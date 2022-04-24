@@ -1,0 +1,40 @@
+
+.topbar {
+    
+    display: flex;
+    flex-direction: row;
+    justify-content: space-between;
+    align-items: center;
+    background-color: #fbfbfb;
+}
+.topbar .ant-menu-horizontal {
+    padding-top: 10px;
+    flex: 1;
+    background-color: #fbfbfb
+}
+.topbar .right {
+    padding-right: 15px;
+}
+
+.topbar .right * {
+    font-size: 16px;
+    color: #fff;
+}
+
+.topbar .ofbutton {
+    border-radius: 50px;
+    padding: 5px;
+    background-color: #1890ff;
+    border: none;
+    width: 36px;
+    height: 36px;
+    border: 1px solid #1890ff;
+}
+
+.topbar .right:hover * {
+    color: #1890ff;
+}
+
+.topbar .right:hover .ofbutton {
+    background-color: transparent;
+}

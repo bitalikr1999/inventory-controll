@@ -1,0 +1,18 @@
+button {
+    border: none;
+    outline: none;
+    cursor: pointer;
+}
+
+.col-right {
+    text-align: right;
+}
+
+
+.form-block {
+    margin-bottom: 12px;
+}
+
+.form-label {
+    margin-bottom: 3px;
+}

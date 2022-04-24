@@ -1,0 +1,14 @@
+{
+  "resolve": {
+    "@jspm/core": "npm:@jspm/core@1.1.1",
+    "typescript": "npm:typescript@1.6.0-beta"
+  },
+  "dependencies": {
+    "npm:@jspm/core@1.1.1": {
+      "source": "https://registry.npmjs.org/@jspm/core/-/core-1.1.1.tgz#sha512-5JjuDSzcxuxgzJ/+ynA7bcqZkI9CdDBERXOnDGdhphxNfmd4PkNl0RDE4hUH0+n8yEaz08Tdmjgxe7tlX3LmRA=="
+    },
+    "npm:typescript@1.6.0-beta": {
+      "source": "https://registry.npmjs.org/typescript/-/typescript-1.6.0-beta.tgz#3e3027d92282dbc8dd22472cc01e592ecb5196c9"
+    }
+  }
+}
