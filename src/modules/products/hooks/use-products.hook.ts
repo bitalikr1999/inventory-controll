@@ -7,11 +7,12 @@ export const useProducts = () => {
 		store: 'products',
 		field: 'list',
 		serrialization: (items: IProduct[]) => {
-			return items.sort((a, b) => a.id - b.id)
+			return items ? items.sort((a, b) => a.id - b.id) : []
 		},
 	})
 
 	const getLastId = () => {
+		if (_.isEmpty(items)) return 0
 		const id = Number(items[items.length - 1].id)
 		return _.defaultTo(id, 0)
 	}

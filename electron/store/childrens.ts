@@ -1,12 +1,13 @@
-import { ipcMain } from 'electron'
+import { app, ipcMain } from 'electron'
+import { dbCwd } from 'electron/config'
 import { getId } from 'electron/helpers'
 import _ from 'lodash'
-import path from 'path'
+
 const Store = require('electron-store')
 
 const store = new Store({
 	name: 'childrens',
-	cwd: path.join(__dirname, '..', '..', 'data'),
+	cwd: dbCwd,
 })
 
 const getGroups = async () => {

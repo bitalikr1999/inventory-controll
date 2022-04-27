@@ -17,7 +17,6 @@ export const AddProductModalSmart = () => {
 	const [visible, setVisible] = useState(false)
 	const form = useForm<Form>({}, validateProduct)
 	const { items, set, getLastId } = useProducts()
-	const [isLoading, setLoading] = useState()
 
 	const showDrawer = () => {
 		setVisible(true)
@@ -28,6 +27,7 @@ export const AddProductModalSmart = () => {
 
 	const submit = async () => {
 		try {
+			console.log('submit')
 			await set([
 				...items,
 				{
@@ -38,8 +38,12 @@ export const AddProductModalSmart = () => {
 			])
 			onClose()
 			form.set({} as any)
-		} catch (e) {}
+		} catch (e) {
+			console.log('error', e)
+		}
 	}
+
+	console.log(form.errors)
 
 	return (
 		<>

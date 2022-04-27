@@ -1,10 +1,12 @@
+import { app } from 'electron'
 import path from 'path'
 const Store = require('electron-store')
 
 const productsStore = new Store(
 	{
 		name: 'products',
-		cwd: path.join(__dirname, '..', '..', 'data'),
+		cwd: app.getPath('appData'),
+		// cwd: path.join(__dirname, '..', '..', 'data'),
 	},
 	{
 		list: [],
@@ -13,7 +15,7 @@ const productsStore = new Store(
 
 const menusStore = new Store({
 	name: 'menu',
-	cwd: path.join(__dirname, '..', '..', 'data'),
+	// cwd: path.join(__dirname, '..', '..', 'data'),
 })
 
 const store = {
@@ -29,6 +31,7 @@ export const getFromStore = (storeName: StoreKey, key: string) => {
 }
 
 export const setToStore = (storeName: StoreKey, key: string, data: any) => {
+	console.log('PRODUCTS SET')
 	if (!store[storeName]) return null
 	return store[storeName].set(key, data)
 }

@@ -1,13 +1,13 @@
 {
-  "name": "electron-react-typescript",
-  "author": "Diego Fernandes <diego.schell.f@gmail.com>",
-  "version": "2.0.0",
-  "description": "An Electron boilerplate including TypeScript, React, Jest and ESLint.",
+  "name": "ac-food",
+  "author": "Vitalik Yatsenko <bitalikr1999@gmail.com>",
+  "version": "1.0.0",
+  "description": "",
   "main": "./.webpack/main/index.js",
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make": "electron-forge make --targets=@electron-forge/maker-dmg",
     "release": "electron-forge publish",
     "lint": "eslint . --ext js,ts",
     "test": "jest"
@@ -29,6 +29,8 @@
     "node-polyfill-webpack-plugin": "^1.1.4",
     "os": "~0.1.2",
     "os-browserify": "~0.3.0",
+    "path": "^0.12.7",
+    "randomstring": "^1.2.2",
     "react": "17.0.2",
     "react-app-rewired": "^2.2.1",
     "react-dom": "17.0.2",
@@ -48,6 +50,7 @@
     "@babel/preset-typescript": "7.14.5",
     "@electron-forge/cli": "6.0.0-beta.57",
     "@electron-forge/maker-deb": "6.0.0-beta.57",
+    "@electron-forge/maker-dmg": "^6.0.0-beta.63",
     "@electron-forge/maker-rpm": "6.0.0-beta.57",
     "@electron-forge/maker-squirrel": "6.0.0-beta.57",
     "@electron-forge/maker-zip": "6.0.0-beta.57",
@@ -90,8 +93,8 @@
   "config": {
     "forge": {
       "packagerConfig": {
-        "name": "Electron starter",
-        "executableName": "electron-starter",
+        "name": "AcFood",
+        "executableName": "AcFood",
         "icon": "assets/icon",
         "extraResource": [
           "assets"
@@ -138,6 +141,13 @@
         {
           "name": "@electron-forge/maker-rpm",
           "config": {}
+        },
+        {
+          "name": "@electron-forge/maker-dmg",
+          "config": {
+            "background": "./assets/bg.webp",
+            "format": "ULFO"
+          }
         }
       ]
     }
