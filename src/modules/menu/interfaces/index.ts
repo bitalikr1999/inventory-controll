@@ -1,9 +1,11 @@
+import { GroupCategoryKey } from '@/@types/enums'
 import { IProduct } from '@/@types/interfaces'
 
 export interface MenuEditorForm {
 	title: string
 	pressAdd: () => void
 	items: MenuEditorItem[]
+	groupCategory: GroupCategoryKey
 }
 
 export interface MenuEditorItem {

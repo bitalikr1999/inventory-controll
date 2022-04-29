@@ -8,7 +8,7 @@ const store = new Store({
 	cwd: dbCwd,
 })
 
-const getMenus = async (_date: string) => {
+const getMenus = async (_date: string | number): Promise<any[]> => {
 	const key = getKey(_date)
 	const items = await store.get(key)
 	return items ? items : []
@@ -20,12 +20,30 @@ const getKey = (_date: string | number) => {
 }
 
 const getId = (payload: AddMenuPayload) => {
+	if (payload.id) return payload.id
 	return new Date(payload.date).getTime()
 }
 
 export const initMenusStoreListeners = () => {
 	ipcMain.handle('getMenus', (_, date: string) => {
 		return getMenus(date)
+	})
+
+	ipcMain.handle('getMenu', async (_, id: string) => {
+		const menus = await getMenus(id)
+
+		const menu = menus.find(it => String(it.id) === String(id))
+		return menu
+	})
+
+	ipcMain.handle('removeMenu', async (_, id: string) => {
+		const menus = await getMenus(id)
+		const key = getKey(id)
+
+		await store.set(
+			key,
+			menus.filter(it => it.id !== id),
+		)
 	})
 
 	// ipcMain.handle('getMenu', async (_, id: number) => {
@@ -35,21 +53,25 @@ export const initMenusStoreListeners = () => {
 
 	ipcMain.handle('addMenu', async (_, payload: AddMenuPayload) => {
 		const id = getId(payload)
-		console.log('id', id)
 		const key = getKey(id)
-		console.log('key', key)
-		const menus = await getMenus(String(id))
+		const menus = await getMenus(id)
 
 		const newMenu = {
 			id,
 			name: payload.name,
 			date: payload.date,
 			items: payload.items,
+			groupCategory: payload.groupCategory,
 		}
 
-		console.log('new menu', newMenu)
+		const menuExistIndex = menus.findIndex(
+			it => String(it.id) === String(id),
+		)
 
-		await store.set(key, [...menus, newMenu])
+		if (menuExistIndex >= 0) menus[menuExistIndex] = newMenu
+		else menus.push(newMenu)
+
+		await store.set(key, menus)
 		return newMenu
 	})
 }
@@ -58,6 +80,7 @@ interface AddMenuPayload {
 	id?: number
 	name: string
 	date: string
+	groupCategory: string
 	items: {
 		name: string
 		products: {

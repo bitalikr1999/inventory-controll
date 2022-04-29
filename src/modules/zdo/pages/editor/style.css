@@ -1,0 +1,12 @@
+.zdo-item-table, .zdo-item-table th, .zdo-item-table td {
+    border: 1px solid rgba(0,0,0,.1);
+}
+
+.zdo-item-table{
+    width: 100%;
+    table-layout: fixed;
+}
+
+.zdo-item-table td {
+    text-align: center;
+}

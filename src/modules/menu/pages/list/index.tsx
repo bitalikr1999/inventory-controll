@@ -1,4 +1,5 @@
 import { RouteKey } from '@/@types/enums'
+import { PageHeader } from '@/shared/components/grid'
 import { AppstoreAddOutlined } from '@ant-design/icons'
 import { Button, Col, Row, Table } from 'antd'
 import _ from 'lodash'
@@ -9,14 +10,22 @@ import { useMenus } from '../../hooks'
 export const MenuListPage = () => {
 	const navigate = useNavigate()
 
-	const { data } = useMenus()
+	const { data, remove } = useMenus()
 
 	const renderItems = () => {
 		if (_.isEmpty(data)) return null
-		return data.map(it => {
+		return data.reverse().map(it => {
 			return (
-				<Col span={6}>
-					<MenuItem menu={it} />
+				<Col span={8} style={{ padding: 10 }}>
+					<MenuItem
+						menu={it}
+						onPressItem={() =>
+							navigate(RouteKey.MenuEditor, {
+								state: { id: it.id },
+							})
+						}
+						onPressDelete={() => remove(it.id)}
+					/>
 				</Col>
 			)
 		})
@@ -24,11 +33,9 @@ export const MenuListPage = () => {
 
 	return (
 		<>
-			<Row align="middle">
-				<Col span={16}>
-					<h1>Меню</h1>
-				</Col>
-				<Col span={8} className="col-right">
+			<PageHeader
+				title={`Меню`}
+				rightComponent={
 					<Button
 						type="primary"
 						icon={<AppstoreAddOutlined />}
@@ -36,8 +43,8 @@ export const MenuListPage = () => {
 						onClick={() => navigate(RouteKey.MenuEditor)}>
 						Створити
 					</Button>
-				</Col>
-			</Row>
+				}
+			/>
 			<Row>{renderItems()}</Row>
 		</>
 	)

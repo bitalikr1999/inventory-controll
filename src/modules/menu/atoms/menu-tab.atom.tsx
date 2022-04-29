@@ -46,21 +46,17 @@ export const MenuTabAtom: FC<MenuTabProps> = ({
 						...(isActive ? styles.itemActive : {}),
 					}}
 					onClick={() => onPressItem(it.id)}>
-					<p style={styles.itemText}>
+					<p style={{ ...styles.itemText, width: '50%' }}>
 						{it.name ? it.name : 'Без назви'}
 					</p>
-					<p style={styles.itemText}>{getPrice(it)} грн. </p>
+					<p style={{ ...styles.itemText, width: '30%' }}>
+						{getPrice(it)} грн.{' '}
+					</p>
 					<Row>
 						<Button
 							shape="circle"
 							type="primary"
-							style={{ marginRight: 10 }}
-							icon={<EditOutlined />}
-							onClick={() => onPressItem(it.id)}
-						/>
-						<Button
-							shape="circle"
-							type="primary"
+							size="small"
 							style={{
 								background: '#ff522b',
 								borderColor: '#ff522b',

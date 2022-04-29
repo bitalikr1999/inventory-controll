@@ -1,12 +1,13 @@
 import { GroupCategoryKey, RouteKey } from '@/@types/enums'
 import { IProduct } from '@/@types/interfaces'
+import { PageBackBtn } from '@/shared/components/grid'
 import { createStyleSheet } from '@/shared/helpers'
 import { useForm } from '@/shared/hooks/useForm'
-import { AppstoreAddOutlined } from '@ant-design/icons'
+import { AppstoreAddOutlined, ArrowLeftOutlined } from '@ant-design/icons'
 import { Button, Col, Row, Select, Table } from 'antd'
 import _ from 'lodash'
-import { useMemo, useState } from 'react'
-import { useNavigate } from 'react-router-dom'
+import { useEffect, useMemo, useState } from 'react'
+import { Route, useLocation, useNavigate } from 'react-router-dom'
 import { ItemEditor } from '../../atoms/item-editor.atom'
 import { MenuTabAtom } from '../../atoms/menu-tab.atom'
 import { useMenus } from '../../hooks'
@@ -25,13 +26,24 @@ export const MenuEditorPage = () => {
 		() => null,
 	)
 	const [selectedItemId, selectItemId] = useState<string>()
-	const { set } = useMenus()
+	const { set, getOne } = useMenus()
+	const navigate = useNavigate()
+	const location: any = useLocation()
+	const existId = location.state?.id
+
+	const loadExist = async () => {
+		const menu = await getOne(existId)
+		console.log('exist menu', menu)
+		form.set(menu)
+	}
+
+	useEffect(() => {
+		if (existId) loadExist()
+	}, [existId])
 
 	const addItem = (period: MenuItemPeriod) => {
 		const items = [...form.values.items]
-
 		const id = randomstring.generate(12)
-
 		items.push({
 			id,
 			name: '',
@@ -40,7 +52,6 @@ export const MenuEditorPage = () => {
 		})
 
 		form.setField('items', items)
-
 		selectItemId(id)
 	}
 
@@ -65,9 +76,6 @@ export const MenuEditorPage = () => {
 		return _items.find(it => it.id === selectedItemId)
 	}, [selectedItemId, form.values.items])
 
-	// console.log('items', items)
-	// console.log('selectedItem', selectedItem)
-
 	const addProduct = () => {
 		const items = [...form.values.items]
 		const item = items.findIndex(it => it.id === selectedItemId)
@@ -82,18 +90,25 @@ export const MenuEditorPage = () => {
 		form.setField('items', _.cloneDeep(items))
 	}
 
-	const save = () => {
+	const save = async () => {
 		const { values } = form
 
-		set({
-			name: values.title,
-			date: new Date(),
-			items: values.items,
-		})
+		try {
+			await set({
+				id: _.defaultTo(existId, null),
+				name: values.title,
+				date: new Date(),
+				items: values.items,
+				groupCategory: values.groupCategory,
+			})
+		} finally {
+			navigate(RouteKey.Menu)
+		}
 	}
 
 	return (
 		<div>
+			<PageBackBtn />
 			<Row style={{ alignItems: 'center', marginBottom: 20 }}>
 				<h1 style={styles.title}>Створення меню</h1>
 
@@ -101,8 +116,8 @@ export const MenuEditorPage = () => {
 					style={{ width: 150, marginRight: 30 }}
 					placeholder="1-4 р."
 					size="middle"
-					value={null}
-					onChange={val => {}}>
+					value={form.values.groupCategory}
+					onChange={val => form.setField('groupCategory', val)}>
 					<Select.Option value={GroupCategoryKey.Junior}>
 						1-4 p.
 					</Select.Option>
@@ -161,5 +176,10 @@ const styles = createStyleSheet({
 	title: {
 		marginBottom: 0,
 		marginRight: 30,
+	},
+	back: {
+		fontSize: 24,
+		marginRight: 20,
+		cursor: 'pointer',
 	},
 })

@@ -20,6 +20,15 @@ export const useMenus = () => {
 		resetData()
 	}
 
+	const remove = async (id: number) => {
+		await window.Main.emit('removeMenu', id)
+		resetData()
+	}
+
+	const getOne = async (id: number) => {
+		return window.Main.emit('getMenu', id)
+	}
+
 	useEventsListener('onChangeStoreData', ({ key, data }) => {
 		if ('menus' === key) setData(data)
 	})
@@ -32,5 +41,7 @@ export const useMenus = () => {
 		data,
 		resetData,
 		set,
+		getOne,
+		remove,
 	}
 }

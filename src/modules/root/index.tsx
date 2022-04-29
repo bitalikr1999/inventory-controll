@@ -5,6 +5,8 @@ import { GroupPage } from '../childrens/pages/group'
 import { MenuListPage } from '../menu/pages'
 import { MenuEditorPage } from '../menu/pages/editor'
 import { ProductsListPage } from '../products/pages/list'
+import { ZdoEditorPage } from '../zdo/pages'
+import { ZdoListPage } from '../zdo/pages/list'
 import { MainLayout } from './components'
 
 export const Root = () => {
@@ -23,6 +25,11 @@ export const Root = () => {
 					/>
 					<Route path={RouteKey.Menu} element={<MenuListPage />} />
 					<Route path={RouteKey.Group} element={<GroupPage />} />
+					<Route path={RouteKey.ZDO} element={<ZdoListPage />} />
+					<Route
+						path={RouteKey.ZdoEditor}
+						element={<ZdoEditorPage />}
+					/>
 					<Route
 						path={RouteKey.MenuEditor}
 						element={<MenuEditorPage />}
