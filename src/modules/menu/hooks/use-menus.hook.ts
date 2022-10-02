@@ -1,17 +1,26 @@
-import { GroupCategoryKey } from '@/@types/enums'
-import { IGroup, IMenu } from '@/@types/interfaces'
+import { IMenu } from '@/@types/interfaces'
 import { appEvents } from '@/shared/events'
 import { useEventsListener } from '@/shared/hooks/use-events-listener.hook'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useState } from 'react'
 
-export const useMenus = () => {
+interface UseMenusParams {
+	filterMenus?: (items: IMenu[]) => IMenu[]
+}
+
+export const useMenus = ({ filterMenus = items => items }: UseMenusParams) => {
 	const [data, setData] = useState<IMenu[]>()
+	const [date, setDate] = useState(new Date())
 
 	const resetData = async () => {
-		const _data = await window.Main.emit('getMenus', new Date())
+		console.log('get menus ', new Date(date).toISOString())
+		const _data = await window.Main.emit(
+			'getMenus',
+			new Date(date).toISOString(),
+		)
+		console.log('result', _data)
 		appEvents.emit('onChangeStoreData', {
 			key: 'menus',
-			data: _data,
+			data: filterMenus(_data),
 		})
 	}
 
@@ -34,8 +43,9 @@ export const useMenus = () => {
 	})
 
 	useEffect(() => {
+		console.log('reload', date)
 		resetData()
-	}, [])
+	}, [date])
 
 	return {
 		data,
@@ -43,5 +53,7 @@ export const useMenus = () => {
 		set,
 		getOne,
 		remove,
+		date,
+		setDate,
 	}
 }

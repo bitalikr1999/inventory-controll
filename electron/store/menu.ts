@@ -1,3 +1,4 @@
+import { da } from 'date-fns/locale'
 import { ipcMain } from 'electron'
 import { dbCwd } from 'electron/config'
 import _ from 'lodash'
@@ -10,6 +11,7 @@ const store = new Store({
 
 const getMenus = async (_date: string | number): Promise<any[]> => {
 	const key = getKey(_date)
+	console.log('key', key)
 	const items = await store.get(key)
 	return items ? items : []
 }
@@ -21,11 +23,17 @@ const getKey = (_date: string | number) => {
 
 const getId = (payload: AddMenuPayload) => {
 	if (payload.id) return payload.id
-	return new Date(payload.date).getTime()
+	const date = new Date(payload.date)
+	if (payload.groupCategory === 'junior') date.setHours(1)
+	if (payload.groupCategory === 'middle') date.setHours(2)
+	if (payload.groupCategory === 'senior') date.setHours(3)
+
+	return date.getTime()
 }
 
 export const initMenusStoreListeners = () => {
 	ipcMain.handle('getMenus', (_, date: string) => {
+		console.log('GET MENUS', date)
 		return getMenus(date)
 	})
 
@@ -46,16 +54,12 @@ export const initMenusStoreListeners = () => {
 		)
 	})
 
-	// ipcMain.handle('getMenu', async (_, id: number) => {
-	// 	const groups = await getGroups()
-	// 	return groups.find((it: any) => Number(it.id) === Number(id))
-	// })
-
 	ipcMain.handle('addMenu', async (_, payload: AddMenuPayload) => {
 		const id = getId(payload)
+		console.log('id', id)
 		const key = getKey(id)
 		const menus = await getMenus(id)
-
+		console.log('menus')
 		const newMenu = {
 			id,
 			name: payload.name,
@@ -67,6 +71,8 @@ export const initMenusStoreListeners = () => {
 		const menuExistIndex = menus.findIndex(
 			it => String(it.id) === String(id),
 		)
+
+		console.log('menuExistIndex', menuExistIndex)
 
 		if (menuExistIndex >= 0) menus[menuExistIndex] = newMenu
 		else menus.push(newMenu)

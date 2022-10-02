@@ -27,7 +27,6 @@ export const AddProductModalSmart = () => {
 
 	const submit = async () => {
 		try {
-			console.log('submit')
 			await set([
 				...items,
 				{

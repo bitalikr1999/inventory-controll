@@ -1,12 +1,15 @@
 .zdo-item-table, .zdo-item-table th, .zdo-item-table td {
     border: 1px solid rgba(0,0,0,.1);
+    font-size: 12px;
 }
 
 .zdo-item-table{
     width: 100%;
     table-layout: fixed;
+    margin-top: 10px;
 }
 
 .zdo-item-table td {
     text-align: center;
+
 }

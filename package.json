@@ -18,6 +18,7 @@
     "@ant-design/icons": "^4.7.0",
     "@react-navigation/native": "^6.0.10",
     "ajv": "^8.11.0",
+    "alphanumeric-encoder": "^1.5.2",
     "antd": "^4.19.5",
     "assert": "^2.0.0",
     "date-fns": "^2.28.0",
@@ -40,7 +41,9 @@
     "stream-http": "^3.2.0",
     "styled-components": "5.3.0",
     "typescript": "1.6.0-beta",
-    "validate.js": "^0.13.1"
+    "validate.js": "^0.13.1",
+    "xlsx": "^0.18.5",
+    "xlsx-js-style": "^1.2.0"
   },
   "devDependencies": {
     "@babel/core": "7.14.6",

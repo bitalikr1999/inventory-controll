@@ -25,11 +25,8 @@ export const Root = () => {
 					/>
 					<Route path={RouteKey.Menu} element={<MenuListPage />} />
 					<Route path={RouteKey.Group} element={<GroupPage />} />
-					<Route path={RouteKey.ZDO} element={<ZdoListPage />} />
-					<Route
-						path={RouteKey.ZdoEditor}
-						element={<ZdoEditorPage />}
-					/>
+					{/* <Route path={RouteKey.ZDO} element={<ZdoListPage />} /> */}
+					<Route path={RouteKey.ZDO} element={<ZdoEditorPage />} />
 					<Route
 						path={RouteKey.MenuEditor}
 						element={<MenuEditorPage />}

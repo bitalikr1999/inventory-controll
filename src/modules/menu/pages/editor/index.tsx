@@ -1,39 +1,34 @@
-import { GroupCategoryKey, RouteKey } from '@/@types/enums'
-import { IProduct } from '@/@types/interfaces'
+import { RouteKey } from '@/@types/enums'
+import { SelectGroupCategory } from '@/modules/childrens/components'
 import { PageBackBtn } from '@/shared/components/grid'
-import { createStyleSheet } from '@/shared/helpers'
+import { createStyleSheet, prepareDateForDatePicker } from '@/shared/helpers'
 import { useForm } from '@/shared/hooks/useForm'
-import { AppstoreAddOutlined, ArrowLeftOutlined } from '@ant-design/icons'
-import { Button, Col, Row, Select, Table } from 'antd'
+import { Button, Col, DatePicker, Row, Select, Table } from 'antd'
 import _ from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
-import { Route, useLocation, useNavigate } from 'react-router-dom'
+import { useLocation, useNavigate } from 'react-router-dom'
 import { ItemEditor } from '../../atoms/item-editor.atom'
 import { MenuTabAtom } from '../../atoms/menu-tab.atom'
 import { useMenus } from '../../hooks'
-import {
-	MenuEditorForm,
-	MenuEditorItem,
-	MenuItemPeriod,
-} from '../../interfaces'
+import { MenuEditorForm, MenuItemPeriod } from '../../interfaces'
 const randomstring = require('randomstring')
 
 export const MenuEditorPage = () => {
 	const form = useForm<MenuEditorForm>(
 		{
 			items: [],
+			date: new Date(),
 		},
 		() => null,
 	)
 	const [selectedItemId, selectItemId] = useState<string>()
-	const { set, getOne } = useMenus()
+	const { set, getOne } = useMenus({})
 	const navigate = useNavigate()
 	const location: any = useLocation()
 	const existId = location.state?.id
 
 	const loadExist = async () => {
 		const menu = await getOne(existId)
-		console.log('exist menu', menu)
 		form.set(menu)
 	}
 
@@ -97,10 +92,12 @@ export const MenuEditorPage = () => {
 			await set({
 				id: _.defaultTo(existId, null),
 				name: values.title,
-				date: new Date(),
+				date: new Date(values.date).toISOString(),
 				items: values.items,
 				groupCategory: values.groupCategory,
 			})
+		} catch (e) {
+			console.log('error', e)
 		} finally {
 			navigate(RouteKey.Menu)
 		}
@@ -112,22 +109,16 @@ export const MenuEditorPage = () => {
 			<Row style={{ alignItems: 'center', marginBottom: 20 }}>
 				<h1 style={styles.title}>Створення меню</h1>
 
-				<Select
-					style={{ width: 150, marginRight: 30 }}
-					placeholder="1-4 р."
-					size="middle"
-					value={form.values.groupCategory}
-					onChange={val => form.setField('groupCategory', val)}>
-					<Select.Option value={GroupCategoryKey.Junior}>
-						1-4 p.
-					</Select.Option>
-					<Select.Option value={GroupCategoryKey.Middle}>
-						4-6 p.
-					</Select.Option>
-					<Select.Option value={GroupCategoryKey.Senior}>
-						Працівники
-					</Select.Option>
-				</Select>
+				<SelectGroupCategory
+					val={form.values.groupCategory}
+					onChange={val => form.setField('groupCategory', val)}
+					style={{ width: 150, marginRight: 15 }}
+				/>
+				<DatePicker
+					onChange={val => form.setField('date', val)}
+					value={prepareDateForDatePicker(form.values.date)}
+					style={{ width: 150, marginRight: 15 }}
+				/>
 
 				<Button onClick={save} size="middle" type="primary">
 					Зберегти

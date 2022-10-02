@@ -27,7 +27,7 @@ export const PageHeader: FC<PageHeaderProps> = ({
 				) : null}
 				<h1 style={styles.title}>{title}</h1>
 			</Col>
-			<Col span={8} className="col-right">
+			<Col span={8} className="col-right" style={styles.rightBlock}>
 				{rightComponent}
 			</Col>
 		</Row>
@@ -51,5 +51,10 @@ const styles = createStyleSheet({
 	},
 	title: {
 		marginBottom: 0,
+	},
+	rightBlock: {
+		display: 'flex',
+		justifyContent: 'flex-end',
+		alignItems: 'center',
 	},
 })

@@ -1,9 +1,8 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import { write } from 'fs'
-import path from 'path'
 import { getFromStore, setToStore } from './store'
 import { initChildrensStoreListeners } from './store/childrens'
 import { initMenusStoreListeners } from './store/menu'
+import { initZdoListeners } from './store/zdo'
 const fs = require('fs')
 
 let mainWindow: BrowserWindow | null
@@ -67,6 +66,7 @@ async function registerListeners() {
 
 	initChildrensStoreListeners()
 	initMenusStoreListeners()
+	initZdoListeners()
 
 	setTimeout(() => {
 		ipcMain.emit('message', `${app.getPath('appData')}/test.txt`)
@@ -88,14 +88,4 @@ app.on('activate', () => {
 	if (BrowserWindow.getAllWindows().length === 0) {
 		createWindow()
 	}
-
-	const content = 'Some content!'
-
-	fs.writeFile(`${app.getPath('appData')}/test.txt`, content, err => {
-		if (err) {
-			console.error(err)
-			return
-		}
-		//file written successfully
-	})
 })

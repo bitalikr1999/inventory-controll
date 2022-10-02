@@ -1,6 +1,5 @@
 import { IProduct } from '@/@types/interfaces'
 import { useStoreDate } from '@/shared/hooks'
-import { AppstoreAddOutlined } from '@ant-design/icons'
 import { Button, Col, Row, Table } from 'antd'
 import { AddProductModalSmart } from '../../smart-components'
 import { ProductsTableConfig } from './table.config'
