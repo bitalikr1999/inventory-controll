@@ -1,9 +1,13 @@
 import { RouteKey } from '@/@types/enums'
 import { SelectGroupCategory } from '@/modules/childrens/components'
 import { PageBackBtn } from '@/shared/components/grid'
-import { createStyleSheet, prepareDateForDatePicker } from '@/shared/helpers'
+import {
+	$eventVal,
+	createStyleSheet,
+	prepareDateForDatePicker,
+} from '@/shared/helpers'
 import { useForm } from '@/shared/hooks/useForm'
-import { Button, Col, DatePicker, Row, Select, Table } from 'antd'
+import { Button, Col, DatePicker, Input, Row, Select, Table } from 'antd'
 import _ from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -43,6 +47,7 @@ export const MenuEditorPage = () => {
 			id,
 			name: '',
 			period,
+			weight: '0',
 			products: [],
 		})
 
@@ -92,6 +97,7 @@ export const MenuEditorPage = () => {
 			await set({
 				id: _.defaultTo(existId, null),
 				name: values.title,
+				childrensCount: values.childrensCount,
 				date: new Date(values.date).toISOString(),
 				items: values.items,
 				groupCategory: values.groupCategory,
@@ -114,6 +120,15 @@ export const MenuEditorPage = () => {
 					onChange={val => form.setField('groupCategory', val)}
 					style={{ width: 150, marginRight: 15 }}
 				/>
+				<Input
+					placeholder="Кількість дітей"
+					value={form.values.childrensCount}
+					onChange={e =>
+						form.setField('childrensCount', $eventVal(e))
+					}
+					style={{ width: 140, marginRight: 15 }}
+				/>
+
 				<DatePicker
 					onChange={val => form.setField('date', val)}
 					value={prepareDateForDatePicker(form.values.date)}

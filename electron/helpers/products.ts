@@ -1,3 +1,4 @@
+import { IMenuItemProduct } from '@/@types/interfaces'
 import { IMenuItem } from 'electron/xlsx/menu/interfaces'
 import _ from 'lodash'
 
@@ -29,4 +30,15 @@ export const calcProductsSumm = (items: IMenuItem[]) => {
 	})
 
 	return result
+}
+
+export const calcProductsPrice = (products: IMenuItemProduct[]) => {
+	if (_.isEmpty(products)) return 0
+	let resultPrice = 0
+	products.map(it => {
+		if (!it) return
+		resultPrice = resultPrice + Number(it.product.price) * Number(it.count)
+	})
+
+	return resultPrice
 }

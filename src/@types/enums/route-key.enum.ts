@@ -9,4 +9,7 @@ export enum RouteKey {
 	Group = '/childrens/group',
 
 	MenuEditor = '/menu/editor',
+
+	Warehouse = '/warehouse',
+	WarehouseAdmission = '/warehouse/admission',
 }

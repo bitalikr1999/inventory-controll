@@ -1,20 +1,28 @@
 import { IProduct } from '@/@types/interfaces'
 import { $eventVal } from '@/shared/helpers/form.helper'
-import { AutoComplete, Input } from 'antd'
+import { AutoComplete, Input, InputRef } from 'antd'
 import _ from 'lodash'
-import { FC, useEffect, useState } from 'react'
+import { FC, useEffect, useRef, useState } from 'react'
 import { useProducts } from '../hooks'
 
 interface Props {
 	onChange: (product: IProduct) => void
+	product?: IProduct
 }
 
-export const ProductAutocomplite: FC<Props> = ({ onChange }) => {
+export const ProductAutocomplite: FC<Props> = ({ onChange, product }) => {
 	const [value, setValue] = useState('')
 	const [options, setOptions] = useState<{ value: string }[]>([])
 	const [hideOptions, setHideOptions] = useState(false)
+	const inputRef = useRef<InputRef>(null)
 
 	const { items } = useProducts()
+
+	useEffect(() => {
+		if (product) {
+			setValue(product.name)
+		}
+	}, [product])
 
 	const onSearch = (searchText: string) => {
 		const results = _.filter(items, function (item) {
@@ -31,9 +39,7 @@ export const ProductAutocomplite: FC<Props> = ({ onChange }) => {
 		)
 	}
 	const onSelect = (data: string) => {
-		console.log('onSelect', data)
 		const item = items.find(it => it.name === data)
-		console.log('items', item)
 		setHideOptions(true)
 		onChange(item)
 	}
@@ -48,11 +54,14 @@ export const ProductAutocomplite: FC<Props> = ({ onChange }) => {
 			<AutoComplete
 				options={hideOptions ? [] : options}
 				style={{ width: '100%' }}
+				value={value}
 				onSelect={onSelect}>
 				<Input.Search
+					ref={inputRef}
 					size="middle"
 					placeholder="Назва продукту"
 					value={value}
+					defaultValue={value}
 					onChange={e => setValue($eventVal(e))}
 				/>
 			</AutoComplete>

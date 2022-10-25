@@ -1,5 +1,14 @@
 import { RouteKey } from '@/@types/enums'
-import { LogoutOutlined, MailOutlined } from '@ant-design/icons'
+import {
+	AppstoreOutlined,
+	BarChartOutlined,
+	CoffeeOutlined,
+	LockOutlined,
+	LogoutOutlined,
+	MailOutlined,
+	MehOutlined,
+	ScheduleOutlined,
+} from '@ant-design/icons'
 import { Menu } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom'
 import './style.css'
@@ -17,31 +26,37 @@ export const TopBar = () => {
 				className="topbar-menu">
 				<Menu.Item
 					key={RouteKey.Menu.split('/')[1]}
-					icon={<MailOutlined />}
+					icon={<AppstoreOutlined />}
 					onClick={() => navigate(RouteKey.Menu)}>
 					Меню
 				</Menu.Item>
 				<Menu.Item
+					key={RouteKey.Warehouse.split('/')[1]}
+					icon={<LockOutlined />}
+					onClick={() => navigate(RouteKey.Warehouse)}>
+					Склад
+				</Menu.Item>
+				<Menu.Item
 					key={RouteKey.Products.split('/')[1]}
-					icon={<MailOutlined />}
+					icon={<CoffeeOutlined />}
 					onClick={() => navigate(RouteKey.Products)}>
 					Продукти
 				</Menu.Item>
 				<Menu.Item
 					key={RouteKey.ZDO.split('/')[1]}
-					icon={<MailOutlined />}
+					icon={<BarChartOutlined />}
 					onClick={() => navigate(RouteKey.ZDO)}>
 					ЗДО
 				</Menu.Item>
 				<Menu.Item
 					key={RouteKey.ReportCard.split('/')[1]}
-					icon={<MailOutlined />}
+					icon={<ScheduleOutlined />}
 					onClick={() => navigate(RouteKey.ReportCard)}>
 					Табелі
 				</Menu.Item>
 				<Menu.Item
 					key={RouteKey.Children.split('/')[1]}
-					icon={<MailOutlined />}
+					icon={<MehOutlined />}
 					onClick={() => navigate(RouteKey.Children)}>
 					Діти
 				</Menu.Item>

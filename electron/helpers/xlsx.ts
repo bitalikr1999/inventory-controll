@@ -1,22 +1,9 @@
 import * as _ from 'lodash'
 import moment from 'moment'
 
-const borderStyle = {
-	color: {
-		rgb: '#000',
-		tint: 1,
-	},
-	style: 'thin',
-}
 const txtStyle = {
 	alignment: { wrapText: true, vertical: 'center' },
 	border: {},
-	// border: {
-	// 	top: borderStyle,
-	// 	bottom: borderStyle,
-	// 	left: borderStyle,
-	// 	right: borderStyle,
-	// },
 }
 
 export const getArrayOfDates = (date: Date) => {
@@ -33,7 +20,16 @@ export const xlsxVal = (v: any, border = true) => {
 	return {
 		v,
 		t: 's',
-		s: border ? txtStyle : null,
+		s: {
+			alignment: {
+				wrapText: true,
+				vertical: 'center',
+			},
+			border: border ? txtStyle.border : null,
+			font: {
+				sz: 10,
+			},
+		},
 	}
 }
 
@@ -48,6 +44,9 @@ export const xlsxValСenter = (v: any, border = true) => {
 				horizontal: 'center',
 			},
 			border: border ? txtStyle.border : null,
+			font: {
+				sz: 10,
+			},
 		},
 	}
 }
@@ -63,6 +62,9 @@ export const xlsxValRight = (v: any, border = true) => {
 				horizontal: 'right',
 			},
 			border: border ? txtStyle.border : null,
+			font: {
+				sz: 10,
+			},
 		},
 	}
 }

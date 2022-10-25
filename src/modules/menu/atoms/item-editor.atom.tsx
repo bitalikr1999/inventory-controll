@@ -66,6 +66,13 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 		setItems(_.cloneDeep(_items))
 	}
 
+	const setWeight = (weight: string) => {
+		const _items = [...items]
+		const index = items.findIndex(it => it.id === item.id)
+		_items[index].weight = weight
+		setItems(_.cloneDeep(_items))
+	}
+
 	const columns: ColumnsType = [
 		{
 			title: '#',
@@ -82,6 +89,7 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 			render: (_, record: any) => {
 				return (
 					<ProductAutocomplite
+						product={record?.product}
 						onChange={product =>
 							setProductField(record.id, product, 'product')
 						}
@@ -139,6 +147,12 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 				placeholder="Назва"
 				value={item.name}
 				onChange={e => setName($eventVal(e))}
+				style={{ marginBottom: 20 }}
+			/>
+			<Input
+				placeholder="Вихід"
+				value={item.weight}
+				onChange={e => setWeight($eventVal(e))}
 				style={{ marginBottom: 20 }}
 			/>
 			<Table

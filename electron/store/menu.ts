@@ -64,6 +64,7 @@ export const initMenusStoreListeners = () => {
 			id,
 			name: payload.name,
 			date: payload.date,
+			childrensCount: payload.childrensCount,
 			items: payload.items,
 			groupCategory: payload.groupCategory,
 		}
@@ -87,6 +88,7 @@ interface AddMenuPayload {
 	name: string
 	date: string
 	groupCategory: string
+	childrensCount: number
 	items: {
 		name: string
 		products: {

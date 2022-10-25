@@ -191,7 +191,7 @@ const calcConfig = (items: ZdoItem[], date: any) => {
 		result.endProductRow + 1
 	}`
 	result.endTableCol = result.endProductCol + 1
-	console.log('config', result)
+
 	return result
 }
 
@@ -217,7 +217,7 @@ export interface IProduct {
 	id: number
 	name: string
 	price: number
-	measurmentUnit: string
+	measurmentUnit: any
 	createdAt: string
 }
 

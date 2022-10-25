@@ -16,8 +16,8 @@ export const addDishes = (
 	for (let index = 0; index < config.maxDishesCount; index++) {
 		const values: any = [xlsxVal(index + 1, false)]
 		;[
-			periods.dinner[index],
 			periods.mornin[index],
+			periods.dinner[index],
 			periods.supper[index],
 		].map(it => {
 			if (it) {
@@ -43,6 +43,21 @@ export const addDishesSummary = (
 	periods: IMenu['itemsByPeriod'],
 	config: IMenuTableConfig,
 ) => {
+	const sum1 = periods.mornin.reduce((res, item) => {
+		res = Number(res) + Number(calcDishPrice(item))
+		return res
+	}, 0)
+
+	const sum2 = periods.dinner.reduce((res, item) => {
+		res = Number(res) + Number(calcDishPrice(item))
+		return res
+	}, 0)
+
+	const sum3 = periods.supper.reduce((res, item) => {
+		res = Number(res) + Number(calcDishPrice(item))
+		return res
+	}, 0)
+
 	XLSX.utils.sheet_add_aoa(
 		worksheet,
 		[
@@ -51,15 +66,15 @@ export const addDishesSummary = (
 				xlsxValRight('Вартість сніданку', false),
 				xlsxVal('', false),
 				xlsxVal('', false),
-				xlsxValСenter('10', false),
+				xlsxValСenter(sum1.toFixed(2), false),
 				xlsxValRight('Вартість обіду', false),
 				,
 				,
-				xlsxValСenter('10', false),
+				xlsxValСenter(sum2.toFixed(2), false),
 				xlsxValRight('Вартість вечері', false),
 				,
 				,
-				xlsxValСenter('10', false),
+				xlsxValСenter(sum3.toFixed(2), false),
 			],
 		],
 		{
