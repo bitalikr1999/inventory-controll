@@ -29,6 +29,15 @@ export const generateZdoXlsx = ({ items, title }: GenerateZdoXlsx) => {
 	addSumm(config, items, worksheet)
 	addHeight(worksheet)
 
+	worksheet['!rows'] = [
+		{ hpt: 10 },
+		{ hpt: 10 },
+		{ htp: 30 },
+		{ htp: 30 },
+		{ htp: 35 },
+		{ htp: 35 },
+	]
+
 	finish(workbook, worksheet, 'zdo')
 }
 

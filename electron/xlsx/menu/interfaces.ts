@@ -28,7 +28,7 @@ export interface IMenuItem {
 export interface IMenuItemProduct {
 	id: string
 	product: IProduct
-	count: string | number
+	count: number
 }
 
 export type MenuItemPeriod = 'mornin' | 'dinner' | 'supper'

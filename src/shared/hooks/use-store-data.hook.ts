@@ -23,7 +23,6 @@ export const useStoreDate = <T>({
 	const getDataKey = () => `${store}|${field}`
 
 	const set = async (_data: any) => {
-		console.log('set', _data)
 		await window.Main.setToStore(store, field, _data)
 		appEvents.emit('onChangeStoreData', {
 			key: getDataKey(),

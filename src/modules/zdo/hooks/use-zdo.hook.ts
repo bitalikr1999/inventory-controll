@@ -2,38 +2,41 @@ import { GroupCategoryKey } from '@/@types/enums'
 import { IProduct } from '@/@types/interfaces'
 import { ZdoItem, ZdoTableItem } from '@/@types/interfaces/entities/zdo'
 import { useMenus } from '@/modules/menu/hooks'
+import { useWarehouseList } from '@/modules/warehouse/hooks'
 import { getSumm } from '@/shared/helpers'
-import { useStoreDate } from '@/shared/hooks'
 import _ from 'lodash'
-import { useMemo, useState } from 'react'
+import { useEffect, useMemo, useState } from 'react'
 
 export const useZdo = () => {
+	const [groupCategory, setGroupCategory] = useState(GroupCategoryKey.Junior)
+	const { items: warehouseItems } = useWarehouseList()
+
 	const filterMenus = (items: any) =>
-		items.filter((it: any) => it.groupCategory === GroupCategoryKey.Middle)
+		items.filter((it: any) => it.groupCategory === groupCategory)
 
-	const { data: menus, date, setDate } = useMenus({ filterMenus })
-	const { data: products } = useStoreDate<IProduct[]>({
-		store: 'products',
-		field: 'list',
-	})
+	const { data: menus, date, setDate, resetData } = useMenus({ filterMenus })
 
-	const gerPrice = (productId: number) => {
-		const item = products.find(it => it.id === productId)
+	useEffect(() => {
+		resetData()
+	}, [groupCategory])
+
+	const gerPrice = (id: string) => {
+		const item = warehouseItems.find(it => it._id === id)
 		return item.price
 	}
 
-	const getProductFromMenus = (productId: number) => {
+	const getProductFromMenus = (warehouseId: string) => {
 		const result: ZdoTableItem[] = []
 		menus.map(it => {
 			const toAdd: ZdoTableItem = {
 				date: new Date(it.date).getDate(),
 				count: 0,
-				price: gerPrice(productId),
+				price: gerPrice(warehouseId),
 			}
 
 			it.items.map(it => {
 				it.products.map(it2 => {
-					if (it2.product?.id === productId) {
+					if (it2.product?.warehouseId === warehouseId) {
 						toAdd.count = Number(toAdd.count) + Number(it2.count)
 					}
 				})
@@ -56,13 +59,18 @@ export const useZdo = () => {
 
 	const items = useMemo(() => {
 		const result: ZdoItem[] = []
-		if (_.isEmpty(products) || _.isEmpty(menus)) return []
 
-		products.map(it => {
-			const byDays = getProductFromMenus(it.id)
+		if (_.isEmpty(warehouseItems)) return []
+
+		warehouseItems.map(it => {
+			const byDays = getProductFromMenus(it._id)
 			const totalCount = getTotalCount(byDays)
 			result.push({
-				product: it,
+				product: {
+					id: it._id,
+					price: it.price,
+					...it.product,
+				},
 				byDays: byDays,
 				totalCount,
 				totalPrice: getSumm(it.price, totalCount),
@@ -70,7 +78,7 @@ export const useZdo = () => {
 		})
 
 		return result
-	}, [products, menus])
+	}, [warehouseItems, menus])
 
-	return { items, changeDate: setDate, date }
+	return { items, changeDate: setDate, date, groupCategory, setGroupCategory }
 }

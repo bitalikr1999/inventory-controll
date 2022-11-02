@@ -12,12 +12,10 @@ export const useMenus = ({ filterMenus = items => items }: UseMenusParams) => {
 	const [date, setDate] = useState(new Date())
 
 	const resetData = async () => {
-		console.log('get menus ', new Date(date).toISOString())
 		const _data = await window.Main.emit(
 			'getMenus',
 			new Date(date).toISOString(),
 		)
-		console.log('result', _data)
 		appEvents.emit('onChangeStoreData', {
 			key: 'menus',
 			data: filterMenus(_data),

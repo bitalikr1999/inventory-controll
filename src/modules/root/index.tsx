@@ -1,4 +1,6 @@
 import { RouteKey } from '@/@types/enums'
+import { createStyleSheet } from '@/shared/helpers'
+import { useEffect, useState } from 'react'
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ChildrensListPage } from '../childrens/pages'
 import { GroupPage } from '../childrens/pages/group'
@@ -8,42 +10,84 @@ import { ProductsListPage } from '../products/pages/list'
 import { WarehouseAdmissionPage } from '../warehouse/pages'
 import { WarehouseListPage } from '../warehouse/pages/list'
 import { ZdoEditorPage } from '../zdo/pages'
-import { ZdoListPage } from '../zdo/pages/list'
 import { MainLayout } from './components'
 
 export const Root = () => {
-	return (
-		<HashRouter>
-			<MainLayout>
-				<Routes>
-					<Route path="/" element={<Navigate to={RouteKey.Menu} />} />
-					<Route
-						path={RouteKey.Products}
-						element={<ProductsListPage />}
-					/>
-					<Route
-						path={RouteKey.Children}
-						element={<ChildrensListPage />}
-					/>
-					<Route path={RouteKey.Menu} element={<MenuListPage />} />
-					<Route path={RouteKey.Group} element={<GroupPage />} />
-					<Route
-						path={RouteKey.Warehouse}
-						element={<WarehouseListPage />}
-					/>
-					<Route
-						path={RouteKey.WarehouseAdmission}
-						element={<WarehouseAdmissionPage />}
-					/>
+	const [isLoading, setLoading] = useState(true)
 
-					{/* <Route path={RouteKey.ZDO} element={<ZdoListPage />} /> */}
-					<Route path={RouteKey.ZDO} element={<ZdoEditorPage />} />
-					<Route
-						path={RouteKey.MenuEditor}
-						element={<MenuEditorPage />}
-					/>
-				</Routes>
-			</MainLayout>
-		</HashRouter>
+	useEffect(() => {
+		setTimeout(() => {
+			setLoading(false)
+		}, 1000)
+	}, [])
+
+	return (
+		<>
+			{isLoading ? (
+				<div style={styles.overlay}>
+					<div className="lds-dual-ring"></div>
+					<p style={{ marginTop: 20 }}>Завантаження</p>
+				</div>
+			) : null}
+			<HashRouter>
+				<MainLayout>
+					<Routes>
+						<Route
+							path="/"
+							element={<Navigate to={RouteKey.Menu} />}
+						/>
+						<Route
+							path={RouteKey.Products}
+							element={<ProductsListPage />}
+						/>
+						<Route
+							path={RouteKey.Children}
+							element={<ChildrensListPage />}
+						/>
+						<Route
+							path={RouteKey.Menu}
+							element={<MenuListPage />}
+						/>
+						<Route path={RouteKey.Group} element={<GroupPage />} />
+						<Route
+							path={RouteKey.Warehouse}
+							element={<WarehouseListPage />}
+						/>
+						<Route
+							path={RouteKey.WarehouseAdmission}
+							element={<WarehouseAdmissionPage />}
+						/>
+
+						{/* <Route path={RouteKey.ZDO} element={<ZdoListPage />} /> */}
+						<Route
+							path={RouteKey.ZDO}
+							element={<ZdoEditorPage />}
+						/>
+						<Route
+							path={RouteKey.MenuEditor}
+							element={<MenuEditorPage />}
+						/>
+					</Routes>
+				</MainLayout>
+			</HashRouter>
+		</>
 	)
 }
+
+const styles = createStyleSheet({
+	overlay: {
+		position: 'fixed',
+		top: 0,
+		left: 0,
+		right: 0,
+		bottom: 0,
+		height: '100%',
+		width: '100%',
+		backgroundColor: '#fff',
+		zIndex: 999999,
+		display: 'flex',
+		justifyContent: 'center',
+		alignItems: 'center',
+		flexDirection: 'column',
+	},
+})

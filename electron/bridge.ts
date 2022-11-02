@@ -18,6 +18,7 @@ export const api = {
 	},
 
 	send: (key: string, data: any) => {
+		console.log('key', key, data)
 		return ipcRenderer.send(key, data)
 	},
 
@@ -26,7 +27,6 @@ export const api = {
 	},
 
 	setToStore: (store: string, key: string, data: any) => {
-		console.log('set to store')
 		return ipcRenderer.invoke('setToStore', store, key, data)
 	},
 	/**

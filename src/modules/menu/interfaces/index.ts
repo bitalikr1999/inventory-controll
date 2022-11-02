@@ -1,5 +1,5 @@
-import { GroupCategoryKey } from '@/@types/enums'
-import { IProduct } from '@/@types/interfaces'
+import { GroupCategoryKey, MeasurmentUnit } from '@/@types/enums'
+import { IProduct, IWarehouseItem } from '@/@types/interfaces'
 
 export interface MenuEditorForm {
 	title: string
@@ -15,12 +15,19 @@ export interface MenuEditorItem {
 	name: string
 	weight: string
 	period: MenuItemPeriod
-	products: MenuEditorProduct[]
+	products?: MenuEditorProduct[]
 }
 
 export interface MenuEditorProduct {
 	id: string
-	product: IProduct
+	product?: {
+		warehouseId: string
+		productId: number
+		price: number
+		name: string
+		measurmentUnit: MeasurmentUnit
+		maxCount?: number
+	}
 	count: string | number
 }
 

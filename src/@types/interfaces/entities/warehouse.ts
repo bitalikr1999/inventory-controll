@@ -1,7 +1,7 @@
 import { IProduct } from './product'
 
 export interface IWarehouseItem {
-	id: number
+	_id: string
 	productId: number
 
 	count: number

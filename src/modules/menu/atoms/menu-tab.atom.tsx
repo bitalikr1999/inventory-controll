@@ -14,6 +14,7 @@ interface MenuTabProps {
 	items: MenuEditorForm['items']
 	onPressItem: (itemId: string) => void
 	selectedItemId: string
+	onPressRemoveItem: (itemId: string) => void
 }
 
 export const MenuTabAtom: FC<MenuTabProps> = ({
@@ -22,6 +23,7 @@ export const MenuTabAtom: FC<MenuTabProps> = ({
 	items,
 	onPressItem,
 	selectedItemId,
+	onPressRemoveItem,
 }) => {
 	const getPrice = (item: MenuEditorItem) => {
 		let result = 0
@@ -57,6 +59,7 @@ export const MenuTabAtom: FC<MenuTabProps> = ({
 							shape="circle"
 							type="primary"
 							size="small"
+							onClick={() => onPressRemoveItem(it.id)}
 							style={{
 								background: '#ff522b',
 								borderColor: '#ff522b',

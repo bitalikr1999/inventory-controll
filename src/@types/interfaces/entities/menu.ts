@@ -1,4 +1,4 @@
-import { GroupCategoryKey } from '@/@types/enums'
+import { GroupCategoryKey, MeasurmentUnit } from '@/@types/enums'
 import { IProduct } from './product'
 
 export interface IMenu {
@@ -18,8 +18,15 @@ export interface IMenuItem {
 
 export interface IMenuItemProduct {
 	id: string
-	product: IProduct
-	count: string | number
+	product?: {
+		warehouseId?: string
+		productId?: number
+		price: number
+		name?: string
+		measurmentUnit: MeasurmentUnit
+		maxCount?: number
+	}
+	count: number
 }
 
 export type MenuItemPeriod = 'mornin' | 'dinner' | 'supper'

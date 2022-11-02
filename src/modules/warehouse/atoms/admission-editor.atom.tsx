@@ -92,7 +92,7 @@ export const AdmissionEditorAtom: FC<Props> = ({ items, onChange }) => {
 						type="number"
 						disabled={!record.product}
 						addonAfter={'грн.'}
-						onChange={e => onChangeRow(i, 'price', $eventVal(e))}
+						onChange={e => onChangeRow(i, 'summ', $eventVal(e))}
 					/>
 				)
 			},

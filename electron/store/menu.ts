@@ -1,7 +1,13 @@
 import { da } from 'date-fns/locale'
 import { ipcMain } from 'electron'
 import { dbCwd } from 'electron/config'
+import { getMenuDifference } from 'electron/helpers'
+import { AddMenuPayload } from 'electron/typing'
 import _ from 'lodash'
+import {
+	decreaseWarehouseItemCount,
+	increaseWarehouseItemCount,
+} from './warehouse'
 const Store = require('electron-store')
 
 const store = new Store({
@@ -31,9 +37,28 @@ const getId = (payload: AddMenuPayload) => {
 	return date.getTime()
 }
 
+const getMenu = async (id: string) => {
+	const menus = await getMenus(id)
+
+	const menu = menus.find(it => String(it.id) === String(id))
+	return menu
+}
+
+const saveDifferenceMenu = async (difference: {
+	warehouseToReturn: any[]
+	warehouseToSubstract: any[]
+}) => {
+	for await (const item of difference.warehouseToSubstract) {
+		await decreaseWarehouseItemCount(item.warehouseId, item.count)
+	}
+
+	for await (const item of difference.warehouseToReturn) {
+		await increaseWarehouseItemCount(item.warehouseId, item.count)
+	}
+}
+
 export const initMenusStoreListeners = () => {
 	ipcMain.handle('getMenus', (_, date: string) => {
-		console.log('GET MENUS', date)
 		return getMenus(date)
 	})
 
@@ -56,10 +81,8 @@ export const initMenusStoreListeners = () => {
 
 	ipcMain.handle('addMenu', async (_, payload: AddMenuPayload) => {
 		const id = getId(payload)
-		console.log('id', id)
 		const key = getKey(id)
 		const menus = await getMenus(id)
-		console.log('menus')
 		const newMenu = {
 			id,
 			name: payload.name,
@@ -72,8 +95,8 @@ export const initMenusStoreListeners = () => {
 		const menuExistIndex = menus.findIndex(
 			it => String(it.id) === String(id),
 		)
-
-		console.log('menuExistIndex', menuExistIndex)
+		const difference = getMenuDifference(menus[menuExistIndex], newMenu)
+		await saveDifferenceMenu(difference)
 
 		if (menuExistIndex >= 0) menus[menuExistIndex] = newMenu
 		else menus.push(newMenu)
@@ -81,19 +104,4 @@ export const initMenusStoreListeners = () => {
 		await store.set(key, menus)
 		return newMenu
 	})
-}
-
-interface AddMenuPayload {
-	id?: number
-	name: string
-	date: string
-	groupCategory: string
-	childrensCount: number
-	items: {
-		name: string
-		products: {
-			productId: number
-			count: number
-		}[]
-	}[]
 }

@@ -1,5 +1,6 @@
 import { IProduct } from '@/@types/interfaces'
 import { ProductAutocomplite } from '@/modules/products/smart-components'
+import { WarehouseAutocomplite } from '@/modules/warehouse/smart-components'
 import { createStyleSheet } from '@/shared/helpers'
 import { $eventVal } from '@/shared/helpers/form.helper'
 import { getSumm } from '@/shared/helpers/number.helper'
@@ -88,11 +89,22 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 			key: 'name',
 			render: (_, record: any) => {
 				return (
-					<ProductAutocomplite
-						product={record?.product}
-						onChange={product =>
-							setProductField(record.id, product, 'product')
-						}
+					<WarehouseAutocomplite
+						item={record}
+						onChange={item => {
+							setProductField(
+								record.id,
+								{
+									warehouseId: item._id,
+									productId: item.product.id,
+									price: item.price,
+									name: item.product.name,
+									measurmentUnit: item.product.measurmentUnit,
+									maxCount: item.count,
+								},
+								'product',
+							)
+						}}
 					/>
 				)
 			},
@@ -108,9 +120,17 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 						value={val}
 						type="number"
 						addonBefore={record.product?.measurmentUnit}
-						onChange={e =>
-							setProductField(record.id, $eventVal(e), 'count')
-						}
+						onChange={e => {
+							console.log('record.product?.count', record.product)
+							setProductField(
+								record.id,
+								Math.min(
+									$eventVal(e),
+									record.product?.maxCount,
+								),
+								'count',
+							)
+						}}
 					/>
 				)
 			},
@@ -136,11 +156,6 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 		},
 	]
 
-	// console.log(item.products)
-
-	useEffect(() => {
-		console.log(item.products)
-	}, [item.products])
 	return (
 		<div style={styles.container}>
 			<Input

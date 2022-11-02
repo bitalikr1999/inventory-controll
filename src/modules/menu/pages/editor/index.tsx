@@ -14,7 +14,11 @@ import { useLocation, useNavigate } from 'react-router-dom'
 import { ItemEditor } from '../../atoms/item-editor.atom'
 import { MenuTabAtom } from '../../atoms/menu-tab.atom'
 import { useMenus } from '../../hooks'
-import { MenuEditorForm, MenuItemPeriod } from '../../interfaces'
+import {
+	MenuEditorForm,
+	MenuEditorItem,
+	MenuItemPeriod,
+} from '../../interfaces'
 const randomstring = require('randomstring')
 
 export const MenuEditorPage = () => {
@@ -109,6 +113,11 @@ export const MenuEditorPage = () => {
 		}
 	}
 
+	const removeItem = (id: string) => {
+		const items = [...form.values.items].filter(it => it.id !== id)
+		form.setField('items', items)
+	}
+
 	return (
 		<div>
 			<PageBackBtn />
@@ -148,6 +157,7 @@ export const MenuEditorPage = () => {
 						items={items.mornin}
 						onPressItem={selectItemId}
 						selectedItemId={selectedItemId}
+						onPressRemoveItem={removeItem}
 					/>
 					<MenuTabAtom
 						title="Обід"
@@ -155,6 +165,7 @@ export const MenuEditorPage = () => {
 						items={items.dinner}
 						onPressItem={selectItemId}
 						selectedItemId={selectedItemId}
+						onPressRemoveItem={removeItem}
 					/>
 					<MenuTabAtom
 						title="Вечеря"
@@ -162,6 +173,7 @@ export const MenuEditorPage = () => {
 						items={items.supper}
 						onPressItem={selectItemId}
 						selectedItemId={selectedItemId}
+						onPressRemoveItem={removeItem}
 					/>
 				</Col>
 				<Col span={1}></Col>

@@ -1,19 +1,17 @@
 import { createStyleSheet, prepareDateForDatePicker } from '@/shared/helpers'
 import { Button, Col, DatePicker, Row } from 'antd'
 import * as _ from 'lodash'
-import { useNavigate } from 'react-router-dom'
 import { ZdoItemRow, ZdoItemTable } from '../../components'
 import { useZdo } from '../../hooks'
 import './style.css'
 import locale from 'antd/es/date-picker/locale/uk_UA'
+import { SelectGroupCategory } from '@/modules/childrens/components'
 
 export const ZdoEditorPage = () => {
-	const navigate = useNavigate()
-
-	const { items, changeDate, date } = useZdo()
+	const { items, changeDate, date, groupCategory, setGroupCategory } =
+		useZdo()
 
 	const generateZdo = () => {
-		console.log('items', items)
 		window.Main.emit('generateZdo', { items })
 	}
 
@@ -37,6 +35,12 @@ export const ZdoEditorPage = () => {
 					value={prepareDateForDatePicker(date)}
 					picker="month"
 					locale={locale}
+					style={{ width: 150, marginRight: 15 }}
+				/>
+
+				<SelectGroupCategory
+					val={groupCategory}
+					onChange={setGroupCategory}
 					style={{ width: 150, marginRight: 15 }}
 				/>
 
