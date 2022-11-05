@@ -17,7 +17,7 @@ export const MenuListPage = () => {
 
 	const { data, remove, date, setDate } = useMenus({})
 
-	const onPressRemove = (id: number) => {
+	const onPressRemove = (id: string) => {
 		Modal.confirm({
 			title: 'Ви впевненні?',
 			icon: <ExclamationCircleOutlined />,
@@ -35,7 +35,10 @@ export const MenuListPage = () => {
 	const renderItems = () => {
 		if (_.isEmpty(data)) return null
 		return data
-			.sort((a, b) => b.id - a.id)
+			.sort(
+				(a, b) =>
+					new Date(a.date).getTime() - new Date(b.date).getTime(),
+			)
 			.map(it => {
 				return (
 					<Col span={8} style={{ padding: 10 }}>
@@ -43,10 +46,10 @@ export const MenuListPage = () => {
 							menu={it}
 							onPressItem={() =>
 								navigate(RouteKey.MenuEditor, {
-									state: { id: it.id },
+									state: { id: it._id },
 								})
 							}
-							onPressDelete={() => onPressRemove(it.id)}
+							onPressDelete={() => onPressRemove(it._id)}
 						/>
 					</Col>
 				)

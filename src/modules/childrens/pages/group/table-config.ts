@@ -5,11 +5,6 @@ import moment from 'moment'
 
 export const ChildrensTableConfig: ColumnsType<IChildren> = [
 	{
-		title: '№',
-		key: 'key',
-		dataIndex: 'id',
-	},
-	{
 		title: 'ФІО',
 		dataIndex: 'name',
 		key: 'name',
@@ -19,10 +14,10 @@ export const ChildrensTableConfig: ColumnsType<IChildren> = [
 		dataIndex: 'birthday',
 		key: 'age',
 		render: value => {
-			console.log(value)
 			return moment().diff(new Date(value), 'years')
 		},
 	},
+
 	{
 		title: 'Дата створення',
 		dataIndex: 'createdAt',

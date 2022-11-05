@@ -1,4 +1,3 @@
-import { dbCwd } from 'electron/config'
 import path from 'path'
 
 import { app, ipcMain } from 'electron'
@@ -6,7 +5,6 @@ import { IAddWarehouseAdmissionPayload } from 'electron/typing'
 import { IWarehouseItem } from '@/@types/interfaces'
 import _ from 'lodash'
 
-const { v4: uuidv4 } = require('uuid')
 const Datastore = require('nedb')
 export const warehouseDb = new Datastore({
 	filename: path.join(
@@ -21,7 +19,6 @@ export const warehouseDb = new Datastore({
 const getAll = async () => {
 	return new Promise<IWarehouseItem[]>((resolve, reject) => {
 		warehouseDb.find({}, (err: any, docs: IWarehouseItem[]) => {
-			console.log('docs', docs)
 			if (err) reject(err)
 			resolve(docs)
 		})

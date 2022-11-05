@@ -1,11 +1,12 @@
 import { createStyleSheet, prepareDateForDatePicker } from '@/shared/helpers'
-import { Button, Col, DatePicker, Row } from 'antd'
+import { Button, DatePicker, Row } from 'antd'
 import * as _ from 'lodash'
 import { ZdoItemRow, ZdoItemTable } from '../../components'
 import { useZdo } from '../../hooks'
 import './style.css'
 import locale from 'antd/es/date-picker/locale/uk_UA'
 import { SelectGroupCategory } from '@/modules/childrens/components'
+import moment from 'moment'
 
 export const ZdoEditorPage = () => {
 	const { items, changeDate, date, groupCategory, setGroupCategory } =
@@ -16,10 +17,12 @@ export const ZdoEditorPage = () => {
 	}
 
 	const renderItems = () => {
+		const daysCount = moment(new Date(date)).daysInMonth()
+
 		return items.map(it => {
 			return (
 				<ZdoItemRow it={it}>
-					<ZdoItemTable it={it} />
+					<ZdoItemTable it={it} daysCount={daysCount} />
 				</ZdoItemRow>
 			)
 		})

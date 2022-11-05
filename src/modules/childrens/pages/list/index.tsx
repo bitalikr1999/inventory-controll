@@ -18,6 +18,12 @@ export const ChildrensListPage = () => {
 		})
 	}
 
+	const openGroupCalendar = (group: IGroup) => {
+		navigate(RouteKey.GroupCalendar, {
+			state: group,
+		})
+	}
+
 	return (
 		<div>
 			<Row align="middle">
@@ -37,18 +43,21 @@ export const ChildrensListPage = () => {
 					<GroupsTileList
 						items={byCategory.junior}
 						onPressItem={openGroup}
+						onPressCalendar={openGroupCalendar}
 					/>
 				</TabPane>
 				<TabPane tab="4-6 р." key={GroupCategoryKey.Middle}>
 					<GroupsTileList
 						items={byCategory.middle}
 						onPressItem={openGroup}
+						onPressCalendar={openGroupCalendar}
 					/>
 				</TabPane>
 				<TabPane tab="Працівники" key={GroupCategoryKey.Senior}>
 					<GroupsTileList
 						items={byCategory.senior}
 						onPressItem={openGroup}
+						onPressCalendar={openGroupCalendar}
 					/>
 				</TabPane>
 			</Tabs>

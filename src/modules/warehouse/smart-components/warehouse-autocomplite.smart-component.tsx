@@ -51,6 +51,11 @@ export const WarehouseAutocomplite: FC<Props> = ({ onChange, item }) => {
 		onSearch(value)
 	}, [value])
 
+	const onFocus = () => {
+		console.log('focus')
+		onSearch(value)
+	}
+
 	return (
 		<>
 			<AutoComplete
@@ -64,6 +69,7 @@ export const WarehouseAutocomplite: FC<Props> = ({ onChange, item }) => {
 					placeholder="Назва продукту"
 					value={value}
 					defaultValue={value}
+					onFocus={onFocus}
 					onChange={e => setValue($eventVal(e))}
 				/>
 			</AutoComplete>

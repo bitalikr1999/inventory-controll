@@ -4,7 +4,7 @@ import { useEventsListener } from '@/shared/hooks/use-events-listener.hook'
 import { useEffect, useState } from 'react'
 import { ChildreEditorPayloadDto } from '../dto'
 
-export const useChildrenGroup = (id: number) => {
+export const useChildrenGroup = (id: string) => {
 	const [group, setGroup] = useState<IGroup>()
 
 	const resetData = async () => {
@@ -24,10 +24,6 @@ export const useChildrenGroup = (id: number) => {
 	}, [])
 
 	const addChildren = async (data: ChildreEditorPayloadDto) => {
-		console.log('DATA', {
-			...data,
-			groupId: id,
-		})
 		await window.Main.emit('addChildren', {
 			...data,
 			birthday: data.birthday,

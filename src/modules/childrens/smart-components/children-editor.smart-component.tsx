@@ -11,7 +11,7 @@ import { FC, useState } from 'react'
 
 interface Props {
 	existData?: IGroup
-	groupId: number
+	groupId: string
 	onSubmit: (data: Form) => void
 }
 

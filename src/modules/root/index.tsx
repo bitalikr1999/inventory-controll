@@ -3,6 +3,7 @@ import { createStyleSheet } from '@/shared/helpers'
 import { useEffect, useState } from 'react'
 import { HashRouter, Navigate, Route, Routes } from 'react-router-dom'
 import { ChildrensListPage } from '../childrens/pages'
+import { GroupCalendar } from '../childrens/pages/calendar'
 import { GroupPage } from '../childrens/pages/group'
 import { MenuListPage } from '../menu/pages'
 import { MenuEditorPage } from '../menu/pages/editor'
@@ -58,7 +59,6 @@ export const Root = () => {
 							element={<WarehouseAdmissionPage />}
 						/>
 
-						{/* <Route path={RouteKey.ZDO} element={<ZdoListPage />} /> */}
 						<Route
 							path={RouteKey.ZDO}
 							element={<ZdoEditorPage />}
@@ -66,6 +66,11 @@ export const Root = () => {
 						<Route
 							path={RouteKey.MenuEditor}
 							element={<MenuEditorPage />}
+						/>
+
+						<Route
+							path={RouteKey.GroupCalendar}
+							element={<GroupCalendar />}
 						/>
 					</Routes>
 				</MainLayout>

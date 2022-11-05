@@ -1,7 +1,7 @@
 import { MeasurmentUnit } from '@/@types/enums'
 
 export interface AddMenuPayload {
-	id?: number
+	id?: string
 	name: string
 	date: string
 	groupCategory: string
@@ -27,9 +27,10 @@ export interface AddMenuPayload {
 }
 
 export interface IMenu {
-	id?: number
+	_id?: string
 	name: string
 	date: string
+	dateGroupKey: string
 	groupCategory: string
 	childrensCount: number
 	items: {
@@ -50,4 +51,9 @@ export interface IMenu {
 			count: number
 		}[]
 	}[]
+}
+
+export interface GetMenusParams {
+	date: string
+	childrenGroup: string
 }

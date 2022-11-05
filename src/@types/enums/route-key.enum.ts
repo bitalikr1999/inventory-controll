@@ -7,6 +7,7 @@ export enum RouteKey {
 	ReportCard = '/report-card',
 
 	Group = '/childrens/group',
+	GroupCalendar = '/childrens/group-calendar',
 
 	MenuEditor = '/menu/editor',
 

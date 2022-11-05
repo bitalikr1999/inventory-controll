@@ -2,6 +2,7 @@ import { IGroup } from '@/@types/interfaces'
 import {
 	EditOutlined,
 	EllipsisOutlined,
+	FieldTimeOutlined,
 	ForwardOutlined,
 	FullscreenOutlined,
 	SettingOutlined,
@@ -14,9 +15,14 @@ import { FC } from 'react'
 interface Props {
 	items: IGroup[]
 	onPressItem: (item: IGroup) => void
+	onPressCalendar: (item: IGroup) => void
 }
 
-export const GroupsTileList: FC<Props> = ({ items, onPressItem }) => {
+export const GroupsTileList: FC<Props> = ({
+	items,
+	onPressItem,
+	onPressCalendar,
+}) => {
 	const renderItems = () => {
 		if (_.isEmpty(items)) return null
 		return items.map(it => {
@@ -28,11 +34,15 @@ export const GroupsTileList: FC<Props> = ({ items, onPressItem }) => {
 								key="setting"
 								title="Налаштування"
 							/>,
-							<EditOutlined key="edit" title="Редагувати" />,
-							<FullscreenOutlined
-								key="open"
-								title="Детальніше"
+							<EditOutlined
+								key="edit"
+								title="Редагувати"
 								onClick={() => onPressItem(it)}
+							/>,
+							<FieldTimeOutlined
+								key="calendar"
+								title="Пропуски"
+								onClick={() => onPressCalendar(it)}
 							/>,
 						]}>
 						<Meta

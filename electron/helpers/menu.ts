@@ -5,9 +5,6 @@ export const getMenuDifference = (oldMenu: IMenu, newMenu: AddMenuPayload) => {
 		const warehouseToReturn: any[] = []
 		const warehouseToSubstract: any[] = []
 
-		console.log('oldmenu', oldMenu)
-		console.log('newmenu', newMenu)
-
 		newMenu.items.map(item => {
 			const oldItem = oldMenu?.items?.find(it => it.id === item.id)
 
@@ -83,4 +80,9 @@ export const getMenuDifference = (oldMenu: IMenu, newMenu: AddMenuPayload) => {
 	} catch (e) {
 		console.log(e)
 	}
+}
+
+export const getMenuKey = (_date: string | number) => {
+	const date = new Date(_date)
+	return `${date.getFullYear()}_${date.getMonth()}`
 }

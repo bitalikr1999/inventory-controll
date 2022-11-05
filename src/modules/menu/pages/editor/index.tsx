@@ -7,18 +7,14 @@ import {
 	prepareDateForDatePicker,
 } from '@/shared/helpers'
 import { useForm } from '@/shared/hooks/useForm'
-import { Button, Col, DatePicker, Input, Row, Select, Table } from 'antd'
+import { Button, Col, DatePicker, Input, Row } from 'antd'
 import _ from 'lodash'
 import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ItemEditor } from '../../atoms/item-editor.atom'
 import { MenuTabAtom } from '../../atoms/menu-tab.atom'
 import { useMenus } from '../../hooks'
-import {
-	MenuEditorForm,
-	MenuEditorItem,
-	MenuItemPeriod,
-} from '../../interfaces'
+import { MenuEditorForm, MenuItemPeriod } from '../../interfaces'
 const randomstring = require('randomstring')
 
 export const MenuEditorPage = () => {

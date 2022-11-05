@@ -49,6 +49,10 @@ export const ProductAutocomplite: FC<Props> = ({ onChange, product }) => {
 		onSearch(value)
 	}, [value])
 
+	const onFocus = () => {
+		onSearch(value)
+	}
+
 	return (
 		<>
 			<AutoComplete
@@ -63,6 +67,7 @@ export const ProductAutocomplite: FC<Props> = ({ onChange, product }) => {
 					value={value}
 					defaultValue={value}
 					onChange={e => setValue($eventVal(e))}
+					onFocus={e => onFocus()}
 				/>
 			</AutoComplete>
 		</>

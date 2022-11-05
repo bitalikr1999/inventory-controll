@@ -1,32 +1,18 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
+import {
+	initChildrensListener,
+	initMenusStoreListeners,
+	initZdoListeners,
+} from './listeners'
 import { getFromStore, setToStore } from './store'
-import { initChildrensStoreListeners } from './store/childrens'
-import { initMenusStoreListeners } from './store/menu'
 import { initWarehouseListeners } from './store/warehouse'
-import { initZdoListeners } from './store/zdo'
+
 let mainWindow: BrowserWindow | null
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
 function createWindow() {
-	// const splashWin = new BrowserWindow({
-	// 	width: 200,
-	// 	height: 200,
-	// 	backgroundColor: '#fff',
-	// 	webPreferences: {
-	// 		nodeIntegration: false,
-	// 		contextIsolation: true,
-	// 		webSecurity: false,
-	// 	},
-	// 	transparent: true,
-	// 	frame: false,
-	// 	alwaysOnTop: true,
-	// })
-
-	// splashWin.loadFile('loading.html')
-	// splashWin.center()
-
 	mainWindow = new BrowserWindow({
 		width: 1100,
 		height: 700,
@@ -60,14 +46,14 @@ async function registerListeners() {
 		return setToStore(store as any, key, data)
 	})
 
-	initChildrensStoreListeners()
+	ipcMain.handle('openDevTooles', () => {
+		mainWindow.webContents.openDevTools()
+	})
+
+	initChildrensListener()
 	initMenusStoreListeners()
 	initZdoListeners()
 	initWarehouseListeners()
-
-	// setTimeout(() => {
-	// 	ipcMain.emit('message', `${app.getPath('appData')}/test.txt`)
-	// }, 8000)
 }
 
 app.on('ready', createWindow)

@@ -1,6 +1,6 @@
-import { IMenu } from '@/@types/interfaces'
 import { appEvents } from '@/shared/events'
 import { useEventsListener } from '@/shared/hooks/use-events-listener.hook'
+import { IMenu } from 'electron/typing'
 import { useEffect, useState } from 'react'
 
 interface UseMenusParams {
@@ -12,10 +12,9 @@ export const useMenus = ({ filterMenus = items => items }: UseMenusParams) => {
 	const [date, setDate] = useState(new Date())
 
 	const resetData = async () => {
-		const _data = await window.Main.emit(
-			'getMenus',
-			new Date(date).toISOString(),
-		)
+		const _data = await window.Main.emit('getMenus', {
+			date: new Date(date).toISOString(),
+		})
 		appEvents.emit('onChangeStoreData', {
 			key: 'menus',
 			data: filterMenus(_data),
@@ -23,16 +22,16 @@ export const useMenus = ({ filterMenus = items => items }: UseMenusParams) => {
 	}
 
 	const set = async (_data: any) => {
-		await window.Main.emit('addMenu', _data)
+		await window.Main.emit('saveMenu', _data)
 		resetData()
 	}
 
-	const remove = async (id: number) => {
+	const remove = async (id: string) => {
 		await window.Main.emit('removeMenu', id)
 		resetData()
 	}
 
-	const getOne = async (id: number) => {
+	const getOne = async (id: string) => {
 		return window.Main.emit('getMenu', id)
 	}
 
@@ -41,7 +40,6 @@ export const useMenus = ({ filterMenus = items => items }: UseMenusParams) => {
 	})
 
 	useEffect(() => {
-		console.log('reload', date)
 		resetData()
 	}, [date])
 
