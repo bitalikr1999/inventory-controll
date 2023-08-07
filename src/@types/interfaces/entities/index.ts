@@ -1,5 +1,6 @@
 export * from './group'
 export * from './menu'
 export * from './product'
+export * from './setting'
 export * from './warehouse'
 export * from './zdo'

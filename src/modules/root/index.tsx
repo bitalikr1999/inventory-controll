@@ -12,6 +12,8 @@ import { WarehouseAdmissionPage } from '../warehouse/pages'
 import { WarehouseListPage } from '../warehouse/pages/list'
 import { ZdoEditorPage } from '../zdo/pages'
 import { MainLayout } from './components'
+import { ProductsCategoriesPage } from '../warehouse/pages/categories'
+import { SettingsPage } from '../settings/pages/settings.page'
 
 export const Root = () => {
 	const [isLoading, setLoading] = useState(true)
@@ -71,6 +73,16 @@ export const Root = () => {
 						<Route
 							path={RouteKey.GroupCalendar}
 							element={<GroupCalendar />}
+						/>
+
+						<Route
+							path={RouteKey.WarehouseCategories}
+							element={<ProductsCategoriesPage />}
+						/>
+
+						<Route
+							path={RouteKey.Settings}
+							element={<SettingsPage />}
 						/>
 					</Routes>
 				</MainLayout>

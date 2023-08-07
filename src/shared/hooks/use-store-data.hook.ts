@@ -3,7 +3,7 @@ import { appEvents } from '../events'
 import { useEventsListener } from './use-events-listener.hook'
 
 interface Options<T> {
-	store: 'products'
+	store: 'products' | 'settings'
 	field: string
 	serrialization?: (data: any) => T
 }
@@ -17,12 +17,14 @@ export const useStoreDate = <T>({
 
 	const resetData = async () => {
 		const _data = await window.Main.getStore(store, field)
+		console.log(_data)
 		setData(serrialization ? serrialization(_data) : _data)
 	}
 
 	const getDataKey = () => `${store}|${field}`
 
 	const set = async (_data: any) => {
+		console.log(_data)
 		await window.Main.setToStore(store, field, _data)
 		appEvents.emit('onChangeStoreData', {
 			key: getDataKey(),

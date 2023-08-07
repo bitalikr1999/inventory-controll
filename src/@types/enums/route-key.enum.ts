@@ -12,5 +12,9 @@ export enum RouteKey {
 	MenuEditor = '/menu/editor',
 
 	Warehouse = '/warehouse',
+	WarehouseCategories = '/warehouse-categories',
+
 	WarehouseAdmission = '/warehouse/admission',
+
+	Settings = '/settings',
 }

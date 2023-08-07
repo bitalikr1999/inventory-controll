@@ -7,11 +7,13 @@ import { validateProduct } from '../validator'
 import { $eventVal } from '@/shared/helpers/form.helper'
 import { useForm } from '@/shared/hooks/useForm'
 import { useProducts } from '../hooks'
+import { ProductCategory } from '@/@types/enums'
 
 interface Form {
 	name: string
 	price: number
 	measurmentUnit: string
+	category: ProductCategory
 }
 export const AddProductModalSmart = () => {
 	const [visible, setVisible] = useState(false)
@@ -41,8 +43,6 @@ export const AddProductModalSmart = () => {
 			console.log('error', e)
 		}
 	}
-
-	console.log(form.errors)
 
 	return (
 		<>
@@ -97,6 +97,51 @@ export const AddProductModalSmart = () => {
 						<Select.Option value="л">л</Select.Option>
 						<Select.Option value="бух">бух</Select.Option>
 						<Select.Option value="грам">грам</Select.Option>
+					</Select>
+				</div>
+
+				<div className="form-block">
+					<p className="form-label">Категорія</p>
+					<Select
+						showSearch
+						style={{ width: '100%' }}
+						placeholder="Категорія"
+						optionFilterProp="children"
+						size="large"
+						value={form.values.category}
+						onChange={val => form.setField('category', val)}
+						filterOption={(input: string, option: any) =>
+							option.children
+								.toLowerCase()
+								.indexOf(input.toLowerCase()) >= 0
+						}>
+						<Select.Option value={ProductCategory.Meat}>
+							Мясо
+						</Select.Option>
+						<Select.Option value={ProductCategory.Cereals}>
+							Крупи
+						</Select.Option>
+						<Select.Option value={ProductCategory.Fish}>
+							Риба
+						</Select.Option>
+						<Select.Option value={ProductCategory.Fruits}>
+							Фрукти
+						</Select.Option>
+						<Select.Option value={ProductCategory.Meat}>
+							Мясо
+						</Select.Option>
+						<Select.Option value={ProductCategory.Milk}>
+							Молоко
+						</Select.Option>
+						<Select.Option value={ProductCategory.Mushrooms}>
+							Грииби
+						</Select.Option>
+						<Select.Option value={ProductCategory.Vegetables}>
+							Овочі
+						</Select.Option>
+						<Select.Option value={ProductCategory.Groceries}>
+							Бакалія
+						</Select.Option>
 					</Select>
 				</div>
 

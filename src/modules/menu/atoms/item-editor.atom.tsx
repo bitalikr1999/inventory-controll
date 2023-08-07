@@ -5,9 +5,9 @@ import { createStyleSheet } from '@/shared/helpers'
 import { $eventVal } from '@/shared/helpers/form.helper'
 import { getSumm } from '@/shared/helpers/number.helper'
 import { SearchOutlined } from '@ant-design/icons'
-import { Button, Input, Table } from 'antd'
+import { Button, Checkbox, Input, Table } from 'antd'
 import { ColumnsType } from 'antd/lib/table'
-import _ from 'lodash'
+import _, { noop } from 'lodash'
 import { FC, useEffect } from 'react'
 import { MenuEditorItem, MenuEditorProduct } from '../interfaces'
 const randomstring = require('randomstring')
@@ -133,6 +133,14 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 						}}
 					/>
 				)
+			},
+		},
+		{
+			title: 'Безкоштовно',
+			dataIndex: 'product',
+			key: 'price',
+			render: val => {
+				return <Checkbox onChange={noop}></Checkbox>
 			},
 		},
 		{

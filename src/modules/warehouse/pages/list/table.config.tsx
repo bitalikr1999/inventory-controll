@@ -3,10 +3,11 @@ import { IProduct, IWarehouseItem } from '@/@types/interfaces'
 import { ColumnsType } from 'antd/lib/table'
 import { format } from 'date-fns'
 import { Button, Row } from 'antd'
-import { DeleteOutlined } from '@ant-design/icons'
+import { DeleteOutlined, PlusCircleOutlined } from '@ant-design/icons'
 
 export const WarehouseTableConfig = (
 	onDelete: (id: string) => any,
+	onPressAdmission: (product: IProduct) => void,
 ): ColumnsType<IWarehouseItem> => {
 	return [
 		// {
@@ -60,8 +61,21 @@ export const WarehouseTableConfig = (
 							style={{
 								background: '#ff522b',
 								borderColor: '#ff522b',
+								marginRight: 15,
 							}}
 							icon={<DeleteOutlined />}
+						/>
+
+						<Button
+							onClick={() => onPressAdmission(record.product)}
+							shape="circle"
+							type="primary"
+							size="small"
+							style={{
+								background: '#1890ff',
+								borderColor: '#1890ff',
+							}}
+							icon={<PlusCircleOutlined />}
 						/>
 					</Row>
 				)

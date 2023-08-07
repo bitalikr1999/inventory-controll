@@ -8,6 +8,7 @@ import {
 	MailOutlined,
 	MehOutlined,
 	ScheduleOutlined,
+	SettingOutlined,
 } from '@ant-design/icons'
 import { Menu } from 'antd'
 import { useLocation, useNavigate } from 'react-router-dom'
@@ -16,7 +17,6 @@ import './style.css'
 export const TopBar = () => {
 	const navigate = useNavigate()
 	const location = useLocation()
-	console.log(location)
 
 	return (
 		<div className="topbar">
@@ -62,6 +62,11 @@ export const TopBar = () => {
 				</Menu.Item>
 			</Menu>
 			<div className="right">
+				<button
+					className="ofbutton"
+					onClick={() => navigate(RouteKey.Settings)}>
+					<SettingOutlined />
+				</button>
 				<button className="ofbutton">
 					<LogoutOutlined />
 				</button>

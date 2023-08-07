@@ -29,12 +29,13 @@
     width: 36px;
     height: 36px;
     border: 1px solid #1890ff;
+    margin-left: 10px;
 }
 
-.topbar .right:hover * {
+.topbar .right .ofbutton:hover * {
     color: #1890ff;
 }
 
-.topbar .right:hover .ofbutton {
+.topbar .right .ofbutton:hover {
     background-color: transparent;
 }

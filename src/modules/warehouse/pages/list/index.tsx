@@ -7,10 +7,14 @@ import { Button, Col, Modal, Row, Table } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useWarehouseList } from '../../hooks'
 import { WarehouseTableConfig } from './table.config'
+import { WarehouseAdmissionModalSmart } from '../../smart-components/warehouse-admission-modal'
+import { useState } from 'react'
+import { IProduct } from '@/@types/interfaces'
 
 export const WarehouseListPage = () => {
 	const navigate = useNavigate()
-	const { items, remove } = useWarehouseList()
+	const { items, remove, reload } = useWarehouseList()
+	const [product, setProduct] = useState<IProduct>(null)
 
 	const onPressDelete = (id: string) => {
 		Modal.confirm({
@@ -20,6 +24,10 @@ export const WarehouseListPage = () => {
 			cancelText: 'Ні',
 			onOk: () => remove(id),
 		})
+	}
+	const onAdmission = () => {
+		reload()
+		setProduct(null)
 	}
 
 	return (
@@ -38,12 +46,26 @@ export const WarehouseListPage = () => {
 					onClick={() => navigate(RouteKey.WarehouseAdmission)}>
 					Поступлення
 				</Button>
+				<Button
+					type="primary"
+					icon={<AppstoreAddOutlined />}
+					size="middle"
+					style={{
+						marginLeft: 15,
+					}}
+					onClick={() => navigate(RouteKey.WarehouseCategories)}>
+					Категорії
+				</Button>
 			</Row>
 			<Table
 				dataSource={items}
-				columns={WarehouseTableConfig(onPressDelete)}
+				columns={WarehouseTableConfig(onPressDelete, setProduct)}
 			/>
-			;
+
+			<WarehouseAdmissionModalSmart
+				product={product}
+				onPressClose={onAdmission}
+			/>
 		</div>
 	)
 }

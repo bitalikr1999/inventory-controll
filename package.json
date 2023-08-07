@@ -2,12 +2,12 @@
   "name": "ac-food",
   "author": "Vitalik Yatsenko <bitalikr1999@gmail.com>",
   "version": "1.0.0",
-  "description": "",
+  "description": "test",
   "main": "./.webpack/main/index.js",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-forge package",
-    "make": "electron-forge make --universal",
+    "package": "electron-forge package --arch=x64 --platform=darwin",
+    "make": "electron-forge make ",
     "release": "electron-forge publish",
     "lint": "eslint . --ext js,ts",
     "test": "jest"
@@ -105,7 +105,11 @@
         "extraResource": [
           "assets"
         ],
-        "arch": "x64"
+        "arch": ["x64","arm64"],
+        "platforms": [
+
+        ]
+
       },
       "plugins": [
         [
@@ -118,6 +122,7 @@
                 {
                   "html": "./public/index.html",
                   "js": "./src/index.tsx",
+                  "description": "My Description",
                   "name": "main_window",
                   "preload": {
                     "js": "./electron/bridge.ts"
@@ -132,13 +137,16 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "Electron Starter"
+            "name": "Warehouse",
+            "description": "My Description"
           }
         },
         {
           "name": "@electron-forge/maker-zip",
           "platforms": [
-            "darwin"
+            "darwin",
+            "linux",
+            "windows"
           ]
         },
         {

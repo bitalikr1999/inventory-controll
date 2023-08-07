@@ -1,7 +1,7 @@
 import { IProduct } from '@/@types/interfaces'
 import { app, shell } from 'electron'
 import { dbCwd, groupsLabelsConfig, publicCwd } from 'electron/config'
-import { xlsxVal, xlsxValСenter } from 'electron/helpers/xlsx'
+import { xlsxVal, xlsxValRight, xlsxValСenter } from 'electron/helpers/xlsx'
 import { writeFile } from 'fs'
 import * as _ from 'lodash'
 import moment from 'moment'
@@ -43,7 +43,7 @@ export const generateMenusXlsx = ({ menus }: Params) => {
 
 	writeFile(path.join(publicCwd, `ZDO-${date}.xlsx`), buf, err => {
 		console.log('error', err)
-		shell.showItemInFolder(path.join(publicCwd, `test2.xlsx`))
+		shell.showItemInFolder(path.join(publicCwd, `ZDO-${date}.xlsx`))
 	})
 }
 
@@ -53,7 +53,7 @@ const generateMenuList = (menu: IMenu) => {
 	const config = getConfig(menu)
 
 	try {
-		addHead(worksheet, menu)
+		addHead(worksheet, menu, config)
 		addDishes(worksheet, menu.itemsByPeriod, config)
 		addDishesSummary(worksheet, menu.itemsByPeriod, config)
 		addMerge(worksheet, config)
@@ -75,7 +75,25 @@ const generateMenuList = (menu: IMenu) => {
 			{ wch: 6 },
 			{ wch: 6 },
 		]
-		worksheet['!rows'] = [{ hpt: 25 }, { hpt: 25 }]
+		worksheet['!rows'] = [
+			{ hpt: 11 },
+			{ hpt: 11 },
+			{ hpt: 11 },
+			{ hpt: 14 },
+			{ hpt: 8 },
+			{ hpt: 14 },
+			{ hpt: 14 },
+			{ hpt: 10 },
+			{ hpt: 13 },
+			{ hpt: 10 },
+			{ hpt: 11 },
+			{ hpt: 16 },
+			{ hpt: 14 },
+			{ hpt: 14 },
+			{ hpt: 14 },
+			{ hpt: 14 },
+			{ hpt: 8 },
+		]
 	} catch (e) {
 		console.log('error2', e)
 	}
@@ -89,7 +107,7 @@ const getConfig = (menu: IMenu) => {
 		startHeader: 1,
 		maxIndgedientsCount: [0],
 		maxDishesCount: _.defaultTo(periods.dinner?.length, 0),
-		dishesStartRow: 4,
+		dishesStartRow: 19,
 		rowsConfig: [],
 		childrensCount: Number(menu.childrensCount),
 	}
@@ -133,46 +151,96 @@ const getConfig = (menu: IMenu) => {
 	return res
 }
 
-const addHead = (worksheet: any, menu: IMenu) => {
+const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
 	XLSX.utils.sheet_add_aoa(
 		worksheet,
 		[
-			[
-				xlsxValСenter('Меню вимога їдальні ЦРД " Пролісок"', false),
-				,
-				,
-				,
-				,
-				,
-				xlsxValСenter('Діти віком  1-4 роки', false),
-			],
+			[xlsxValRight('ЗАТВЕРДЖЕНО', false, 8)],
+			[xlsxValRight('Наказ Міністерства фінансів України', false, 8)],
+			[xlsxValRight('13 грудня 2022 року № 431', false, 8)],
 		],
 		{
-			origin: 'A1',
+			origin: 'M1',
 		},
 	)
+
+	XLSX.utils.sheet_add_aoa(
+		worksheet,
+		[
+			[xlsxVal('Центр розвитку дитини "Пролісок"', false, 9)],
+			[xlsxVal('(найменування юридичної особи)', false, 6)],
+			[xlsxVal('Ідентифікаційний', false, 9)],
+			[
+				xlsxVal('код ЄДРПОУ', false, 9),
+				,
+				,
+				xlsxVal('26431648', false, 9),
+			],
+		],
+		{
+			origin: 'A4',
+		},
+	)
+
+	const date = moment(new Date(menu.date)).format('MM.DD.YYYYр')
+
+	XLSX.utils.sheet_add_aoa(
+		worksheet,
+		[
+			[xlsxValСenter('ЗАТВЕРДЖУЮ', false, 8)],
+			[xlsxValСenter('Директор', false, 8)],
+			[xlsxValСenter('(посада)', false, 6)],
+			[xlsxValСenter('Аліна МИХАЛЬСЬКА', false, 8)],
+			[xlsxValСenter("(підпис ,власне ім'я та ПРІЗВИЩЕ)", false, 6)],
+			[xlsxValСenter(date, false, 8)],
+		],
+		{
+			origin: 'H6',
+		},
+	)
+
+	XLSX.utils.sheet_add_aoa(
+		worksheet,
+		[
+			[xlsxValСenter('Меню-вимога', false, 12)],
+			[xlsxValСenter('на видачу продуктів харчування', false, 11)],
+			[xlsxValСenter(date, false, 11)],
+		],
+		{
+			origin: 'A12',
+		},
+	)
+
+	XLSX.utils.sheet_add_aoa(
+		worksheet,
+		[[xlsxValСenter('комора', false, 11)]],
+		{
+			origin: 'J15',
+		},
+	)
+
 	XLSX.utils.sheet_add_aoa(
 		worksheet,
 		[
 			[
 				xlsxVal(''),
-				xlsxVal('Дата'),
-				xlsxVal(''),
-				xlsxVal(moment(new Date(menu.date)).format('MM.DD.YYYYр')),
-				xlsxVal(''),
-				xlsxVal('Кількість  дітей'),
+				xlsxVal('Кількість одержувачів харчування', false, 11),
 				xlsxVal(''),
 				xlsxVal(''),
+				xlsxVal(
+					`${menu.childrensCount ? menu.childrensCount : ''}`,
+					false,
+					11,
+				),
+				xlsxValСenter('Діти віком 1-4 роки', false, 11),
 				xlsxVal(''),
-				xlsxVal(`${menu.childrensCount ? menu.childrensCount : ''}`),
 				xlsxVal(''),
 				xlsxVal(''),
-				xlsxVal(''),
-				xlsxVal(''),
+				xlsxValСenter('(місце складання)', false, 11),
 			],
 		],
 		{
-			origin: `A2`,
+			origin: `A16`,
 		},
 	)
 
@@ -196,22 +264,129 @@ const addHead = (worksheet: any, menu: IMenu) => {
 			],
 		],
 		{
-			origin: `A3`,
+			origin: `A18`,
+		},
+	)
+
+	let startSummary =
+		config.rowsConfig[config.rowsConfig.length - 1].summ2Row + 1
+
+	XLSX.utils.sheet_add_aoa(
+		worksheet,
+		[
+			[
+				xlsxVal('Лікар ( дієтсестра)'),
+				,
+				,
+				,
+				,
+				xlsxValСenter('__________'),
+				,
+				,
+				xlsxValСenter('Світлана ШМІГЕЛЬ'),
+			],
+			[
+				,
+				,
+				,
+				,
+				,
+				xlsxValСenter('(підпис)', false, 7),
+				,
+				,
+				xlsxValСenter("(власне ім'я таПРІЗВИЩЕ)", false, 7),
+			],
+			[
+				xlsxVal('Прийняв'),
+				,
+				,
+				,
+				,
+				xlsxValСenter('__________'),
+				,
+				,
+				xlsxValСenter('Наталія БУХАНЦЕВА'),
+			],
+			[
+				,
+				,
+				,
+				,
+				,
+				xlsxValСenter('(підпис)', false, 7),
+				,
+				,
+				xlsxValСenter("(власне ім'я таПРІЗВИЩЕ)", false, 7),
+			],
+			[
+				xlsxVal('Видав'),
+				,
+				,
+				,
+				,
+				xlsxValСenter('__________'),
+				,
+				,
+				xlsxValСenter('Юлія ЯЦЕНКО'),
+			],
+			[
+				,
+				,
+				,
+				,
+				,
+				xlsxValСenter('(підпис)', false, 7),
+				,
+				,
+				xlsxValСenter("(власне ім'я таПРІЗВИЩЕ)", false, 7),
+			],
+		],
+		{
+			origin: `A${startSummary + 8}`,
 		},
 	)
 }
 
 const addMerge = (worksheet: any, config: IMenuTableConfig) => {
 	const merge = [
-		{ s: { r: 0, c: 0 }, e: { r: 0, c: 5 } },
-		{ s: { r: 0, c: 6 }, e: { r: 0, c: 10 } },
-		{ s: { r: 1, c: 1 }, e: { r: 1, c: 2 } },
-		{ s: { r: 1, c: 3 }, e: { r: 1, c: 4 } },
-		{ s: { r: 1, c: 5 }, e: { r: 1, c: 8 } },
-		{ s: { r: 1, c: 9 }, e: { r: 1, c: 12 } },
+		{ s: { r: 0, c: 7 }, e: { r: 0, c: 12 } }, //ЗАТВЕРДЖЕНО
+		{ s: { r: 1, c: 7 }, e: { r: 1, c: 12 } }, // Наказ Міністерства фінансів України
+		{ s: { r: 2, c: 7 }, e: { r: 2, c: 12 } }, // 13 грудня 2022 року № 431
+
+		{ s: { r: 3, c: 0 }, e: { r: 3, c: 6 } }, // Центр розвитку дитини "Пролісок"
+		{ s: { r: 3, c: 7 }, e: { r: 3, c: 12 } },
+
+		{ s: { r: 4, c: 0 }, e: { r: 4, c: 6 } }, // (найменування юридичної особи)
+		{ s: { r: 5, c: 0 }, e: { r: 5, c: 6 } }, // Ідентифікаційний
+		{ s: { r: 5, c: 7 }, e: { r: 5, c: 12 } }, // ЗАТВЕРДЖУЮ
+
+		{ s: { r: 6, c: 0 }, e: { r: 6, c: 2 } }, // код ЄДРПОУ
+		{ s: { r: 6, c: 3 }, e: { r: 6, c: 4 } }, // 26431648
+
+		{ s: { r: 6, c: 7 }, e: { r: 6, c: 12 } }, // Директор
+		{ s: { r: 7, c: 7 }, e: { r: 7, c: 12 } }, // (посада)
+		{ s: { r: 8, c: 7 }, e: { r: 8, c: 12 } }, // Аліна МИХАЛЬСЬКА
+		{ s: { r: 9, c: 7 }, e: { r: 9, c: 12 } }, // (підпис ,власне ім'я та ПРІЗВИЩЕ)
+		{ s: { r: 10, c: 7 }, e: { r: 10, c: 12 } }, // дата
+
+		{ s: { r: 11, c: 0 }, e: { r: 11, c: 12 } }, // Меню-вимога
+		{ s: { r: 12, c: 0 }, e: { r: 12, c: 12 } }, // на видачу продуктів харчування
+		{ s: { r: 13, c: 0 }, e: { r: 13, c: 12 } }, // дата
+
+		{ s: { r: 14, c: 9 }, e: { r: 14, c: 12 } }, // комора
+
+		{ s: { r: 15, c: 1 }, e: { r: 15, c: 3 } }, // Кількість одержувачів харчування
+		{ s: { r: 15, c: 5 }, e: { r: 15, c: 8 } }, // Діти віком 1-4 роки
+		{ s: { r: 15, c: 9 }, e: { r: 15, c: 12 } }, // (місце складання)
+
+		// { s: { r: 16, c: 1 }, e: { r: 16, c: 4 } },
+		// { s: { r: 16, c: 6 }, e: { r: 16, c: 8 } },
+		// { s: { r: 16, c: 9 }, e: { r: 16, c: 12 } },
+
+		{ s: { r: 16, c: 0 }, e: { r: 16, c: 12 } },
 	]
 
-	for (let index = 2; index <= 3 + config.maxDishesCount; index++) {
+	for (let index = 17; index <= 18 + config.maxDishesCount; index++) {
 		merge.push({
 			s: { r: index, c: 1 },
 			e: { r: index, c: 2 },
@@ -289,19 +464,28 @@ const addMerge = (worksheet: any, config: IMenuTableConfig) => {
 		})
 	}
 
+	const startFinish = startSummary + 7
+	for (let index = 0; index < 6; index++) {
+		merge.push(
+			...[
+				{
+					s: { r: startFinish + index, c: 0 },
+					e: { r: startFinish + index, c: 4 },
+				},
+				{
+					s: { r: startFinish + index, c: 5 },
+					e: { r: startFinish + index, c: 7 },
+				},
+				{
+					s: { r: startFinish + index, c: 8 },
+					e: { r: startFinish + index, c: 12 },
+				},
+			],
+		)
+	}
 	merge.push({
-		s: { r: startSummary + 7, c: 1 },
+		s: { r: startSummary + 7, c: 0 },
 		e: { r: startSummary + 7, c: 4 },
-	})
-
-	merge.push({
-		s: { r: startSummary + 7, c: 5 },
-		e: { r: startSummary + 7, c: 8 },
-	})
-
-	merge.push({
-		s: { r: startSummary + 7, c: 9 },
-		e: { r: startSummary + 7, c: 12 },
 	})
 
 	worksheet['!merges'] = merge

@@ -1,4 +1,4 @@
-import { MeasurmentUnit } from '@/@types/enums'
+import { MeasurmentUnit, ProductCategory } from '@/@types/enums'
 
 export interface IProduct {
 	id: number
@@ -6,4 +6,6 @@ export interface IProduct {
 	price: number
 	measurmentUnit: MeasurmentUnit
 	createdAt: string
+
+	category?: ProductCategory
 }

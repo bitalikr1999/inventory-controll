@@ -12,8 +12,19 @@ const productsStore = new Store(
 	},
 )
 
+const settingsStore = new Store(
+	{
+		name: 'settings',
+		cwd: path.join(dbCwd, ''),
+	},
+	{
+		list: [],
+	},
+)
+
 const store = {
 	products: productsStore,
+	settings: settingsStore,
 }
 
 type StoreKey = keyof typeof store

@@ -31,5 +31,6 @@ export const useWarehouseList = () => {
 	return {
 		items,
 		remove,
+		reload: loadItems,
 	}
 }
