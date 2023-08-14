@@ -11,10 +11,21 @@ export const calcDishWeight = (item: IMenuItem) => {
 	return weight.toFixed(2)
 }
 
-export const calcDishPrice = (item: IMenuItem) => {
+export const calcDishPrice = (item: Pick<IMenuItem, 'products'>) => {
 	let resultPrice = 0
 
 	item.products.map(it => {
+		resultPrice = resultPrice + Number(it.product.price) * Number(it.count)
+	})
+
+	return resultPrice.toFixed(2)
+}
+
+export const calcFreeDishPrice = (item: IMenuItem) => {
+	let resultPrice = 0
+
+	item.products.map(it => {
+		if (!it.isFree) return
 		resultPrice = resultPrice + Number(it.product.price) * Number(it.count)
 	})
 
@@ -37,6 +48,17 @@ export const calcProductsPrice = (products: IMenuItemProduct[]) => {
 	let resultPrice = 0
 	products.map(it => {
 		if (!it) return
+		resultPrice = resultPrice + Number(it.product.price) * Number(it.count)
+	})
+
+	return resultPrice
+}
+
+export const calcProductsFreePrice = (products: IMenuItemProduct[]) => {
+	if (_.isEmpty(products)) return 0
+	let resultPrice = 0
+	products.map(it => {
+		if (!it || !it.isFree) return
 		resultPrice = resultPrice + Number(it.product.price) * Number(it.count)
 	})
 

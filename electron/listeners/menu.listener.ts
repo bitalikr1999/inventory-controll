@@ -53,7 +53,7 @@ export const initMenusStoreListeners = () => {
 		let resultId: string = payload.id
 
 		if (existMenu) {
-			await menusRepository.updateOne({ _id: payload.id }, { $set: data })
+			await menusRepository.updateOne({ _id: payload.id }, data)
 		} else {
 			const menu = await menusRepository.insert(data)
 			resultId = menu._id

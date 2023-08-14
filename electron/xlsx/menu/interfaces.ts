@@ -29,6 +29,7 @@ export interface IMenuItemProduct {
 	id: string
 	product: IProduct
 	count: number
+	isFree?: boolean
 }
 
 export type MenuItemPeriod = 'mornin' | 'dinner' | 'supper'

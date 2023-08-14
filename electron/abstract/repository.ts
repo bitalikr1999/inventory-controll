@@ -31,14 +31,10 @@ export abstract class Repository<T> {
 
 	public updateOne(params: any, set: any) {
 		return new Promise((resolve, reject) => {
-			this.db.updateOne(
-				params,
-				{ $set: set },
-				(err: any, result: any) => {
-					if (err) reject(err)
-					else resolve(result)
-				},
-			)
+			this.db.update(params, { $set: set }, (err: any, result: any) => {
+				if (err) reject(err)
+				else resolve(result)
+			})
 		})
 	}
 

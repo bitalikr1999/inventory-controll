@@ -1,6 +1,6 @@
 import { GroupCategoryKey } from '@/@types/enums'
 import { Select } from 'antd'
-import React from 'react'
+import React, { useEffect } from 'react'
 
 interface Props {
 	val: string
@@ -8,6 +8,10 @@ interface Props {
 	style?: React.CSSProperties
 }
 export const SelectGroupCategory = ({ val, onChange, style }: Props) => {
+	useEffect(() => {
+		if (val === undefined) onChange(GroupCategoryKey.Junior)
+	}, [val])
+
 	return (
 		<Select
 			style={style}

@@ -1,16 +1,17 @@
 import { GroupCategoryKey } from '@/@types/enums'
-import { IGroup } from '@/@types/interfaces'
+import { IChildren, IGroup } from '@/@types/interfaces'
 import { FormControll } from '@/shared/components/form'
 import { createStyleSheet } from '@/shared/helpers'
 import { $eventVal } from '@/shared/helpers/form.helper'
 import { useForm } from '@/shared/hooks/useForm'
 import { AppstoreAddOutlined } from '@ant-design/icons'
 import { Button, DatePicker, Drawer, Input, Select } from 'antd'
+import { cloneDeep } from 'lodash'
 import moment from 'moment'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 
 interface Props {
-	existData?: IGroup
+	existData?: IChildren
 	groupId: string
 	onSubmit: (data: Form) => void
 }
@@ -18,24 +19,34 @@ interface Props {
 interface Form {
 	name: string
 	birthday: any
+	paymentPercent: number
+	halfPaymentReason: string
+}
+
+const initialForm = {
+	birthday: moment().subtract(6, 'years').toISOString(),
+	paymentPercent: 100,
 }
 
 export const ChildrenEditor: FC<Props> = ({ existData, onSubmit }) => {
 	const [visible, setVisible] = useState(false)
-	const form = useForm<Form>(
-		{
-			birthday: moment().subtract(6, 'years').toISOString(),
-		},
-		() => null,
-	)
+	const form = useForm<Form>(cloneDeep(initialForm), () => null)
+
+	useEffect(() => {
+		if (existData) {
+			form.set(existData as any)
+			setVisible(true)
+		}
+	}, [existData])
 
 	const close = () => setVisible(false)
 
 	const submit = () => {
 		onSubmit(form.values)
 		close()
-		form.set({} as any)
+		form.set(cloneDeep(initialForm) as any)
 	}
+
 	return (
 		<>
 			<Button
@@ -58,6 +69,27 @@ export const ChildrenEditor: FC<Props> = ({ existData, onSubmit }) => {
 					onChangeVal={val => form.setField('name', val)}
 				/>
 
+				<FormControll
+					label="Сума оплати"
+					size="large"
+					placeholder="100"
+					value={form.values.paymentPercent}
+					onChangeVal={val => form.setField('paymentPercent', val)}
+					prefix="%"
+				/>
+
+				{form.values.paymentPercent < 100 ? (
+					<FormControll
+						label="Причина часткової оплати"
+						size="large"
+						placeholder=""
+						value={form.values.halfPaymentReason}
+						onChangeVal={val =>
+							form.setField('halfPaymentReason', val)
+						}
+					/>
+				) : null}
+
 				<div className="form-block">
 					<p className="form-label">День народження</p>
 					<DatePicker
@@ -75,7 +107,7 @@ export const ChildrenEditor: FC<Props> = ({ existData, onSubmit }) => {
 					size="large"
 					style={styles.button}
 					onClick={() => form.onSubmit(submit)}>
-					Додати
+					Зберегти
 				</Button>
 			</Drawer>
 		</>

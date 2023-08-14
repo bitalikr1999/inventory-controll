@@ -37,6 +37,12 @@ export const TopBar = () => {
 					Склад
 				</Menu.Item>
 				<Menu.Item
+					key={RouteKey.Children.split('/')[1]}
+					icon={<MehOutlined />}
+					onClick={() => navigate(RouteKey.Children)}>
+					Діти
+				</Menu.Item>
+				<Menu.Item
 					key={RouteKey.Products.split('/')[1]}
 					icon={<CoffeeOutlined />}
 					onClick={() => navigate(RouteKey.Products)}>
@@ -49,16 +55,10 @@ export const TopBar = () => {
 					ЗДО
 				</Menu.Item>
 				<Menu.Item
-					key={RouteKey.ReportCard.split('/')[1]}
+					key={RouteKey.VisitingList.split('/')[1]}
 					icon={<ScheduleOutlined />}
-					onClick={() => navigate(RouteKey.ReportCard)}>
+					onClick={() => navigate(RouteKey.VisitingList)}>
 					Табелі
-				</Menu.Item>
-				<Menu.Item
-					key={RouteKey.Children.split('/')[1]}
-					icon={<MehOutlined />}
-					onClick={() => navigate(RouteKey.Children)}>
-					Діти
 				</Menu.Item>
 			</Menu>
 			<div className="right">

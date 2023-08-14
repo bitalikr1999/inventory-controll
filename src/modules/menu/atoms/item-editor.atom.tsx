@@ -137,10 +137,16 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 		},
 		{
 			title: 'Безкоштовно',
-			dataIndex: 'product',
-			key: 'price',
-			render: val => {
-				return <Checkbox onChange={noop}></Checkbox>
+			dataIndex: 'isFree',
+			key: 'isFree',
+			render: (isFree, record: any) => {
+				return (
+					<Checkbox
+						checked={isFree}
+						onChange={() =>
+							setProductField(record?.id, !isFree, 'isFree')
+						}></Checkbox>
+				)
 			},
 		},
 		{

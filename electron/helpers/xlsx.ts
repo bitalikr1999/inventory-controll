@@ -16,7 +16,7 @@ export const getArrayOfDates = (date: Date) => {
 	return result
 }
 
-export const xlsxVal = (v: any, border = true, sz = 10) => {
+export const xlsxVal = (v: any, border = true, sz = 10, fontStyle = {}) => {
 	return {
 		v,
 		t: 's',
@@ -28,12 +28,18 @@ export const xlsxVal = (v: any, border = true, sz = 10) => {
 			border: border ? txtStyle.border : null,
 			font: {
 				sz: sz,
+				...fontStyle,
 			},
 		},
 	}
 }
 
-export const xlsxValСenter = (v: any, border = true, sz = 10) => {
+export const xlsxValСenter = (
+	v: any,
+	border = true,
+	sz = 10,
+	fontStyle = {},
+) => {
 	return {
 		v,
 		t: 's',
@@ -46,6 +52,7 @@ export const xlsxValСenter = (v: any, border = true, sz = 10) => {
 			border: border ? txtStyle.border : null,
 			font: {
 				sz: sz,
+				...fontStyle,
 			},
 		},
 	}

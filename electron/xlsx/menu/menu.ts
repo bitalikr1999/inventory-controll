@@ -144,7 +144,7 @@ const getConfig = (menu: IMenu) => {
 			end: end,
 			headerRow: blockStart,
 			summRow: end,
-			summ2Row: end + 1,
+			summ2Row: end + 2,
 		}
 	})
 
@@ -213,7 +213,7 @@ const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
 
 	XLSX.utils.sheet_add_aoa(
 		worksheet,
-		[[xlsxValСenter('комора', false, 11)]],
+		[[xlsxValСenter('комора', false, 10)]],
 		{
 			origin: 'J15',
 		},
@@ -224,7 +224,7 @@ const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
 		[
 			[
 				xlsxVal(''),
-				xlsxVal('Кількість одержувачів харчування', false, 11),
+				xlsxVal('Кількість одержувачів харчування', false, 10),
 				xlsxVal(''),
 				xlsxVal(''),
 				xlsxVal(
@@ -232,11 +232,11 @@ const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
 					false,
 					11,
 				),
-				xlsxValСenter('Діти віком 1-4 роки', false, 11),
+				xlsxValСenter('Діти віком 1-4 роки', false, 10),
 				xlsxVal(''),
 				xlsxVal(''),
 				xlsxVal(''),
-				xlsxValСenter('(місце складання)', false, 11),
+				xlsxValСenter('(місце складання)', false, 7),
 			],
 		],
 		{
@@ -269,7 +269,7 @@ const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
 	)
 
 	let startSummary =
-		config.rowsConfig[config.rowsConfig.length - 1].summ2Row + 1
+		config.rowsConfig[config.rowsConfig.length - 1].summ2Row + 2
 
 	XLSX.utils.sheet_add_aoa(
 		worksheet,
@@ -342,7 +342,7 @@ const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
 			],
 		],
 		{
-			origin: `A${startSummary + 8}`,
+			origin: `A${startSummary + 9}`,
 		},
 	)
 }
@@ -449,6 +449,8 @@ const addMerge = (worksheet: any, config: IMenuTableConfig) => {
 	let startSummary =
 		config.rowsConfig[config.rowsConfig.length - 1].summ2Row + 1
 
+	console.log('startSummary', startSummary)
+
 	for (let index = 0; index < 4; index++) {
 		merge.push({
 			s: { r: startSummary + index, c: 1 },
@@ -464,7 +466,7 @@ const addMerge = (worksheet: any, config: IMenuTableConfig) => {
 		})
 	}
 
-	const startFinish = startSummary + 7
+	const startFinish = startSummary + 9
 	for (let index = 0; index < 6; index++) {
 		merge.push(
 			...[
@@ -483,9 +485,26 @@ const addMerge = (worksheet: any, config: IMenuTableConfig) => {
 			],
 		)
 	}
+
+	// summary summ
 	merge.push({
-		s: { r: startSummary + 7, c: 0 },
-		e: { r: startSummary + 7, c: 4 },
+		s: { r: startSummary + 5, c: 5 },
+		e: { r: startSummary + 5, c: 6 },
+	})
+
+	merge.push({
+		s: { r: startSummary + 6, c: 5 },
+		e: { r: startSummary + 6, c: 6 },
+	})
+
+	merge.push({
+		s: { r: startSummary + 7, c: 5 },
+		e: { r: startSummary + 7, c: 6 },
+	})
+
+	merge.push({
+		s: { r: startSummary + 8, c: 5 },
+		e: { r: startSummary + 8, c: 6 },
 	})
 
 	worksheet['!merges'] = merge

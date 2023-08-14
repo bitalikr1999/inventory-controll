@@ -16,7 +16,7 @@ export const menusDb = new Datastore({
 class MenusRepository {
 	public db = menusDb
 
-	public async findByDate(date: string) {
+	public async findByDate(date: string): Promise<IMenu[]> {
 		return new Promise((resolve, reject) => {
 			this.db.find(
 				{ dateGroupKey: getMenuKey(date) },
@@ -49,14 +49,10 @@ class MenusRepository {
 
 	public updateOne(params: any, set: any) {
 		return new Promise((resolve, reject) => {
-			this.db.updateOne(
-				params,
-				{ $set: set },
-				(err: any, result: any) => {
-					if (err) reject(err)
-					else resolve(result)
-				},
-			)
+			this.db.update(params, { $set: set }, (err: any, result: any) => {
+				if (err) reject(err)
+				else resolve(result)
+			})
 		})
 	}
 

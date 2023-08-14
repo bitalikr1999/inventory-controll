@@ -13,8 +13,9 @@ import { useEffect, useMemo, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 import { ItemEditor } from '../../atoms/item-editor.atom'
 import { MenuTabAtom } from '../../atoms/menu-tab.atom'
-import { useMenus } from '../../hooks'
+import { useChildrenCount, useMenus } from '../../hooks'
 import { MenuEditorForm, MenuItemPeriod } from '../../interfaces'
+import { LoadingOutlined } from '@ant-design/icons'
 const randomstring = require('randomstring')
 
 export const MenuEditorPage = () => {
@@ -30,6 +31,10 @@ export const MenuEditorPage = () => {
 	const navigate = useNavigate()
 	const location: any = useLocation()
 	const existId = location.state?.id
+	const { count, isLoading } = useChildrenCount(
+		form.values.date,
+		form.values.groupCategory,
+	)
 
 	const loadExist = async () => {
 		const menu = await getOne(existId)
@@ -97,7 +102,7 @@ export const MenuEditorPage = () => {
 			await set({
 				id: _.defaultTo(existId, null),
 				name: values.title,
-				childrensCount: values.childrensCount,
+				childrensCount: Number(count),
 				date: new Date(values.date).toISOString(),
 				items: values.items,
 				groupCategory: values.groupCategory,
@@ -127,15 +132,15 @@ export const MenuEditorPage = () => {
 				/>
 				<Input
 					placeholder="Кількість дітей"
-					value={form.values.childrensCount}
-					onChange={e =>
-						form.setField('childrensCount', $eventVal(e))
-					}
-					style={{ width: 140, marginRight: 15 }}
+					value={count}
+					prefix="Кількість дітей: "
+					disabled={true}
+					style={{ width: 180, marginRight: 15 }}
+					suffix={isLoading ? <LoadingOutlined /> : null}
 				/>
 
 				<DatePicker
-					onChange={val => form.setField('date', val)}
+					onChange={val => form.setField('date', val.toDate())}
 					value={prepareDateForDatePicker(form.values.date)}
 					style={{ width: 150, marginRight: 15 }}
 				/>

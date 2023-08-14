@@ -10,9 +10,29 @@ export interface IGroup {
 }
 
 export interface IChildren {
-	id: number
+	_id: string
 	name: string
 	groupId: string
 	birthday: string
+	createdAt: string
+
+	paymentPercent?: number
+	halfPaymentReason?: string
+}
+
+export interface IChildrenCalendarChild {
+	childId: string
+	visiting: {
+		day: number
+		isPresent: boolean
+	}[]
+}
+
+export interface IChildrenCalendarRecord {
+	_id: string
+	groupId: string
+	date: string
+	items: IChildrenCalendarChild[]
+
 	createdAt: string
 }

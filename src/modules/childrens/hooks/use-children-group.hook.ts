@@ -32,9 +32,20 @@ export const useChildrenGroup = (id: string) => {
 		resetData()
 	}
 
+	const editChildren = async (_id: string, data: ChildreEditorPayloadDto) => {
+		await window.Main.emit('editChildren', {
+			_id,
+			...data,
+			birthday: data.birthday,
+			groupId: id,
+		})
+		resetData()
+	}
+
 	return {
 		group,
 		resetData,
 		addChildren,
+		editChildren,
 	}
 }

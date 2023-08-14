@@ -1,4 +1,7 @@
-import { calcProductsPrice } from 'electron/helpers/products'
+import {
+	calcProductsFreePrice,
+	calcProductsPrice,
+} from 'electron/helpers/products'
 import { xlsxVal, xlsxValСenter } from 'electron/helpers/xlsx'
 import {
 	IItemsRow,
@@ -65,35 +68,54 @@ export const writeRow = (
 	const summDinner = calcProductsPrice(row.d?.products)
 	const summSupper = calcProductsPrice(row.e?.products)
 
+	const freeSummMorning = calcProductsFreePrice(row.m?.products)
+	const freeSummDinner = calcProductsFreePrice(row.d?.products)
+	const freeSummSupper = calcProductsFreePrice(row.e?.products)
+
 	XLSX.utils.sheet_add_aoa(
 		worksheet,
 		[
 			[
 				xlsxVal('', false),
-				xlsxVal('Разом за оплатою', false),
+				xlsxVal('Разом', false),
 				,
 				,
 				xlsxValСenter(summMorning.toFixed(2)),
-				xlsxVal('Разом за оплатою', false),
+				xlsxVal('Разом', false),
 				,
 				,
 				xlsxValСenter(summDinner.toFixed(2)),
-				xlsxVal('Разом за оплатою', false),
+				xlsxVal('Разом', false),
 				,
 				,
 				xlsxValСenter(summSupper.toFixed(2)),
 			],
 			[
 				xlsxVal('', false),
-				xlsxVal('На 1 дитину', false),
+				xlsxVal('Безкоштовно', false),
+				,
+				,
+				xlsxValСenter(freeSummMorning.toFixed(2)),
+				xlsxVal('Безкоштовно', false),
+				,
+				,
+				xlsxValСenter(freeSummDinner.toFixed(2)),
+				xlsxVal('Безкоштовно', false),
+				,
+				,
+				xlsxValСenter(freeSummSupper.toFixed(2)),
+			],
+			[
+				xlsxVal('', false),
+				xlsxVal('На 1 дитину за оплатою', false),
 				,
 				,
 				xlsxValСenter(Number(summMorning / childrensCount).toFixed(2)),
-				xlsxVal('На 1 дитину', false),
+				xlsxVal('На 1 дитину за оплатою', false),
 				,
 				,
 				xlsxValСenter(Number(summDinner / childrensCount).toFixed(2)),
-				xlsxVal('На 1 дитину', false),
+				xlsxVal('На 1 дитину за оплатою', false),
 				,
 				,
 				xlsxValСenter(Number(summSupper / childrensCount).toFixed(2)),

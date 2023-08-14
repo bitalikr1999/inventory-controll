@@ -1,7 +1,9 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
 import {
+	initChildrensCalendarsListener,
 	initChildrensListener,
 	initMenusStoreListeners,
+	initSettingsListener,
 	initZdoListeners,
 } from './listeners'
 import { getFromStore, setToStore } from './store'
@@ -54,6 +56,8 @@ async function registerListeners() {
 	initMenusStoreListeners()
 	initZdoListeners()
 	initWarehouseListeners()
+	initChildrensCalendarsListener()
+	initSettingsListener()
 }
 
 app.on('ready', createWindow)

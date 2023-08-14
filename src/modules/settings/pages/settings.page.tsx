@@ -2,7 +2,7 @@ import React, { useEffect, useMemo, useState } from 'react'
 import { IProduct, ISetting } from '@/@types/interfaces'
 import { $eventVal } from '@/shared/helpers'
 import { useStoreDate } from '@/shared/hooks'
-import { Button, Col, Input, Row } from 'antd'
+import { Button, Col, Divider, Input, Row } from 'antd'
 import _ from 'lodash'
 
 export const SettingsPage = () => {
@@ -47,6 +47,9 @@ export const SettingsPage = () => {
 		set(items)
 	}
 
+	const openDbFolder = () => {
+		window.Main.emit('openDbFolder', null)
+	}
 	return (
 		<div>
 			<h1>Налаштування</h1>
@@ -124,6 +127,14 @@ export const SettingsPage = () => {
 
 			<Button type="primary" size="large" onClick={submit}>
 				Зберегти
+			</Button>
+
+			<Divider />
+
+			<h1>Швидкі дії</h1>
+
+			<Button type="primary" size="large" onClick={openDbFolder}>
+				Відкрити db теку
 			</Button>
 		</div>
 	)

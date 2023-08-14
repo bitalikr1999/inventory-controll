@@ -27,6 +27,7 @@ export interface IMenuItemProduct {
 		maxCount?: number
 	}
 	count: number
+	isFree?: boolean
 }
 
 export type MenuItemPeriod = 'mornin' | 'dinner' | 'supper'

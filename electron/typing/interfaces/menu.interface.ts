@@ -49,6 +49,7 @@ export interface IMenu {
 				maxCount?: number
 			}
 			count: number
+			isFree?: boolean
 		}[]
 	}[]
 }
