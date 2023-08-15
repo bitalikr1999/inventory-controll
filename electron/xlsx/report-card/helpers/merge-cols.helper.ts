@@ -9,6 +9,7 @@ export const generateMerge = (config: XlsxReportCardConfig) => {
 		{ s: { r: 4, c: 2 }, e: { r: 4, c: 3 } }, // код ЄДРПОУ val
 	]
 
+	// titles
 	for (let index = 0; index < 3; index++) {
 		merge.push({
 			s: {
@@ -22,6 +23,7 @@ export const generateMerge = (config: XlsxReportCardConfig) => {
 		})
 	}
 
+	// tabel names
 	for (
 		let index = config.startTableRow;
 		index <= config.endTableRow;
@@ -39,6 +41,7 @@ export const generateMerge = (config: XlsxReportCardConfig) => {
 		})
 	}
 
+	// footer
 	for (let index = 0; index < 2; index++) {
 		merge.push({
 			s: {

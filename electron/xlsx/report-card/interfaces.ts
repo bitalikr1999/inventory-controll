@@ -19,6 +19,12 @@ export interface XlsxReportCardGroup {
 	calendar: IChildrenCalendarRecord
 	items: XlsxReportCardItem[]
 	summary: Record<string, { summ: number; count: number }>
+	total?: {
+		visitingCount: number
+		brutto: number
+		netto: number
+		isPay50: number
+	}
 }
 
 export interface XlsxReportCardData {

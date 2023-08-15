@@ -1,4 +1,3 @@
-const XLSX = require('xlsx-js-style')
 import 'moment/locale/uk'
 import {
 	XlsxReportCardConfig,
@@ -25,11 +24,13 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 		this.initWorksheet()
 		this.initConfig()
 		this.mergeCols()
+		this.sizes()
 		this.writeHead()
 		this.writeTitle()
 		this.writeTableHead()
 		this.writeChilds()
 		this.writeItemsSummary()
+		this.writeFooter()
 
 		return [this.getName(), this.worksheet]
 	}
@@ -48,6 +49,9 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 		const childCount = this.group.items.length
 		const tableHeadRowCount = 0 // start in this row
 		const tableFooterRowCount = 2
+		const summaryRowCount = 2
+		const summarySpace = 2
+		const footerSpaceFromSummary = 2
 
 		this.config.endTableRow =
 			this.config.startTableRow +
@@ -56,20 +60,58 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 			tableFooterRowCount
 
 		this.config.startTableSummaryRow =
-			this.config.startTableRow + tableHeadRowCount + childCount + 1
+			this.config.startTableRow +
+			tableHeadRowCount +
+			childCount +
+			summarySpace
 
-		this.config.startFooterRow = this.config.endTableRow + 2
+		this.config.startFooterRow =
+			this.config.startTableSummaryRow +
+			summaryRowCount +
+			footerSpaceFromSummary
 	}
 
 	protected mergeCols() {
 		this.worksheet['!merges'] = generateMerge(this.config)
 	}
 
+	protected sizes() {
+		if (!this.config.startTableRow) return
+
+		const colsSizes = [{ wpx: 28 }, { wpx: 50 }, { wpx: 34 }, { wpx: 70 }]
+
+		for (
+			let index = 0;
+			index < this.setting.daysInMonthCount + 6;
+			index++
+		) {
+			colsSizes.push({ wpx: 54 })
+		}
+
+		this.worksheet['!cols'] = colsSizes
+
+		this.worksheet['!rows'] = [
+			{ hpt: 14 },
+			{ hpt: 24 },
+			{ hpt: 14 },
+			{ hpt: 14 },
+			{ hpt: 14 },
+
+			{ hpt: 22 }, //title
+			{ hpt: 22 }, //title
+			{ hpt: 22 }, //title
+
+			{ hpt: 15 }, //title space
+
+			{ hpt: 54 }, //table head
+		]
+	}
+
 	protected writeHead() {
 		this.writeData(this.transformFromCords(this.config.startHead), [
-			[xlsxVal(this.setting.name), false, 11],
-			[xlsxVal('(найменування юридичної особи)'), false, 8],
-			[xlsxVal('Ідентифікаційний '), false, 11],
+			[xlsxVal(this.setting.name, false, 11)],
+			[xlsxVal('(найменування юридичної особи)', false, 8)],
+			[xlsxVal('Ідентифікаційний ', false, 11)],
 			[
 				xlsxVal('код ЄДРПОУ', false, 11),
 				,
@@ -93,7 +135,7 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 	}
 
 	protected writeTableHead() {
-		const values = [xlsxVal("Прізвище ім'я", false, 15), , ,]
+		const values = [xlsxVal("Прізвище ім'я", false, 12), , ,]
 
 		for (let index = 0; index < this.setting.daysInMonthCount; index++) {
 			values.push(xlsxValСenter(index + 1, false, 14))
@@ -117,21 +159,27 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 	protected writeChilds() {
 		const values: any[] = []
 
-		this.group.items.map(item => {
-			values.push(this.writeChild(item))
+		this.group.items.map((item, index) => {
+			values.push(this.writeChild(item, index))
 		})
 
-		values.push([xlsxVal('Сума')])
-		values.push([xlsxVal('Дні')])
+		values.push([, xlsxVal('', false, 12)])
+		values.push([, xlsxVal('Сума', false, 12)])
+		values.push([, xlsxVal('Дні', false, 12)])
 
 		this.writeData(
-			this.transformFromCords([1, this.config.startTableRow + 1]),
+			this.transformFromCords([0, this.config.startTableRow + 1]),
 			values,
 		)
 	}
 
-	protected writeChild(child: XlsxReportCardItem) {
-		const values = [xlsxVal(child.childrenName, false, 14), , ,]
+	protected writeChild(child: XlsxReportCardItem, index: number) {
+		const values = [
+			xlsxValСenter(index + 1),
+			xlsxVal(child.childrenName, false, 12),
+			,
+			,
+		]
 
 		for (let index = 1; index <= this.setting.daysInMonthCount; index++) {
 			values.push(xlsxValСenter(child.values[String(index)], false, 11))
@@ -192,11 +240,80 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 			}
 		}
 
+		sums.push(
+			xlsxVal(''),
+			xlsxValСenter(''),
+			xlsxValСenter(
+				Number(this.group.total.brutto).toFixed(2),
+				false,
+				11,
+				{ bold: true },
+			),
+			xlsxValСenter(
+				Number(this.group.total.netto).toFixed(2),
+				false,
+				11,
+				{ bold: true },
+			),
+		)
+
+		if (this.group.total.isPay50 > 0)
+			sums.push(
+				xlsxValСenter(
+					Number(this.group.total.isPay50.toFixed(2)),
+					false,
+					11,
+					{ bold: true },
+				),
+			)
+
+		counts.push(
+			xlsxVal(''),
+			xlsxValСenter(
+				Number(this.group.total.visitingCount).toFixed(0),
+				false,
+				11,
+				{ bold: true },
+			),
+		)
+
 		values.push(sums, counts)
 
 		this.writeData(
 			this.transformFromCords([4, this.config.startTableSummaryRow]),
 			values,
+		)
+	}
+
+	protected writeFooter() {
+		this.writeData(
+			this.transformFromCords([2, this.config.startFooterRow]),
+			[
+				[
+					xlsxVal('Директор', false, 16),
+					,
+					,
+					,
+					,
+					,
+					,
+					xlsxVal('________ Аліна МИХАЛЬСЬКА', false, 16),
+				],
+				[
+					xlsxVal('(посада)', false, 11),
+					,
+					,
+					,
+					,
+					,
+					,
+					xlsxVal(
+						"(підпис                       власне ім'я)",
+						false,
+						11,
+					),
+				],
+			],
 		)
 	}
 }

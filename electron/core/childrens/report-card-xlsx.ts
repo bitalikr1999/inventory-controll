@@ -99,6 +99,7 @@ export class ReportCardXlsx {
 		)
 
 		result.summary = this.calcSummary(result.items)
+		result.total = this.calcTotal(result.items)
 
 		return result
 	}
@@ -186,7 +187,23 @@ export class ReportCardXlsx {
 			result[String(index)] = { summ, count }
 		}
 
-		console.log('Summary result', result)
+		return result
+	}
+
+	private calcTotal(items: XlsxReportCardGroup['items']) {
+		const result: XlsxReportCardGroup['total'] = {
+			visitingCount: 0,
+			brutto: 0,
+			netto: 0,
+			isPay50: 0,
+		}
+
+		items.map(item => {
+			result.visitingCount += Number(item.presentCound)
+			result.brutto += Number(item.bruttoSumm)
+			result.netto += Number(item.nettoSumm)
+			if (item.isPay50) result.isPay50 += Number(item.isPay50)
+		})
 
 		return result
 	}
