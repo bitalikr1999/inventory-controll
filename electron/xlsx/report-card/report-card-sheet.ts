@@ -9,16 +9,21 @@ import { XlsxSheetGenerator } from 'electron/abstract'
 import { generateMerge } from './helpers/merge-cols.helper'
 import { xlsxVal, xlsxValСenter } from 'electron/helpers'
 import _ from 'lodash'
+import moment from 'moment'
+import 'moment/locale/uk'
 
 export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 	protected group: XlsxReportCardGroup
 	protected config: XlsxReportCardConfig
 	protected setting: XlsxReportCardData['setting']
+	protected date: Date
 
 	public generate(
 		group: XlsxReportCardGroup,
 		setting: XlsxReportCardData['setting'],
+		date: Date,
 	) {
+		this.date = date
 		this.group = group
 		this.setting = setting
 		this.initWorksheet()
@@ -125,12 +130,18 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 			[xlsxValСenter('Табель', false, 18)],
 			[
 				xlsxValСenter(
-					'щоденного харчування дітей групи раннього віку № 1',
+					`щоденного харчування ${this.group.group.reportCardTitle}`,
 					false,
 					18,
 				),
 			],
-			[xlsxValСenter('за червень 2023 року', false, 18)],
+			[
+				xlsxValСenter(
+					moment(this.date).format('за MMMM YYYY року'),
+					false,
+					18,
+				),
+			],
 		])
 	}
 
@@ -297,7 +308,7 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 					,
 					,
 					,
-					xlsxVal('________ Аліна МИХАЛЬСЬКА', false, 16),
+					xlsxVal(`________ ${this.setting.director}`, false, 16),
 				],
 				[
 					xlsxVal('(посада)', false, 11),

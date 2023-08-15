@@ -20,6 +20,11 @@ export const useChildrensGroups = () => {
 		resetData()
 	}
 
+	const update = async (_data: any) => {
+		await window.Main.emit('editGroup', _data)
+		resetData()
+	}
+
 	useEventsListener('onChangeStoreData', ({ key, data }) => {
 		if ('children-groups' === key) setData(data)
 	})
@@ -42,5 +47,6 @@ export const useChildrensGroups = () => {
 		resetData,
 		set,
 		byCategory,
+		update,
 	}
 }

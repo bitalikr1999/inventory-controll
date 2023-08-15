@@ -34,6 +34,7 @@ export interface XlsxReportCardData {
 		name: string
 		edrpoy: string
 		daysInMonthCount: number
+		director: string
 	}
 }
 

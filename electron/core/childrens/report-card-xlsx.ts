@@ -16,11 +16,13 @@ import {
 	XlsxReportCardGroup,
 	XlsxReportCardItem,
 } from 'electron/xlsx/report-card'
+import { getFromStore } from 'electron/store'
 
 export class ReportCardXlsx {
 	private repository = childrensCalendarsRepository
 	private groupsRepository = childrensGroupsRepository
 	private childrenRepository = childrensRepository
+
 	private params: IGenerateXlsxReportCardParams
 	private daysInMonthCount = 0
 	private menuReport: MenuReport
@@ -32,6 +34,7 @@ export class ReportCardXlsx {
 			name: '',
 			edrpoy: '',
 			daysInMonthCount: 0,
+			director: '',
 		},
 	}
 
@@ -162,10 +165,19 @@ export class ReportCardXlsx {
 	}
 
 	private async loadSettings() {
+		const settings: any[] = await getFromStore('settings', 'list')
+		const settingsObj: Record<string, string> = {}
+
+		settings.map(it => {
+			settingsObj[it.key] = it.value
+		})
+		console.log(settings, settingsObj)
+
 		this.result.setting = {
-			name: 'Центр розвитку дитини "Пролісок"',
-			edrpoy: '26431648',
+			name: settingsObj?.name,
+			edrpoy: settingsObj?.edrpoy,
 			daysInMonthCount: this.daysInMonthCount,
+			director: settingsObj?.director,
 		}
 	}
 

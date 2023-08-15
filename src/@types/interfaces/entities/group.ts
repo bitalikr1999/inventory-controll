@@ -7,6 +7,8 @@ export interface IGroup {
 	category: GroupCategoryKey
 
 	childrens?: IChildren[]
+
+	reportCardTitle?: string
 }
 
 export interface IChildren {

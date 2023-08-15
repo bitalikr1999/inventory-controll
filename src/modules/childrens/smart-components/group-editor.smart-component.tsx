@@ -6,28 +6,49 @@ import { $eventVal } from '@/shared/helpers/form.helper'
 import { useForm } from '@/shared/hooks/useForm'
 import { AppstoreAddOutlined } from '@ant-design/icons'
 import { Button, Drawer, Input, Select } from 'antd'
-import { FC, useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { useChildrensGroups } from '../hooks'
 
 interface Props {
 	existData?: IGroup
+	onPressClose?: () => void
 }
 
 interface Form {
 	name: string
 	category: GroupCategoryKey
+
+	reportCardTitle?: string
 }
 
-export const GroupEditorSmart: FC<Props> = ({ existData }) => {
-	const { data, set } = useChildrensGroups()
+export const GroupEditorSmart: FC<Props> = ({ existData, onPressClose }) => {
+	const { data, set, update } = useChildrensGroups()
 	const [visible, setVisible] = useState(false)
 	const form = useForm<Form>({}, () => null)
+	const mod = existData ? 'edit' : 'create'
 
-	const close = () => setVisible(false)
+	useEffect(() => {
+		if (existData) {
+			setVisible(true)
+			form.set(existData)
+		}
+	}, [existData])
 
-	const submit = () => {
+	const close = () => {
+		setVisible(false)
+		onPressClose()
+	}
+
+	const submit = async () => {
 		try {
-			set(form.values)
+			if (mod === 'edit') {
+				await update({
+					_id: existData._id,
+					...form.values,
+				})
+			} else {
+				await set(form.values)
+			}
 			close()
 			form.set({} as any)
 		} catch (e) {}
@@ -73,6 +94,14 @@ export const GroupEditorSmart: FC<Props> = ({ existData }) => {
 						</Select.Option>
 					</Select>
 				</div>
+
+				<FormControll
+					label="Табель щоденного харчування"
+					size="large"
+					placeholder="дітей групи раннього віку № 1"
+					value={form.values.reportCardTitle}
+					onChangeVal={val => form.setField('reportCardTitle', val)}
+				/>
 
 				<Button
 					type="primary"

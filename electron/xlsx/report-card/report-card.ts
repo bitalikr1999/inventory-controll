@@ -41,6 +41,7 @@ export class ReportCardXlsxGenerator {
 		const [name, worksheet] = sheetGenerator.generate(
 			group,
 			this.data.setting,
+			this.data.date,
 		)
 
 		XLSX.utils.book_append_sheet(this.workbook, worksheet, name)

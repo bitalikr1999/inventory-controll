@@ -30,7 +30,20 @@ export const initChildrensListener = () => {
 		const result = await childrensGroupsRepository.insert({
 			name: data.name,
 			category: data.category,
+			reportCardTitle: data.reportCardTitle,
 		})
+		return result
+	})
+
+	ipcMain.handle('editGroup', async (_, data: any) => {
+		const result = await childrensGroupsRepository.updateOne(
+			{ _id: data._id },
+			{
+				name: data.name,
+				category: data.category,
+				reportCardTitle: data.reportCardTitle,
+			},
+		)
 		return result
 	})
 

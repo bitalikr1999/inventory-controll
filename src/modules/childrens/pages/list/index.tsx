@@ -6,12 +6,14 @@ import { useChildrensGroups } from '../../hooks'
 import { GroupEditorSmart } from '../../smart-components'
 import { useNavigate } from 'react-router-dom'
 import { PrinterOutlined } from '@ant-design/icons'
+import { useState } from 'react'
 
 const { TabPane } = Tabs
 
 export const ChildrensListPage = () => {
 	const { data, byCategory } = useChildrensGroups()
 	const navigate = useNavigate()
+	const [group, setGroup] = useState<IGroup>(null)
 
 	const openGroup = (group: IGroup) => {
 		navigate(RouteKey.Group, {
@@ -29,6 +31,9 @@ export const ChildrensListPage = () => {
 		window.Main.emit('generateReportCard', {
 			date: '2023/7',
 		})
+	}
+	const onPressEdit = (group: IGroup) => {
+		setGroup(group)
 	}
 
 	return (
@@ -50,7 +55,10 @@ export const ChildrensListPage = () => {
 						onClick={generateReportCard}>
 						Згенерувати XLSX
 					</Button>
-					<GroupEditorSmart />
+					<GroupEditorSmart
+						existData={group}
+						onPressClose={() => setGroup(null)}
+					/>
 				</Col>
 			</Row>
 
@@ -63,6 +71,7 @@ export const ChildrensListPage = () => {
 						items={byCategory.junior}
 						onPressItem={openGroup}
 						onPressCalendar={openGroupCalendar}
+						onPressEdit={onPressEdit}
 					/>
 				</TabPane>
 				<TabPane tab="4-6 р." key={GroupCategoryKey.Middle}>
@@ -70,6 +79,7 @@ export const ChildrensListPage = () => {
 						items={byCategory.middle}
 						onPressItem={openGroup}
 						onPressCalendar={openGroupCalendar}
+						onPressEdit={onPressEdit}
 					/>
 				</TabPane>
 				<TabPane tab="Працівники" key={GroupCategoryKey.Senior}>
@@ -77,6 +87,7 @@ export const ChildrensListPage = () => {
 						items={byCategory.senior}
 						onPressItem={openGroup}
 						onPressCalendar={openGroupCalendar}
+						onPressEdit={onPressEdit}
 					/>
 				</TabPane>
 			</Tabs>

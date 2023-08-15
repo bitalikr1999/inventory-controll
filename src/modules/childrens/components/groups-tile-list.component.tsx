@@ -5,6 +5,7 @@ import {
 	FieldTimeOutlined,
 	ForwardOutlined,
 	FullscreenOutlined,
+	OrderedListOutlined,
 	SettingOutlined,
 } from '@ant-design/icons'
 import { Avatar, Card, Col, Row } from 'antd'
@@ -16,12 +17,14 @@ interface Props {
 	items: IGroup[]
 	onPressItem: (item: IGroup) => void
 	onPressCalendar: (item: IGroup) => void
+	onPressEdit: (item: IGroup) => void
 }
 
 export const GroupsTileList: FC<Props> = ({
 	items,
 	onPressItem,
 	onPressCalendar,
+	onPressEdit,
 }) => {
 	const renderItems = () => {
 		if (_.isEmpty(items)) return null
@@ -30,11 +33,13 @@ export const GroupsTileList: FC<Props> = ({
 				<Col span={8} style={{ padding: '0 10px' }}>
 					<Card
 						actions={[
-							<SettingOutlined
+							<EditOutlined
 								key="setting"
 								title="Налаштування"
+								onClick={() => onPressEdit(it)}
 							/>,
-							<EditOutlined
+
+							<OrderedListOutlined
 								key="edit"
 								title="Редагувати"
 								onClick={() => onPressItem(it)}
