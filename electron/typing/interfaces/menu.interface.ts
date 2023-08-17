@@ -26,6 +26,27 @@ export interface AddMenuPayload {
 	}[]
 }
 
+export interface IMenuItemProduct {
+	id: string
+	product?: {
+		warehouseId: string
+		productId: string
+		price: number
+		name: string
+		measurmentUnit: string
+		maxCount?: number
+	}
+	count: number
+	isFree?: boolean
+}
+
+export interface IMenuItem {
+	id: string
+	weight: string
+	name: string
+
+	products: IMenuItemProduct[]
+}
 export interface IMenu {
 	_id?: string
 	name: string
@@ -33,25 +54,7 @@ export interface IMenu {
 	dateGroupKey: string
 	groupCategory: string
 	childrensCount: number
-	items: {
-		id: string
-		weight: string
-		name: string
-
-		products: {
-			id: string
-			product?: {
-				warehouseId: string
-				productId: number
-				price: number
-				name: string
-				measurmentUnit: MeasurmentUnit
-				maxCount?: number
-			}
-			count: number
-			isFree?: boolean
-		}[]
-	}[]
+	items: IMenuItem[]
 }
 
 export interface GetMenusParams {

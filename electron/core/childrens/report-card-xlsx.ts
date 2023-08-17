@@ -42,12 +42,11 @@ export class ReportCardXlsx {
 		this.params = params
 		this.menuReport = new MenuReport()
 		this.initDaysCount()
+		this.result.date = this.getDateobject()
 
-		await this.menuReport.init()
+		await this.menuReport.init(this.result.date)
 		await this.loadGroups()
 		await this.loadSettings()
-
-		this.result.date = this.getDateobject()
 
 		new ReportCardXlsxGenerator().generate(this.result)
 	}

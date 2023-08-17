@@ -12,7 +12,7 @@ const { shell } = require('electron')
 const AlphanumericEncoder = require('alphanumeric-encoder')
 const encoder = new AlphanumericEncoder()
 
-export const generateZdoXlsx = ({ items, title }: GenerateZdoXlsx) => {
+export const generateZdoXlsx = ({ items }: GenerateZdoXlsx) => {
 	const workbook = XLSX.utils.book_new()
 	const worksheet = XLSX.utils.aoa_to_sheet([])
 	const config = calcConfig(items, new Date())
@@ -206,12 +206,23 @@ const calcConfig = (items: ZdoItem[], date: any) => {
 
 export interface GenerateZdoXlsx {
 	items: ZdoItem[]
-	title: string
+	setting: {
+		name: string
+		edrpoy: string
+		daysInMonthCount: number
+		director: string
+		storekeeper: string
+		title: string
+		subtitle: string
+		date: string
+	}
 }
 
 export interface ZdoItem {
 	product: IProduct
 	byDays: ZdoTableItem[]
+	numberOfRecipients: number
+
 	totalCount: number
 	totalPrice: number
 }

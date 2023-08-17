@@ -61,6 +61,14 @@ const remove = async (id: number) => {
 	})
 }
 
+export const warehouseDbCtr = {
+	getAll,
+	update,
+	insert,
+	getOne,
+	remove,
+}
+
 export const decreaseWarehouseItemCount = async (id: number, count: number) => {
 	const item = await getOne({ _id: id })
 	return new Promise((resolve, reject) => {
@@ -97,6 +105,8 @@ export const initWarehouseListeners = () => {
 		async (_, data: IAddWarehouseAdmissionPayload) => {
 			await Promise.all(
 				data.items.map(async item => {
+					item.price = Number(Number(item.price).toFixed(2))
+
 					const exist = await getOne({
 						price: item.price,
 						productId: item.product.id,

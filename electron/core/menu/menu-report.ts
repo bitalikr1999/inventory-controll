@@ -20,9 +20,11 @@ export class MenuReport {
 	private date: Date = new Date()
 	private menuRepository = menusRepository
 	private menus: IPreparedMenu[] = []
+	private clearMenus: IMenu[] = []
 	private menusObj: Record<string, IPreparedMenu> = {}
 
-	public async init() {
+	public async init(date: Date) {
+		this.date = date
 		await this.loadMenus()
 		return this
 	}
@@ -45,14 +47,15 @@ export class MenuReport {
 	private async loadMenus() {
 		const menus = await this.menuRepository.findByDate(this.date as any)
 		const result: IPreparedMenu[] = menus.map(this.prepareMenu)
-		console.log('Load menus result', result)
+		this.clearMenus = menus
 		this.menus = result
 		this.menusObj = {}
 
 		result.map(item => {
 			this.menusObj[this.generateMenuObjKeyFromPreparedMenu(item)] = item
 		})
-		console.log(this.menusObj)
+
+		console.log(this.clearMenus)
 	}
 
 	private generateMenuObjKeyFromPreparedMenu(preparedMenu: IPreparedMenu) {
@@ -93,5 +96,9 @@ export class MenuReport {
 			nettoSumm,
 			oneChildSumm: nettoSumm / menu.childrensCount,
 		}
+	}
+
+	public getMenusByCategory(category: GroupCategoryKey) {
+		return this.clearMenus.filter(it => it.groupCategory === category)
 	}
 }

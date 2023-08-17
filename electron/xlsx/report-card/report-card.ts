@@ -21,15 +21,11 @@ export class ReportCardXlsxGenerator {
 		this.data = data
 
 		this.createWorkbook()
-		console.log('createWorkbook')
 		this.generateSheets()
-		console.log('generateSheets')
-
 		this.writeFile()
 	}
 
 	protected generateSheets() {
-		console.log('GROUPS COUNT', this.data.groups.length)
 		this.data.groups.map(it => {
 			this.generateSheet(it)
 		})
