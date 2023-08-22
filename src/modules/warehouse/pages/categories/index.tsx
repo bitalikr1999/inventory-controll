@@ -1,64 +1,22 @@
 import React, { useMemo, useState } from 'react'
-import { ProductCategory, RouteKey } from '@/@types/enums'
-
+import { useNavigate } from 'react-router-dom'
 import { Button, Col, Modal, Row, Table } from 'antd'
-import './styles.css'
+
+import { RouteKey } from '@/@types/enums'
 import { productsCategoryLabels } from '@/modules/products/config'
 
-import cerealsImg from '@/assets/cereals.jpeg'
-import meatImg from '@/assets/meat.jpeg'
-import fishImg from '@/assets/fish.jpeg'
-import fruitsImg from '@/assets/fruits.jpeg'
-import groceriesImg from '@/assets/groceries.jpeg'
-import milkImg from '@/assets/milk.jpeg'
-import mushroomsImg from '@/assets/mushrooms.jpeg'
-import vegetablesImg from '@/assets/vegetables.jpeg'
 import { useWarehouseList } from '../../hooks'
 import { WarehouseTableConfig } from '../list/table.config'
-import { noop } from 'lodash'
 import {
 	AppstoreAddOutlined,
 	ExclamationCircleOutlined,
 } from '@ant-design/icons'
-import { useNavigate } from 'react-router-dom'
+
 import { WarehouseAdmissionModalSmart } from '../../smart-components/warehouse-admission-modal'
 import { IProduct } from '@/@types/interfaces'
+import { categoriesList } from './config'
 
-const categoriesList = [
-	{
-		value: ProductCategory.Meat,
-		image: meatImg,
-	},
-	{
-		value: ProductCategory.Fish,
-		image: fishImg,
-	},
-	{
-		value: ProductCategory.Fruits,
-		image: fruitsImg,
-	},
-	{
-		value: ProductCategory.Vegetables,
-		image: vegetablesImg,
-	},
-	{
-		value: ProductCategory.Milk,
-		image: milkImg,
-	},
-	{
-		value: ProductCategory.Cereals,
-		image: cerealsImg,
-	},
-	{
-		value: ProductCategory.Groceries,
-		image: groceriesImg,
-	},
-
-	{
-		value: ProductCategory.Mushrooms,
-		image: mushroomsImg,
-	},
-]
+import './styles.css'
 
 export const ProductsCategoriesPage = () => {
 	const navigate = useNavigate()
@@ -72,8 +30,6 @@ export const ProductsCategoriesPage = () => {
 
 		return items.filter(it => it.product.category === category)
 	}, [items, category])
-
-	console.log('selectedItems', selectedItems, items, category)
 
 	const renderCategories = () => {
 		return categoriesList.map(item => {

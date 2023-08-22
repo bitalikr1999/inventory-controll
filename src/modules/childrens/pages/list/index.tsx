@@ -7,11 +7,12 @@ import { GroupEditorSmart } from '../../smart-components'
 import { useNavigate } from 'react-router-dom'
 import { PrinterOutlined } from '@ant-design/icons'
 import { useState } from 'react'
+import { childrensCalendarsAPI } from '../../api/childrens-calendars.api'
 
 const { TabPane } = Tabs
 
 export const ChildrensListPage = () => {
-	const { data, byCategory } = useChildrensGroups()
+	const { byCategory } = useChildrensGroups()
 	const navigate = useNavigate()
 	const [group, setGroup] = useState<IGroup>(null)
 
@@ -28,9 +29,7 @@ export const ChildrensListPage = () => {
 	}
 
 	const generateReportCard = () => {
-		window.Main.emit('generateReportCard', {
-			date: '2023/7',
-		})
+		childrensCalendarsAPI.generateReportCardXlsx({ date: '2023/7' })
 	}
 	const onPressEdit = (group: IGroup) => {
 		setGroup(group)

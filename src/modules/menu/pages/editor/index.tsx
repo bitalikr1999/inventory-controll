@@ -1,16 +1,14 @@
+import _, { cloneDeep } from 'lodash'
+import { useEffect, useMemo, useState } from 'react'
+import { useLocation, useNavigate } from 'react-router-dom'
+
 import { RouteKey } from '@/@types/enums'
 import { SelectGroupCategory } from '@/modules/childrens/components'
 import { PageBackBtn } from '@/shared/components/grid'
-import {
-	$eventVal,
-	createStyleSheet,
-	prepareDateForDatePicker,
-} from '@/shared/helpers'
+import { createStyleSheet, prepareDateForDatePicker } from '@/shared/helpers'
 import { useForm } from '@/shared/hooks/useForm'
 import { Button, Col, DatePicker, Input, Row } from 'antd'
-import _ from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
-import { useLocation, useNavigate } from 'react-router-dom'
+
 import { ItemEditor } from '../../atoms/item-editor.atom'
 import { MenuTabAtom } from '../../atoms/menu-tab.atom'
 import { useChildrenCount, useMenus } from '../../hooks'
@@ -18,19 +16,23 @@ import { MenuEditorForm, MenuItemPeriod } from '../../interfaces'
 import { LoadingOutlined } from '@ant-design/icons'
 const randomstring = require('randomstring')
 
+const formInitialState: Partial<MenuEditorForm> = {
+	items: [],
+	date: new Date(),
+}
+
 export const MenuEditorPage = () => {
+	const navigate = useNavigate()
+	const location: any = useLocation()
+	const existId = location.state?.id
+
 	const form = useForm<MenuEditorForm>(
-		{
-			items: [],
-			date: new Date(),
-		},
+		cloneDeep(formInitialState),
 		() => null,
 	)
 	const [selectedItemId, selectItemId] = useState<string>()
 	const { set, getOne } = useMenus({})
-	const navigate = useNavigate()
-	const location: any = useLocation()
-	const existId = location.state?.id
+
 	const { count, isLoading } = useChildrenCount(
 		form.values.date,
 		form.values.groupCategory,

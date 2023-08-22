@@ -3,6 +3,7 @@ import { IProduct } from '@/@types/interfaces'
 import { $eventVal, createStyleSheet } from '@/shared/helpers'
 import { useForm } from '@/shared/hooks/useForm'
 import { Button, Drawer, Input } from 'antd'
+import { warehouseAPI } from '../../api'
 
 interface Props {
 	product: IProduct
@@ -23,19 +24,21 @@ export const WarehouseAdmissionModalSmart: FC<Props> = ({
 
 	const submit = async () => {
 		try {
-			await window.Main.emit('warehouseAdmission', {
-				items: [
-					{
-						...form.values,
-						product,
-						price:
-							Number(form.values.summ) /
-							Number(form.values.count),
-					},
-				],
+			await warehouseAPI.admission({
+				items: prepareToSave(),
 			})
 			onPressClose()
 		} catch (e) {}
+	}
+
+	const prepareToSave = () => {
+		return [
+			{
+				...form.values,
+				product,
+				price: Number(form.values.summ) / Number(form.values.count),
+			},
+		]
 	}
 
 	return (
@@ -80,7 +83,7 @@ export const WarehouseAdmissionModalSmart: FC<Props> = ({
 				size="large"
 				style={styles.button}
 				onClick={() => form.onSubmit(submit)}>
-				Створити
+				Зберегти
 			</Button>
 		</Drawer>
 	)

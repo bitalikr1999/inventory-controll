@@ -1,10 +1,15 @@
 import { GroupCategoryKey } from '@/@types/enums'
 import { XlsxSheetGenerator } from 'electron/abstract'
-import { GenerateZdoDataXlsx, GenerateZdoXlsx } from 'electron/typing'
+import {
+	GenerateZdoDataXlsx,
+	GenerateZdoXlsx,
+	ZdoTableItem,
+} from 'electron/typing'
 import { XlsxProductsSummaryConfig } from './interface'
 import { generateMerge } from './helpers/merge-cols.helper'
-import { xlsxVal, xlsxValСenter } from 'electron/helpers'
+import { xlsxVal, xlsxValRight, xlsxValСenter } from 'electron/helpers'
 import moment from 'moment'
+import { calcConfig, calcSizes } from './helpers'
 
 export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 	private data: GenerateZdoXlsx
@@ -30,6 +35,9 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 		this.writeResponsiblePerson()
 		this.writeTableHead()
 		this.writeItems()
+		this.writeItemsSummary()
+		this.writeFooter()
+		this.writeOrder()
 
 		return [this.getName(), this.worksheet]
 	}
@@ -38,45 +46,11 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 		if (this.data.category === GroupCategoryKey.Junior) return '1-4р.'
 		if (this.data.category === GroupCategoryKey.Middle) return '4-6р.'
 		if (this.data.category === GroupCategoryKey.Senior) return 'Працівники.'
+		return 'Зведена'
 	}
 
 	protected initConfig() {
-		this.config = {
-			startHead: [0, 3],
-			startTitle: [9, 7],
-			startResponsiblePerson: 11,
-			daysInMonthCount: Number(this.settings.daysInMonthCount),
-		}
-
-		const childCount = this.data.items.length
-		const tableHeadRowCount = 3 // start in this row
-		const tableFooterRowCount = 2
-		const summaryRowCount = 2
-		const summarySpace = 2
-		const footerSpaceFromSummary = 2
-
-		this.config.startTableRow = this.config.startResponsiblePerson + 2
-		this.config.startTableItemsRow =
-			this.config.startTableRow + tableHeadRowCount
-
-		this.config.endTableRow =
-			this.config.startTableRow +
-			tableHeadRowCount +
-			childCount +
-			tableFooterRowCount
-
-		this.config.startTableSummaryRow =
-			this.config.startTableRow +
-			tableHeadRowCount +
-			childCount +
-			summarySpace
-
-		this.config.startFooterRow =
-			this.config.startTableSummaryRow +
-			summaryRowCount +
-			footerSpaceFromSummary
-
-		console.log('thisconfig', this.config)
+		this.config = calcConfig(this.data, this.settings)
 	}
 
 	protected mergeCols() {
@@ -84,48 +58,9 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 	}
 
 	protected sizes() {
-		if (!this.config.startTableRow) return
-
-		const colsSizes = [
-			{ wpx: 24 },
-			{ wpx: 159 },
-			{ wpx: 45 },
-			{ wpx: 75 },
-
-			{ wpx: 93 },
-			{ wpx: 88 },
-		]
-
-		for (
-			let index = 0;
-			index < this.settings.daysInMonthCount + 1;
-			index++
-		) {
-			colsSizes.push({ wpx: 52 })
-		}
-
-		this.worksheet['!cols'] = colsSizes
-
-		this.worksheet['!rows'] = [
-			{ hpt: 17 },
-			{ hpt: 14 },
-			{ hpt: 12 },
-			{ hpt: 19 },
-			{ hpt: 19 },
-			{ hpt: 19 },
-			{ hpt: 16 },
-			{ hpt: 22 },
-			{ hpt: 14 },
-
-			{ hpt: 14 }, //title
-			{ hpt: 14 }, //title
-			{ hpt: 22 }, //title
-			{ hpt: 15 }, //title space
-
-			{ hpt: 21 },
-			{ hpt: 24 },
-			{ hpt: 38 },
-		]
+		const { cols, rows } = calcSizes(this.data, this.settings)
+		this.worksheet['!cols'] = cols
+		this.worksheet['!rows'] = rows
 	}
 
 	protected writeHead() {
@@ -141,16 +76,26 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 		])
 	}
 
+	protected getNotorietyNumber() {
+		const vals = {
+			[GroupCategoryKey.Junior]: '1',
+			[GroupCategoryKey.Middle]: '2',
+			[GroupCategoryKey.Senior]: '3',
+		}
+		if (!this.data.category) return '4'
+		return vals[this.data.category]
+	}
+
 	protected writeTitle() {
 		this.writeData(this.transformFromCords(this.config.startTitle), [
-			[xlsxValСenter('Відомість № 1', false, 16)],
 			[
 				xlsxValСenter(
-					`з витрачання продуктів харчування todo `,
+					`Відомість № ${this.getNotorietyNumber()}`,
 					false,
-					14,
+					16,
 				),
 			],
+			[xlsxValСenter(this.getTitleLabel(), false, 14)],
 			[
 				xlsxValСenter(
 					moment(this.date).format('за MMMM YYYY року'),
@@ -159,6 +104,20 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 				),
 			],
 		])
+	}
+
+	protected getTitleLabel() {
+		const start = `з витрачання продуктів харчування `
+		switch (this.data.category) {
+			case GroupCategoryKey.Junior:
+				return `${start} дітей 1-4р.`
+			case GroupCategoryKey.Middle:
+				return `${start} дітей 4-6р.`
+			case GroupCategoryKey.Senior:
+				return `${start} працівників.`
+			default:
+				return `${start} зведена`
+		}
 	}
 
 	protected writeResponsiblePerson() {
@@ -208,11 +167,17 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 		const head2RowData = [
 			xlsxVal('Кількість одержувачів', false, 11),
 			,
-			xlsxVal('790', false, 11),
+			xlsxVal(Number(this.data.numberOfRecipients), false, 11),
 		]
 
 		for (let index = 0; index < this.settings.daysInMonthCount; index++) {
-			head2RowData.push(xlsxValСenter(30, false, 11))
+			head2RowData.push(
+				xlsxValСenter(
+					this.data.numberOfRecipientsByDays[index + 1],
+					false,
+					11,
+				),
+			)
 		}
 
 		this.writeData(
@@ -224,9 +189,9 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 			this.transformFromCords([3, this.config.startTableRow + 2]),
 			[
 				[
-					xlsxVal('Витрачено', false, 11),
-					xlsxVal('Вартість за одиницю', false, 11),
-					xlsxVal('Сума,грн', false, 11),
+					xlsxValСenter('Витрачено', false, 11),
+					xlsxValСenter('Вартість за одиницю', false, 11),
+					xlsxValСenter('Сума,грн', false, 11),
 					xlsxValСenter(
 						'Кількість витрачених продуктів харчування',
 						false,
@@ -240,20 +205,29 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 	protected writeItems() {
 		const data: any[] = []
 
-		console.log('items', this.data.items)
 		this.data.items.map(item => {
 			const rowData = [
 				xlsxVal(item.name, false, 11),
 				,
 				xlsxValСenter(item.measurmentUnit, false, 11),
-				xlsxValСenter(Number(item.totalCount).toFixed(2), false, 11),
-				xlsxValСenter(Number(item.price).toFixed(2), false, 11),
-				xlsxValСenter(Number(item.totalPrice).toFixed(2), false, 11),
+				xlsxValСenter(
+					this.prepareNumberVal(item.totalCount),
+					false,
+					11,
+				),
+				xlsxValСenter(this.prepareNumberVal(item.price), false, 11),
+				xlsxValСenter(
+					this.prepareNumberVal(item.totalPrice),
+					false,
+					11,
+				),
 			]
 
 			item.byDays.map(it2 => {
 				if (it2.count > 0)
-					rowData.push(xlsxValСenter(Number(it2.count).toFixed(2)))
+					rowData.push(
+						xlsxValСenter(this.prepareNumberVal(it2.count)),
+					)
 				else rowData.push(xlsxVal(''))
 			})
 			data.push(rowData)
@@ -263,5 +237,116 @@ export class ProductsSummarySheetXlsxGenerator extends XlsxSheetGenerator {
 			this.transformFromCords([0, this.config.startTableItemsRow]),
 			data,
 		)
+	}
+
+	protected writeItemsSummary() {
+		const val = (val: string) =>
+			xlsxValRight(val, false, 11, { bold: true })
+
+		const totalRow: any[] = [
+			val('РАЗОМ'),
+			,
+			,
+			,
+			,
+			val(this.prepareNumberVal(this.data.totalBruto)),
+		]
+
+		const freeRow: any[] = [
+			val('БЕЗКОШТОВНО'),
+			,
+			,
+			,
+			,
+			val(this.prepareNumberVal(this.data.totalFree)),
+		]
+
+		const nettoRow: any[] = [
+			val('ЗА ОПЛАТОЮ'),
+			,
+			,
+			,
+			,
+			val(this.prepareNumberVal(this.data.totalNetto)),
+		]
+
+		for (let index = 1; index <= this.settings.daysInMonthCount; index++) {
+			const result = {
+				brutto: 0,
+				free: 0,
+				netto: 0,
+			}
+
+			this.data.items.map(item => {
+				const byDay = item.byDays.find(it => it.date === index)
+				result.brutto += Number(byDay.summ)
+				result.free += Number(byDay.freeSumm)
+				result.netto += Number(byDay.summ) - Number(byDay.freeSumm)
+			})
+
+			totalRow.push(
+				xlsxValСenter(this.prepareNumberVal(result.brutto), false, 11),
+			)
+			freeRow.push(
+				xlsxValСenter(this.prepareNumberVal(result.free), false, 11),
+			)
+			nettoRow.push(
+				xlsxValСenter(this.prepareNumberVal(result.netto), false, 11),
+			)
+		}
+
+		this.writeData(
+			this.transformFromCords([0, this.config.startTableSummaryRow]),
+			[totalRow, freeRow, nettoRow],
+		)
+	}
+
+	protected writeFooter() {
+		this.writeData(
+			this.transformFromCords([1, this.config.startFooterRow]),
+			[
+				[
+					xlsxValRight('Додається', false, 11),
+					xlsxValСenter('', false, 11),
+					xlsxVal(''),
+					xlsxVal(''),
+					xlsxVal('штук меню-вимог', false, 11),
+				],
+				[
+					xlsxValRight('Склав:', false, 11),
+					xlsxValСenter('комірник', false, 11),
+					xlsxVal(''),
+					xlsxVal(''),
+					xlsxVal(this.settings.storekeeper),
+				],
+				[
+					xlsxVal(''),
+					xlsxValСenter('(посада)', false, 10),
+					xlsxVal(''),
+					xlsxValСenter('(підпис)', false, 10),
+				],
+				[
+					xlsxValRight('Перевірив:', false, 11),
+					xlsxValСenter('директор', false, 11),
+					xlsxVal(''),
+					xlsxVal(''),
+					xlsxVal(this.settings.director),
+				],
+				[
+					xlsxVal(''),
+					xlsxValСenter('(посада)', false, 10),
+					xlsxVal(''),
+					xlsxValСenter('(підпис)', false, 10),
+				],
+			],
+		)
+	}
+
+	protected writeOrder() {
+		this.writeData(this.transformFromCords(this.config.startOrderInfo), [
+			[xlsxValRight('ЗАТВЕРДЖЕНО', false, 11)],
+			[xlsxValRight('Наказ Міністерства фінансів України', false, 11)],
+			[xlsxValRight('13 грудня 2022 року № 431', false, 11)],
+		])
 	}
 }

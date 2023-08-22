@@ -35,7 +35,10 @@ export const MenuTabAtom: FC<MenuTabProps> = ({
 				Number(result) + getSumm(it.product?.price, Number(it.count))
 		})
 
-		return result
+		return Number(String(result)).toLocaleString('ru-RU', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 3,
+		})
 	}
 	const renderItems = () => {
 		return items.map(it => {

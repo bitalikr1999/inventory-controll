@@ -58,7 +58,12 @@ export const xlsxValСenter = (
 	}
 }
 
-export const xlsxValRight = (v: any, border = true, sz = 10) => {
+export const xlsxValRight = (
+	v: any,
+	border = true,
+	sz = 10,
+	fontStyle = {},
+) => {
 	return {
 		v,
 		t: 's',
@@ -71,6 +76,7 @@ export const xlsxValRight = (v: any, border = true, sz = 10) => {
 			border: border ? txtStyle.border : null,
 			font: {
 				sz,
+				...fontStyle,
 			},
 		},
 	}

@@ -1,30 +1,24 @@
 import { IGroup } from '@/@types/interfaces'
-import { appEvents } from '@/shared/events'
-import { useEventsListener } from '@/shared/hooks/use-events-listener.hook'
-import { useEffect, useState } from 'react'
+import { useEffect } from 'react'
 import { ChildreEditorPayloadDto } from '../dto'
+import { useMultyHookState } from '@/shared/hooks'
+import { childrensGroupsAPI } from '../api/childrens-groups.api'
+import { childrenAPI } from '../api/childrens.api'
 
 export const useChildrenGroup = (id: string) => {
-	const [group, setGroup] = useState<IGroup>()
+	const [group, setGroup] = useMultyHookState<IGroup>(`group-${id}`, null)
 
 	const resetData = async () => {
-		const _data = await window.Main.emit('getGroup', id)
-		appEvents.emit('onChangeStoreData', {
-			key: `group-${id}`,
-			data: _data,
-		})
+		const _data = await childrensGroupsAPI.getOne(id)
+		setGroup(_data)
 	}
 
-	useEventsListener('onChangeStoreData', ({ key, data }) => {
-		if (`group-${id}` === key) setGroup(data)
-	})
-
 	useEffect(() => {
-		resetData()
-	}, [])
+		if (id) resetData()
+	}, [id])
 
 	const addChildren = async (data: ChildreEditorPayloadDto) => {
-		await window.Main.emit('addChildren', {
+		await childrenAPI.add({
 			...data,
 			birthday: data.birthday,
 			groupId: id,
@@ -33,7 +27,7 @@ export const useChildrenGroup = (id: string) => {
 	}
 
 	const editChildren = async (_id: string, data: ChildreEditorPayloadDto) => {
-		await window.Main.emit('editChildren', {
+		await childrenAPI.edit({
 			_id,
 			...data,
 			birthday: data.birthday,

@@ -1,6 +1,6 @@
 import { GroupCategoryKey } from '@/@types/enums'
 
-export interface ICountChildrenCountParams {
+export interface IGetPresentChildrenParams {
 	groupCategory?: GroupCategoryKey
 	date?: string // year/month format
 	day?: number
@@ -8,4 +8,9 @@ export interface ICountChildrenCountParams {
 
 export interface IGenerateXlsxReportCardParams {
 	date: string // year/month
+}
+
+export interface GetOneChildrensCalendarParams {
+	groupId: string
+	date: string
 }

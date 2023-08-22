@@ -1,33 +1,26 @@
 import { GroupCategoryKey } from '@/@types/enums'
 import { IGroup } from '@/@types/interfaces'
-import { appEvents } from '@/shared/events'
-import { useEventsListener } from '@/shared/hooks/use-events-listener.hook'
-import { useEffect, useMemo, useState } from 'react'
+import { useMultyHookState } from '@/shared/hooks'
+import { useEffect, useMemo } from 'react'
+import { childrensGroupsAPI } from '../api/childrens-groups.api'
 
 export const useChildrensGroups = () => {
-	const [data, setData] = useState<IGroup[]>()
+	const [data, setData] = useMultyHookState<IGroup[]>('children-groups', [])
 
 	const resetData = async () => {
-		const _data = await window.Main.emit('getGroups', null)
-		appEvents.emit('onChangeStoreData', {
-			key: 'children-groups',
-			data: _data,
-		})
+		const _data = await childrensGroupsAPI.getAll()
+		setData(_data)
 	}
 
 	const set = async (_data: any) => {
-		await window.Main.emit('addGroup', _data)
+		await childrensGroupsAPI.add(_data)
 		resetData()
 	}
 
 	const update = async (_data: any) => {
-		await window.Main.emit('editGroup', _data)
+		await childrensGroupsAPI.edit(_data)
 		resetData()
 	}
-
-	useEventsListener('onChangeStoreData', ({ key, data }) => {
-		if ('children-groups' === key) setData(data)
-	})
 
 	useEffect(() => {
 		resetData()

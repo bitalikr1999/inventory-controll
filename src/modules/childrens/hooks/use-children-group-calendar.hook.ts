@@ -1,16 +1,12 @@
 import { IChildrenCalendarRecord } from '@/@types/interfaces'
 import { useState } from 'react'
+import { childrensCalendarsAPI } from '../api/childrens-calendars.api'
 
 export const useChildrenGroupCalendar = () => {
 	const [calendar, setCalendar] = useState<IChildrenCalendarRecord>(null)
 
 	const fetch = async (groupId: string, date: string) => {
-		const data = await window.Main.emit('getChildrenGroupCalendar', {
-			groupId,
-			date,
-		})
-
-		console.log('data', data)
+		const data = await childrensCalendarsAPI.getOne({ groupId, date })
 		setCalendar(data)
 	}
 

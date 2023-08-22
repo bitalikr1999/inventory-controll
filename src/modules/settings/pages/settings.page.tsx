@@ -4,6 +4,7 @@ import { $eventVal } from '@/shared/helpers'
 import { useStoreDate } from '@/shared/hooks'
 import { Button, Col, Divider, Input, Row } from 'antd'
 import _ from 'lodash'
+import { settingsAPI } from '../api'
 
 export const SettingsPage = () => {
 	const { data, set } = useStoreDate<ISetting[]>({
@@ -47,9 +48,6 @@ export const SettingsPage = () => {
 		set(items)
 	}
 
-	const openDbFolder = () => {
-		window.Main.emit('openDbFolder', null)
-	}
 	return (
 		<div>
 			<h1>Налаштування</h1>
@@ -87,13 +85,13 @@ export const SettingsPage = () => {
 					</div>
 
 					<div className="form-block">
-						<p className="form-label">ФІО "Приняв"</p>
+						<p className="form-label">ФІО Комірника</p>
 						<Input
 							size="large"
 							placeholder=""
-							value={values.peopleWhoAccepted}
+							value={values.storekeeper}
 							onChange={e =>
-								onChange('peopleWhoAccepted', $eventVal(e))
+								onChange('storekeeper', $eventVal(e))
 							}
 						/>
 					</div>
@@ -133,7 +131,10 @@ export const SettingsPage = () => {
 
 			<h1>Швидкі дії</h1>
 
-			<Button type="primary" size="large" onClick={openDbFolder}>
+			<Button
+				type="primary"
+				size="large"
+				onClick={settingsAPI.openDbFolder}>
 				Відкрити db теку
 			</Button>
 		</div>

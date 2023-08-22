@@ -1,41 +1,82 @@
 import { GroupCategoryKey } from '@/@types/enums'
-import { IChildren, IChildrenCalendarChild } from '@/@types/interfaces'
-import { childrensCalendarsRepository } from 'electron/store/childrens-calendar'
-import { childrensGroupsRepository } from 'electron/store/childrens-groups'
+import { IChildrenCalendarChild } from '@/@types/interfaces'
+import {
+	childrensCalendarsRepository,
+	childrensGroupsRepository,
+} from 'electron/repositories'
 import { ICountChildrenCountParams } from 'electron/typing'
 
 export class ChildrenCounter {
 	private params: ICountChildrenCountParams
 	private repository = childrensCalendarsRepository
 	private groupsRepository = childrensGroupsRepository
+	private children: IChildrenCalendarChild[]
 
 	public setParams(params: ICountChildrenCountParams) {
 		this.params = params
 		return this
 	}
 
+	public async preload() {
+		const children = await this.getChildren()
+		this.children = children
+	}
+
+	public getCount(day: number) {
+		const checker = (it: any) => this.checkIsChildWasPresent(it, day)
+		return this.countByChecker(this.children, checker)
+	}
+
+	public getCountByCategory(day: number, category: GroupCategoryKey) {
+		const checker = (it: any) => {
+			if (it.groupCategory !== category) return false
+			return this.checkIsChildWasPresent(it, day)
+		}
+		return this.countByChecker(this.children, checker)
+	}
+
 	public async calc() {
 		const children = await this.getChildren()
+		const checker = (it: any) => {
+			return this.checkIsChildWasPresent(it, this.params.day)
+		}
+		return this.countByChecker(children, checker)
+	}
 
-		let result = 0
+	private countByChecker(children: any[], checker: (it: any) => boolean) {
+		try {
+			let result = 0
 
-		children.map(it => {
-			if (this.checkIsChildWasPresent(it, this.params.day)) {
-				result++
-			}
-		})
-		console.log('count children', result)
+			children.map(it => {
+				if (checker(it)) result++
+			})
 
-		return result
+			return result
+		} catch (e) {
+			console.log(e)
+			return 0
+		}
 	}
 
 	private async getChildren() {
 		const calendars = await this.getCalendars()
-
-		console.log(calendars)
 		const children: IChildrenCalendarChild[] = []
 
-		calendars.map(it => children.push(...it.items))
+		await Promise.all(
+			calendars.map(async it => {
+				const group = await this.groupsRepository.findOne({
+					_id: it.groupId,
+				})
+				const toPush = it.items.map(item => {
+					return {
+						...item,
+						groupCategory: group.category,
+					}
+				})
+				children.push(...toPush)
+			}),
+		)
+
 		return children
 	}
 
@@ -59,7 +100,6 @@ export class ChildrenCounter {
 				this.params.groupCategory,
 			)
 
-			console.log('groupsIds', groupsIds)
 			if (!groupsIds.length) return []
 
 			options.groupId = { $in: groupsIds }
@@ -67,8 +107,6 @@ export class ChildrenCounter {
 		if (this.params.date) {
 			options.date = this.params.date
 		}
-
-		console.log('options', options)
 
 		const calendars = await this.repository.find(options)
 
@@ -79,8 +117,6 @@ export class ChildrenCounter {
 		const groups = await this.groupsRepository.find({
 			category: groupCategory,
 		})
-
-		console.log('groups', groupCategory, groups)
 
 		return groups.map(it => it._id)
 	}

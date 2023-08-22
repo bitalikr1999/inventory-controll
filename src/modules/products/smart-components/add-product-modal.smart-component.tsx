@@ -1,24 +1,42 @@
 import { AppstoreAddOutlined } from '@ant-design/icons'
 import { Button, Drawer, Input, Select } from 'antd'
-import { useState } from 'react'
+import { FC, useEffect, useState } from 'react'
 import { createStyleSheet } from '@/shared/helpers'
 
 import { validateProduct } from '../validator'
 import { $eventVal } from '@/shared/helpers/form.helper'
 import { useForm } from '@/shared/hooks/useForm'
 import { useProducts } from '../hooks'
-import { ProductCategory } from '@/@types/enums'
+import { MeasurmentUnit, ProductCategory } from '@/@types/enums'
+import { IProduct } from '@/@types/interfaces'
+import { cloneDeep, cloneDeepWith } from 'lodash'
 
 interface Form {
 	name: string
 	price: number
-	measurmentUnit: string
+	measurmentUnit: MeasurmentUnit
 	category: ProductCategory
 }
-export const AddProductModalSmart = () => {
+
+interface Props {
+	existProduct?: IProduct
+}
+export const AddProductModalSmart: FC<Props> = ({ existProduct }) => {
 	const [visible, setVisible] = useState(false)
 	const form = useForm<Form>({}, validateProduct)
 	const { items, set, getLastId } = useProducts()
+
+	useEffect(() => {
+		if (existProduct) {
+			form.set({
+				name: existProduct.name,
+				price: existProduct.price,
+				measurmentUnit: existProduct.measurmentUnit,
+				category: existProduct.category,
+			})
+			showDrawer()
+		}
+	}, [existProduct])
 
 	const showDrawer = () => {
 		setVisible(true)
@@ -27,16 +45,36 @@ export const AddProductModalSmart = () => {
 		setVisible(false)
 	}
 
+	const update = async () => {
+		const _items = cloneDeep(items)
+
+		_items.forEach((it, i) => {
+			if (it.id === existProduct.id) {
+				_items[i] = {
+					...it,
+					...form.values,
+				}
+			}
+		})
+
+		await set(_items)
+	}
+
+	const add = async () => {
+		await set([
+			...items,
+			{
+				...form.values,
+				id: getLastId() + 1,
+				createdAt: new Date(),
+			},
+		])
+	}
+
 	const submit = async () => {
 		try {
-			await set([
-				...items,
-				{
-					...form.values,
-					id: getLastId() + 1,
-					createdAt: new Date(),
-				},
-			])
+			if (existProduct) await update()
+			else add()
 			onClose()
 			form.set({} as any)
 		} catch (e) {
@@ -150,7 +188,7 @@ export const AddProductModalSmart = () => {
 					size="large"
 					style={styles.button}
 					onClick={() => form.onSubmit(submit)}>
-					Створити
+					Зберегти
 				</Button>
 			</Drawer>
 		</>

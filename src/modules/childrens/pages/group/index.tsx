@@ -17,7 +17,6 @@ export const GroupPage = () => {
 	const [child, setChild] = useState<IChildren>()
 
 	const onSubmitChildrenEditor = (payload: ChildreEditorPayloadDto) => {
-		console.log(child)
 		if (child) {
 			editChildren(child._id, payload)
 		} else addChildren(payload)
@@ -41,7 +40,9 @@ export const GroupPage = () => {
 				}
 			/>
 			<Table
-				dataSource={group?.childrens}
+				dataSource={group?.childrens.sort((a, b) =>
+					b.name.localeCompare(a.name),
+				)}
 				columns={ChildrensTableConfig({ onPressEdit })}
 			/>
 		</div>

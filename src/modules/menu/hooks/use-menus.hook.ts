@@ -1,43 +1,36 @@
-import { appEvents } from '@/shared/events'
-import { useEventsListener } from '@/shared/hooks/use-events-listener.hook'
-import { IMenu } from 'electron/typing'
 import { useEffect, useState } from 'react'
+import { IMenu } from 'electron/typing'
+
+import { useMultyHookState } from '@/shared/hooks'
+
+import { menusAPI } from '../api'
 
 interface UseMenusParams {
 	filterMenus?: (items: IMenu[]) => IMenu[]
 }
 
 export const useMenus = ({ filterMenus = items => items }: UseMenusParams) => {
-	const [data, setData] = useState<IMenu[]>()
+	const [data, setData] = useMultyHookState<IMenu[]>('menus', [])
 	const [date, setDate] = useState(new Date())
 
 	const resetData = async () => {
-		const _data = await window.Main.emit('getMenus', {
-			date: new Date(date).toISOString(),
-		})
-		appEvents.emit('onChangeStoreData', {
-			key: 'menus',
-			data: filterMenus(_data),
-		})
+		const _data = await menusAPI.getMany(new Date(date))
+		setData(filterMenus(_data))
 	}
 
-	const set = async (_data: any) => {
-		await window.Main.emit('saveMenu', _data)
+	const set = async (payload: any) => {
+		await menusAPI.put(payload)
 		resetData()
 	}
 
 	const remove = async (id: string) => {
-		await window.Main.emit('removeMenu', id)
+		await menusAPI.remove(id)
 		resetData()
 	}
 
 	const getOne = async (id: string) => {
-		return window.Main.emit('getMenu', id)
+		return await menusAPI.getOne(id)
 	}
-
-	useEventsListener('onChangeStoreData', ({ key, data }) => {
-		if ('menus' === key) setData(data)
-	})
 
 	useEffect(() => {
 		resetData()

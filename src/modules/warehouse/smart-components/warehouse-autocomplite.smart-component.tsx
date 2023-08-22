@@ -1,4 +1,4 @@
-import { IProduct, IWarehouseItem } from '@/@types/interfaces'
+import { IWarehouseItem } from '@/@types/interfaces'
 import { $eventVal } from '@/shared/helpers/form.helper'
 import { AutoComplete, Input, InputRef } from 'antd'
 import _ from 'lodash'
@@ -51,10 +51,7 @@ export const WarehouseAutocomplite: FC<Props> = ({ onChange, item }) => {
 		onSearch(value)
 	}, [value])
 
-	const onFocus = () => {
-		console.log('focus')
-		onSearch(value)
-	}
+	const onFocus = () => onSearch(value)
 
 	return (
 		<>

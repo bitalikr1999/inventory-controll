@@ -1,6 +1,8 @@
 import { XlsxCoords } from 'electron/typing'
 
 export interface XlsxProductsSummaryConfig {
+	startOrderInfo?: XlsxCoords
+
 	startHead?: XlsxCoords
 	startTitle?: XlsxCoords
 	startResponsiblePerson?: number

@@ -11,6 +11,15 @@ export const generateMerge = (config: XlsxProductsSummaryConfig) => {
 		{ s: { r: sth + 3, c: 2 }, e: { r: sth + 3, c: 3 } }, // код ЄДРПОУ val
 	]
 
+	const soir = config.startOrderInfo[1]
+	const soic = config.startOrderInfo[0]
+
+	merge.push(
+		{ s: { r: soir, c: soic }, e: { r: soir, c: soic + 5 } },
+		{ s: { r: soir + 1, c: soic }, e: { r: soir + 1, c: soic + 5 } },
+		{ s: { r: soir + 2, c: soic }, e: { r: soir + 2, c: soic + 5 } },
+	)
+
 	// titles
 	for (let index = 0; index < 3; index++) {
 		merge.push({
@@ -64,7 +73,7 @@ export const generateMerge = (config: XlsxProductsSummaryConfig) => {
 	// tabel names
 	for (
 		let index = config.startTableItemsRow;
-		index <= config.endTableRow;
+		index <= config.endTableRow + 2;
 		index++
 	) {
 		merge.push({
@@ -75,6 +84,31 @@ export const generateMerge = (config: XlsxProductsSummaryConfig) => {
 			e: {
 				r: index,
 				c: 1,
+			},
+		})
+	}
+
+	let stf = config.startFooterRow
+	for (let index = 0; index < 5; index++) {
+		merge.push({
+			s: {
+				r: stf + index,
+				c: 2,
+			},
+			e: {
+				r: stf + index,
+				c: 3,
+			},
+		})
+
+		merge.push({
+			s: {
+				r: stf + index,
+				c: 5,
+			},
+			e: {
+				r: stf + index,
+				c: 7,
 			},
 		})
 	}

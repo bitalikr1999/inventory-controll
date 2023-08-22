@@ -9,6 +9,7 @@ import { useLocation } from 'react-router-dom'
 import { useChildrenGroup, useChildrenGroupCalendar } from '../../hooks'
 import { IChildrenCalendarRecord } from '@/@types/interfaces'
 import _ from 'lodash'
+import { childrensCalendarsAPI } from '../../api/childrens-calendars.api'
 
 export const GroupCalendar = () => {
 	const location: any = useLocation()
@@ -65,7 +66,7 @@ export const GroupCalendar = () => {
 	}
 
 	const submit = async () => {
-		await window.Main.emit('putChildrenGroupCalendar', {
+		await childrensCalendarsAPI.put({
 			groupId: group._id,
 			date: getDateKey(date),
 			items,
@@ -74,27 +75,33 @@ export const GroupCalendar = () => {
 	}
 
 	const renderTr = () => {
-		return group?.childrens.map(it => {
-			return (
-				<tr>
-					<td style={{ fontSize: 14 }}>{it.name}</td>
-					{Array.from({ length: daysCount }, (_, i) => {
-						const day = i + 1
-						return (
-							<th>
-								<Checkbox
-									defaultChecked={true}
-									checked={getIsVisiting(it._id, day)}
-									onChange={e =>
-										onChange(it._id, day, e.target.checked)
-									}
-								/>
-							</th>
-						)
-					})}
-				</tr>
-			)
-		})
+		return group?.childrens
+			.sort((a, b) => a.name.localeCompare(b.name))
+			.map(it => {
+				return (
+					<tr>
+						<td style={{ fontSize: 14 }}>{it.name}</td>
+						{Array.from({ length: daysCount }, (_, i) => {
+							const day = i + 1
+							return (
+								<th>
+									<Checkbox
+										defaultChecked={true}
+										checked={getIsVisiting(it._id, day)}
+										onChange={e =>
+											onChange(
+												it._id,
+												day,
+												e.target.checked,
+											)
+										}
+									/>
+								</th>
+							)
+						})}
+					</tr>
+				)
+			})
 	}
 
 	return (

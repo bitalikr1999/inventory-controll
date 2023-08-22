@@ -48,7 +48,7 @@ export const TopBar = () => {
 					onClick={() => navigate(RouteKey.Products)}>
 					Продукти
 				</Menu.Item>
-				<Menu.Item
+				{/* <Menu.Item
 					key={RouteKey.ZDO.split('/')[1]}
 					icon={<BarChartOutlined />}
 					onClick={() => navigate(RouteKey.ZDO)}>
@@ -59,7 +59,7 @@ export const TopBar = () => {
 					icon={<ScheduleOutlined />}
 					onClick={() => navigate(RouteKey.VisitingList)}>
 					Табелі
-				</Menu.Item>
+				</Menu.Item> */}
 			</Menu>
 			<div className="right">
 				<button

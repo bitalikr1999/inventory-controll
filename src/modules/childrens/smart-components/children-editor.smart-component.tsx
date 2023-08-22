@@ -36,10 +36,15 @@ export const ChildrenEditor: FC<Props> = ({ existData, onSubmit }) => {
 		if (existData) {
 			form.set(existData as any)
 			setVisible(true)
+		} else {
+			form.set(cloneDeep(initialForm) as any)
 		}
 	}, [existData])
 
-	const close = () => setVisible(false)
+	const close = () => {
+		setVisible(false)
+		form.set(cloneDeep(initialForm) as any)
+	}
 
 	const submit = () => {
 		onSubmit(form.values)

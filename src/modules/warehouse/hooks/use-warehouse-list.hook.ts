@@ -1,14 +1,17 @@
+import { useEffect, useState } from 'react'
+import _ from 'lodash'
+
 import { IWarehouseItem } from '@/@types/interfaces'
 import { useProducts } from '@/modules/products/hooks'
-import _ from 'lodash'
-import { useEffect, useState } from 'react'
+
+import { warehouseAPI } from '../api/warehouse.api'
 
 export const useWarehouseList = () => {
 	const [items, setItems] = useState<IWarehouseItem[]>([])
 	const products = useProducts()
 
 	const loadItems = async () => {
-		const data = await window.Main.emit('getWarehouseItems', {})
+		const data = await warehouseAPI.get()
 		setItems(data.map(fillItem))
 	}
 
@@ -24,7 +27,7 @@ export const useWarehouseList = () => {
 	}, [products.items])
 
 	const remove = async (id: string) => {
-		await window.Main.emit('deleteWarehouseItem', { id })
+		await warehouseAPI.delete(id)
 		loadItems()
 	}
 

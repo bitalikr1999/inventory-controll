@@ -24,6 +24,7 @@ export interface IChildren {
 
 export interface IChildrenCalendarChild {
 	childId: string
+	groupCategory?: GroupCategoryKey
 	visiting: {
 		day: number
 		isPresent: boolean
@@ -31,10 +32,10 @@ export interface IChildrenCalendarChild {
 }
 
 export interface IChildrenCalendarRecord {
-	_id: string
+	_id?: string
 	groupId: string
 	date: string
 	items: IChildrenCalendarChild[]
 
-	createdAt: string
+	createdAt?: string
 }

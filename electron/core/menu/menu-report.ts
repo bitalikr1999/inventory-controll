@@ -1,7 +1,8 @@
 import { GroupCategoryKey } from '@/@types/enums'
-import { calcDishPrice } from 'electron/helpers'
-import { menusRepository } from 'electron/store/menu'
 import { IMenu } from 'electron/typing'
+import { ChildrenCounter } from '../childrens/children-counter'
+import { YMstringToDate, dateToYMstring } from 'electron/helpers/date'
+import { menusRepository } from 'electron/repositories'
 
 interface IPreparedMenu {
 	menu: IMenu
@@ -22,20 +23,26 @@ export class MenuReport {
 	private menus: IPreparedMenu[] = []
 	private clearMenus: IMenu[] = []
 	private menusObj: Record<string, IPreparedMenu> = {}
+	private childrenCounter: ChildrenCounter
 
 	public async init(date: Date) {
 		this.date = date
+		await this.initChildrenCount()
 		await this.loadMenus()
+
 		return this
 	}
 
+	private async initChildrenCount() {
+		this.childrenCounter = new ChildrenCounter().setParams({
+			date: dateToYMstring(this.date),
+		})
+
+		await this.childrenCounter.preload()
+	}
+
 	public async setDate(yearMonthString: string) {
-		const year = yearMonthString.split('/')[0]
-		const month = yearMonthString.split('/')[1]
-		const date = new Date()
-		date.setFullYear(Number(year))
-		date.setMonth(Number(month))
-		this.date = date
+		this.date = YMstringToDate(yearMonthString)
 	}
 
 	public getMenu(params: IGetOneChildSummParams) {
@@ -46,7 +53,7 @@ export class MenuReport {
 
 	private async loadMenus() {
 		const menus = await this.menuRepository.findByDate(this.date as any)
-		const result: IPreparedMenu[] = menus.map(this.prepareMenu)
+		const result: IPreparedMenu[] = menus.map(this.prepareMenu.bind(this))
 		this.clearMenus = menus
 		this.menus = result
 		this.menusObj = {}
@@ -54,8 +61,6 @@ export class MenuReport {
 		result.map(item => {
 			this.menusObj[this.generateMenuObjKeyFromPreparedMenu(item)] = item
 		})
-
-		console.log(this.clearMenus)
 	}
 
 	private generateMenuObjKeyFromPreparedMenu(preparedMenu: IPreparedMenu) {
@@ -88,7 +93,13 @@ export class MenuReport {
 			freeSumm += free
 		})
 
+		menu.childrensCount = this.childrenCounter.getCountByCategory(
+			new Date(menu.date).getDate(),
+			menu.groupCategory as any,
+		)
+
 		const nettoSumm = summ - freeSumm
+
 		return {
 			menu,
 			summ,
@@ -98,7 +109,22 @@ export class MenuReport {
 		}
 	}
 
-	public getMenusByCategory(category: GroupCategoryKey) {
+	public getMenusByCategory(category?: GroupCategoryKey) {
+		if (!category) return this.clearMenus
 		return this.clearMenus.filter(it => it.groupCategory === category)
+	}
+
+	public async getMenuChildrensCount(menuId: string) {
+		const menu = await this.menuRepository.findOne(menuId)
+		if (!menu) return 0
+
+		return this.childrenCounter.getCountByCategory(
+			new Date(menu.date).getDate(),
+			menu.groupCategory as any,
+		)
+	}
+
+	public getPreparedMenus() {
+		return Object.values(this.menusObj)
 	}
 }

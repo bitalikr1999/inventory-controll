@@ -39,11 +39,13 @@ export const generateMenusXlsx = ({ menus }: Params) => {
 
 	const date = moment(new Date(menus[0].date))
 		.locale('uk')
-		.format('MMMM-YYYY')
+		.format('MMMM_YYYY')
 
-	writeFile(path.join(publicCwd, `ZDO-${date}.xlsx`), buf, err => {
+	const name = `Меньовки_за_${date}.xlsx`
+
+	writeFile(path.join(publicCwd, name), buf, err => {
 		console.log('error', err)
-		shell.showItemInFolder(path.join(publicCwd, `ZDO-${date}.xlsx`))
+		shell.showItemInFolder(path.join(publicCwd, name))
 	})
 }
 

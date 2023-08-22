@@ -14,7 +14,6 @@ import { ZdoEditorPage } from '../zdo/pages'
 import { MainLayout } from './components'
 import { ProductsCategoriesPage } from '../warehouse/pages/categories'
 import { SettingsPage } from '../settings/pages/settings.page'
-import { VisitingListPage } from '../visiting/pages'
 
 export const Root = () => {
 	const [isLoading, setLoading] = useState(true)
@@ -84,11 +83,6 @@ export const Root = () => {
 						<Route
 							path={RouteKey.Settings}
 							element={<SettingsPage />}
-						/>
-
-						<Route
-							path={RouteKey.VisitingList}
-							element={<VisitingListPage />}
 						/>
 					</Routes>
 				</MainLayout>

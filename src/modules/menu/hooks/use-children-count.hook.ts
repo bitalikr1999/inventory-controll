@@ -1,37 +1,37 @@
+import { useState } from 'react'
 import { GroupCategoryKey } from '@/@types/enums'
-import { useEffect, useRef, useState } from 'react'
+import { childrensCalendarsAPI } from '@/modules/childrens/api/childrens-calendars.api'
+import { dateToYMstring } from '@/shared/helpers'
+import { useDebounce } from '@/shared/hooks/use-debounce.hook'
 
 export const useChildrenCount = (
 	date: Date,
 	groupCategory: GroupCategoryKey,
 ) => {
 	const [count, setCount] = useState(0)
-	const timmerRef = useRef(null)
 	const [isLoading, setLoading] = useState(false)
 
 	const getChildrenCount = async () => {
-		const _date = new Date(date)
-		const count = await window.Main.emit('childrenCountByDay', {
-			groupCategory: groupCategory,
-			date: `${_date.getFullYear()}/${_date.getMonth()}`,
-			day: _date.getDate(),
-		})
-
+		const count = await childrensCalendarsAPI.getPresentChildrenCount(
+			prepareParams(),
+		)
 		setCount(count)
 		setLoading(false)
 	}
 
-	useEffect(() => {
-		if (timmerRef.current) clearTimeout(timmerRef.current)
-		if (groupCategory && date) {
-			setLoading(true)
-			timmerRef.current = setTimeout(() => {
-				getChildrenCount()
-			}, 500)
+	const prepareParams = () => {
+		const _date = new Date(date)
+		return {
+			groupCategory: groupCategory,
+			date: dateToYMstring(_date),
+			day: _date.getDate(),
 		}
-		return () => {
-			clearTimeout(timmerRef.current)
-		}
+	}
+
+	useDebounce(() => {
+		if (!groupCategory || !date) return
+		setLoading(true)
+		getChildrenCount()
 	}, [groupCategory, date])
 
 	return {

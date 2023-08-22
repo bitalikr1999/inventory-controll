@@ -3,9 +3,6 @@ import {
 	IChildrenCalendarRecord,
 	IGroup,
 } from '@/@types/interfaces'
-import { childrensRepository } from 'electron/store/childrens'
-import { childrensCalendarsRepository } from 'electron/store/childrens-calendar'
-import { childrensGroupsRepository } from 'electron/store/childrens-groups'
 import { IGenerateXlsxReportCardParams } from 'electron/typing'
 
 import { MenuReport } from '../menu/menu-report'
@@ -17,6 +14,12 @@ import {
 	XlsxReportCardItem,
 } from 'electron/xlsx/report-card'
 import { getFromStore } from 'electron/store'
+import { YMstringToDate } from 'electron/helpers/date'
+import {
+	childrensCalendarsRepository,
+	childrensGroupsRepository,
+	childrensRepository,
+} from 'electron/repositories'
 
 export class ReportCardXlsx {
 	private repository = childrensCalendarsRepository
@@ -41,8 +44,8 @@ export class ReportCardXlsx {
 	public async generate(params: IGenerateXlsxReportCardParams) {
 		this.params = params
 		this.menuReport = new MenuReport()
-		this.initDaysCount()
 		this.result.date = this.getDateobject()
+		this.initDaysCount()
 
 		await this.menuReport.init(this.result.date)
 		await this.loadGroups()
@@ -52,18 +55,11 @@ export class ReportCardXlsx {
 	}
 
 	private getDateobject() {
-		const year = this.params.date.split('/')[0]
-		const month = this.params.date.split('/')[1]
-		const date = new Date()
-		date.setFullYear(Number(year))
-		date.setMonth(Number(month))
-		return date
+		return YMstringToDate(this.params.date)
 	}
 
 	private initDaysCount() {
-		const date = this.getDateobject()
-
-		this.daysInMonthCount = moment(new Date(date)).daysInMonth()
+		this.daysInMonthCount = moment(this.result.date).daysInMonth()
 	}
 
 	private async loadGroups() {
@@ -133,6 +129,7 @@ export class ReportCardXlsx {
 			const isPresent = visitingObj[day]
 
 			let summ = ''
+
 			if (isPresent) {
 				result.presentCound++
 
@@ -170,7 +167,6 @@ export class ReportCardXlsx {
 		settings.map(it => {
 			settingsObj[it.key] = it.value
 		})
-		console.log(settings, settingsObj)
 
 		this.result.setting = {
 			name: settingsObj?.name,
@@ -219,3 +215,7 @@ export class ReportCardXlsx {
 		return result
 	}
 }
+
+// setTimeout(() => {
+// 	new ReportCardXlsx().generate({ date: '2023/7' })
+// }, 3000)

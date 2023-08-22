@@ -4,15 +4,35 @@ const XLSX = require('xlsx-js-style')
 export abstract class XlsxGenerator {
 	protected XLSX = XLSX
 
-	protected transformToCords(string: string): XlsxCoords {
-		const rowString = string.split('')[0]
-		const col = Number(string.substring(1))
+	protected transformToCords(excelCoordinate: string): XlsxCoords {
+		const columnLetters = excelCoordinate.match(/[A-Z]+/)[0]
+		const rowNumber = parseInt(excelCoordinate.match(/\d+/)[0], 10) - 1
 
-		return [this.alphaVal(rowString) - 1, col - 1]
+		let column = 0
+		for (let i = 0; i < columnLetters.length; i++) {
+			const letter = columnLetters[columnLetters.length - 1 - i]
+			column += (letter.charCodeAt(0) - 65 + 1) * Math.pow(26, i)
+		}
+
+		return [rowNumber, column]
 	}
 
 	protected transformFromCords(cords: XlsxCoords): string {
-		return `${String.fromCharCode(cords[0] + 65)}${cords[1] + 1}`
+		const column = cords[0]
+		const row = cords[1]
+		let dividend = column + 1
+		let excelCoordinate = ''
+
+		while (dividend > 0) {
+			const remainder = (dividend - 1) % 26
+			excelCoordinate =
+				String.fromCharCode(65 + remainder) + excelCoordinate
+			dividend = Math.floor((dividend - 1) / 26)
+		}
+
+		excelCoordinate += row + 1 // Додаємо номер рядка
+
+		return excelCoordinate
 	}
 
 	protected alphaVal(s: string): number {

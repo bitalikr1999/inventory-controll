@@ -23,6 +23,12 @@ export interface GenerateZdoXlsx {
 	numberOfRecipients: number
 	numberOfRecipientsByDays: Record<Day, RecipientsCount>
 	category: GroupCategoryKey
+
+	totalBruto: number
+	totalNetto: number
+	totalFree: number
+
+	menusCount: number
 }
 
 export interface ZdoItem {
@@ -34,12 +40,17 @@ export interface ZdoItem {
 
 	totalCount: number
 	totalPrice: number
+	totalFree: number
+	totalNetto: number
 }
 
 export interface ZdoTableItem {
 	date: number
 	count: number
 	summ: number
+
+	freeCount: number
+	freeSumm: number
 }
 
 export interface GenerateZdosXlsxParams {

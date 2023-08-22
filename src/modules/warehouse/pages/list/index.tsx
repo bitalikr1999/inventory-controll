@@ -3,7 +3,7 @@ import {
 	AppstoreAddOutlined,
 	ExclamationCircleOutlined,
 } from '@ant-design/icons'
-import { Button, Col, Modal, Row, Table } from 'antd'
+import { Button, Modal, Row, Table } from 'antd'
 import { useNavigate } from 'react-router-dom'
 import { useWarehouseList } from '../../hooks'
 import { WarehouseTableConfig } from './table.config'

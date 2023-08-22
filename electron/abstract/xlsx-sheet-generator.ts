@@ -12,4 +12,14 @@ export abstract class XlsxSheetGenerator extends XlsxGenerator {
 			origin,
 		})
 	}
+
+	protected prepareNumberVal(number: number | string) {
+		if (!number) return ''
+		if (number === 0) return ''
+
+		return Number(number).toLocaleString('ru-RU', {
+			minimumFractionDigits: 2,
+			maximumFractionDigits: 3,
+		})
+	}
 }

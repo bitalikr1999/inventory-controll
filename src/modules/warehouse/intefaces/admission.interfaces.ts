@@ -5,4 +5,5 @@ export interface IWarehouseAdmissionItem {
 
 	summ?: number
 	count: number
+	price?: number
 }

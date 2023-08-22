@@ -1,13 +1,15 @@
 import { app, BrowserWindow, ipcMain } from 'electron'
-import {
-	initChildrensCalendarsListener,
-	initChildrensListener,
-	initMenusStoreListeners,
-	initSettingsListener,
-	initZdoListeners,
-} from './listeners'
 import { getFromStore, setToStore } from './store'
-import { initWarehouseListeners } from './store/warehouse'
+import {
+	ChildrensCalendarsController,
+	ChildrensController,
+	ChildrensGroupsController,
+	MenusController,
+	ProductsController,
+	SettingsController,
+	WarehouseController,
+	WarehouseHistoryController,
+} from './controllers'
 
 let mainWindow: BrowserWindow | null
 
@@ -48,16 +50,21 @@ async function registerListeners() {
 		return setToStore(store as any, key, data)
 	})
 
-	ipcMain.handle('openDevTooles', () => {
-		mainWindow.webContents.openDevTools()
-	})
+	// ipcMain.handle('openDevTooles', () => {
+	// 	mainWindow.webContents.openDevTools()
+	// })
 
-	initChildrensListener()
-	initMenusStoreListeners()
-	initZdoListeners()
-	initWarehouseListeners()
-	initChildrensCalendarsListener()
-	initSettingsListener()
+	new ChildrensCalendarsController().listen()
+	new ChildrensController().listen()
+	new ChildrensGroupsController().listen()
+
+	new SettingsController().listen()
+	new ProductsController().listen()
+
+	new WarehouseHistoryController().listen()
+	new WarehouseController().listen()
+
+	new MenusController().listen()
 }
 
 app.on('ready', createWindow)

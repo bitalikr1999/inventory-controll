@@ -193,20 +193,26 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 		]
 
 		for (let index = 1; index <= this.setting.daysInMonthCount; index++) {
-			values.push(xlsxValСenter(child.values[String(index)], false, 11))
+			values.push(
+				xlsxValСenter(
+					this.prepareNumberVal(child.values[String(index)]),
+					false,
+					11,
+				),
+			)
 		}
 
 		values.push(xlsxVal(''))
 		values.push(xlsxValСenter(child.presentCound, false, 11))
 		values.push(
-			xlsxValСenter(Number(child.bruttoSumm).toFixed(2), false, 11),
+			xlsxValСenter(this.prepareNumberVal(child.bruttoSumm), false, 11),
 		)
 		values.push(
-			xlsxValСenter(Number(child.nettoSumm).toFixed(2), false, 11),
+			xlsxValСenter(this.prepareNumberVal(child.nettoSumm), false, 11),
 		)
 		if (child.isPay50)
 			values.push(
-				xlsxValСenter(Number(child.isPay50).toFixed(2), false, 11),
+				xlsxValСenter(this.prepareNumberVal(child.isPay50), false, 11),
 			)
 		else values.push(xlsxVal(''))
 
@@ -233,7 +239,7 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 			if (summaryItem) {
 				sums.push(
 					xlsxValСenter(
-						Number(summaryItem.summ).toFixed(2),
+						this.prepareNumberVal(summaryItem.summ),
 						false,
 						11,
 					),
@@ -255,13 +261,13 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 			xlsxVal(''),
 			xlsxValСenter(''),
 			xlsxValСenter(
-				Number(this.group.total.brutto).toFixed(2),
+				this.prepareNumberVal(this.group.total.brutto),
 				false,
 				11,
 				{ bold: true },
 			),
 			xlsxValСenter(
-				Number(this.group.total.netto).toFixed(2),
+				this.prepareNumberVal(this.group.total.netto),
 				false,
 				11,
 				{ bold: true },
@@ -271,7 +277,7 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 		if (this.group.total.isPay50 > 0)
 			sums.push(
 				xlsxValСenter(
-					Number(this.group.total.isPay50.toFixed(2)),
+					this.prepareNumberVal(this.group.total.isPay50),
 					false,
 					11,
 					{ bold: true },
@@ -281,7 +287,7 @@ export class ReportCardSheetXlsxGenerator extends XlsxSheetGenerator {
 		counts.push(
 			xlsxVal(''),
 			xlsxValСenter(
-				Number(this.group.total.visitingCount).toFixed(0),
+				this.prepareNumberVal(this.group.total.visitingCount),
 				false,
 				11,
 				{ bold: true },

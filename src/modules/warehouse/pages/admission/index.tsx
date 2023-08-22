@@ -7,6 +7,7 @@ import React, { useEffect, useState } from 'react'
 import { useNavigate } from 'react-router-dom'
 import { AdmissionEditorAtom } from '../../atoms'
 import { IWarehouseAdmissionItem } from '../../intefaces'
+import { warehouseAPI } from '../../api'
 
 export const WarehouseAdmissionPage = () => {
 	const [items, setItems] = useState<IWarehouseAdmissionItem[]>([])
@@ -17,7 +18,7 @@ export const WarehouseAdmissionPage = () => {
 	}, [items])
 
 	const submit = async () => {
-		await window.Main.emit('warehouseAdmission', {
+		await warehouseAPI.admission({
 			items: items
 				.filter(it => Boolean(it.product))
 				.map(it => {

@@ -2,6 +2,7 @@ import {
 	GenerateZdoDataXlsx,
 	GenerateZdoXlsx,
 	GenerateZdosXlsxParams,
+	IMenu,
 	IMenuItemProduct,
 	ZdoItem,
 } from 'electron/typing'
@@ -10,7 +11,7 @@ import { GroupCategoryKey } from '@/@types/enums'
 import moment from 'moment'
 import { getFromStore } from 'electron/store'
 import { ProductsSummaryXlsxGenerator } from 'electron/xlsx/products-summary'
-const util = require('util')
+import { YMstringToDate } from 'electron/helpers/date'
 
 export class ProductsSummaryXlsx {
 	private data: Partial<GenerateZdoDataXlsx> = {
@@ -39,12 +40,7 @@ export class ProductsSummaryXlsx {
 	}
 
 	private getDateobject() {
-		const year = this.params.date.split('/')[0]
-		const month = this.params.date.split('/')[1]
-		const date = new Date()
-		date.setFullYear(Number(year))
-		date.setMonth(Number(month))
-		return date
+		return YMstringToDate(this.params.date)
 	}
 
 	private async loadSettings() {
@@ -58,6 +54,7 @@ export class ProductsSummaryXlsx {
 		this.data.daysInMonthCount = this.daysInMonthCount
 		this.data.director = settingsObj?.director
 		this.data.date = this.date
+		this.data.storekeeper = settingsObj?.storekeeper
 	}
 
 	private async calcByCategories() {
@@ -73,9 +70,12 @@ export class ProductsSummaryXlsx {
 				console.log(e)
 			}
 		}
+
+		const item = await this.calcCategory()
+		this.data.items.push(item)
 	}
 
-	private async calcCategory(categoryKey: GroupCategoryKey) {
+	private async calcCategory(categoryKey?: GroupCategoryKey) {
 		const result: GenerateZdoXlsx = {
 			items: [],
 			title: '',
@@ -84,10 +84,19 @@ export class ProductsSummaryXlsx {
 			numberOfRecipients: 0,
 			numberOfRecipientsByDays: {},
 			category: categoryKey,
+			totalBruto: 0,
+			totalFree: 0,
+			totalNetto: 0,
+			menusCount: 0,
 		}
 
 		const menus = this.menuReport.getMenusByCategory(categoryKey)
 		const menusWarehouseItems: Array<TempWarehouseItem> = []
+		const countRecepients = await this.calcNumberOfRecepients(menus)
+
+		result.menusCount = Number(menus.length)
+		result.numberOfRecipients = countRecepients.total
+		result.numberOfRecipientsByDays = countRecepients.byDays
 
 		menus.map(menu => {
 			menu.items.map(item => {
@@ -120,14 +129,6 @@ export class ProductsSummaryXlsx {
 				})
 			})
 		})
-		// console.log(
-		// 	util.inspect(
-		// 		menusWarehouseItems,
-		// 		false,
-		// 		null,
-		// 		true /* enable colors */,
-		// 	),
-		// )
 
 		const items: ZdoItem[] = []
 
@@ -139,6 +140,11 @@ export class ProductsSummaryXlsx {
 		)
 
 		result.items = items
+		result.items.map(it => {
+			result.totalBruto += Number(it.totalPrice)
+			result.totalFree += Number(it.totalFree)
+		})
+		result.totalNetto = result.totalBruto - result.totalFree
 
 		return result
 	}
@@ -152,6 +158,8 @@ export class ProductsSummaryXlsx {
 				byDays: [],
 				totalCount: 0,
 				totalPrice: 0,
+				totalFree: 0,
+				totalNetto: 0,
 			}
 			const obj: Record<string, IMenuItemProduct[]> = {}
 
@@ -167,20 +175,28 @@ export class ProductsSummaryXlsx {
 					count: 0,
 					summ: 0,
 					date: day,
+					freeCount: 0,
+					freeSumm: 0,
 				}
 
 				if (items) {
 					items.map(it => {
 						toAdd.count += Number(it.count)
+						if (it.isFree) toAdd.freeCount += Number(it.count)
 					})
 
 					toAdd.summ = Number(result.price) * toAdd.count
+					toAdd.freeSumm = Number(result.price) * toAdd.freeCount
 				}
 
 				result.byDays.push(toAdd)
 				result.totalCount += Number(toAdd.count)
 				result.totalPrice += Number(toAdd.summ)
+				result.totalFree += Number(toAdd.freeSumm)
 			}
+
+			result.totalNetto =
+				Number(result.totalPrice) - Number(result.totalFree)
 
 			return result
 		} catch (e) {
@@ -188,10 +204,30 @@ export class ProductsSummaryXlsx {
 			return null
 		}
 	}
+
+	protected async calcNumberOfRecepients(menus: IMenu[]) {
+		const result: any = {
+			total: 0,
+			byDays: {},
+		}
+
+		await Promise.all(
+			menus.map(async it => {
+				const childrensCount =
+					await this.menuReport.getMenuChildrensCount(it._id)
+
+				result.total += Number(childrensCount)
+				const dayKey = new Date(it.date).getDate()
+
+				if (result.byDays[dayKey])
+					result.byDays[dayKey] += Number(childrensCount)
+				else result.byDays[dayKey] = Number(childrensCount)
+			}),
+		)
+
+		return result
+	}
 }
-setTimeout(() => {
-	new ProductsSummaryXlsx().generate({ date: '2023/7' })
-}, 3000)
 
 interface TempWarehouseItem {
 	origin: {
