@@ -14,3 +14,9 @@ export interface GetOneChildrensCalendarParams {
 	groupId: string
 	date: string
 }
+
+export interface ICountChildrenCountParams {
+	groupCategory?: GroupCategoryKey
+	date?: string // year/month format
+	day?: number
+}

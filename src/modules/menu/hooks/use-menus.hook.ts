@@ -1,9 +1,9 @@
 import { useEffect, useState } from 'react'
-import { IMenu } from 'electron/typing'
 
 import { useMultyHookState } from '@/shared/hooks'
 
 import { menusAPI } from '../api'
+import { IMenu } from '@/@types/interfaces'
 
 interface UseMenusParams {
 	filterMenus?: (items: IMenu[]) => IMenu[]

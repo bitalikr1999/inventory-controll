@@ -10,7 +10,7 @@ class ChildrensCalendarsAPI extends API {
 	protected basePath = 'childrensCalendars'
 
 	public getOne(params: GetOneChildrensCalendarParams) {
-		return this.calls('getOne', params)
+		return this.call('getOne', params)
 	}
 
 	public put(payload: IChildrenCalendarRecord) {
