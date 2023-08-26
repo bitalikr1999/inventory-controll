@@ -10,11 +10,10 @@ export const useEventsListener = <T extends keyof AppEvents>(
 		const fn = (data: AppEvents[T]) => {
 			try {
 				action(data)
-			} catch(e) {}
+			} catch (e) {}
 		}
 		appEvents.on(name, fn)
 
 		return () => appEvents.off(name, fn)
-		// eslint-disable-next-line react-hooks/exhaustive-deps
 	}, dependencies)
 }
