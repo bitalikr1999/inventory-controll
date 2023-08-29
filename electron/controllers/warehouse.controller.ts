@@ -1,5 +1,9 @@
+import { HistoryRecordReasone, HistoryRecordType } from '@/@types/enums'
 import { Controller } from 'electron/abstract'
-import { warehouseRepository } from 'electron/repositories'
+import {
+	warehouseHistoryRepository,
+	warehouseRepository,
+} from 'electron/repositories'
 import { IAddWarehouseAdmissionPayload } from 'electron/typing'
 
 export class WarehouseController extends Controller {
@@ -41,6 +45,19 @@ export class WarehouseController extends Controller {
 						price: Number(item.price),
 					})
 				}
+
+				await warehouseHistoryRepository.insert({
+					warehouseId: exist._id,
+					productId: exist.productId,
+
+					type: HistoryRecordType.Income,
+					reasone: HistoryRecordReasone.Admission,
+
+					productCount: item.count,
+					price: item.price,
+
+					comment: data.comment,
+				})
 			}),
 		)
 	}

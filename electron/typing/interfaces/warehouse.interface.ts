@@ -9,4 +9,5 @@ export interface IAddWarehouseAdmissionItem {
 
 export interface IAddWarehouseAdmissionPayload {
 	items: IAddWarehouseAdmissionItem[]
+	comment?: string
 }

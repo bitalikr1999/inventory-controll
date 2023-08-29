@@ -30,7 +30,7 @@ export const GroupsTileList: FC<Props> = ({
 		if (_.isEmpty(items)) return null
 		return items.map(it => {
 			return (
-				<Col span={8} style={{ padding: '0 10px' }}>
+				<Col span={8} style={{ padding: '0 10px' }} key={it._id}>
 					<Card
 						actions={[
 							<EditOutlined

@@ -15,6 +15,7 @@ export enum RouteKey {
 	WarehouseCategories = '/warehouse/categories',
 
 	WarehouseAdmission = '/warehouse/admission',
+	WarehouseHistory = '/warehouse/history',
 
 	Settings = '/settings',
 

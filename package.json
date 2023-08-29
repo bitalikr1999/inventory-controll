@@ -1,12 +1,12 @@
 {
-  "name": "ac-food",
+  "name": "warehouse",
   "author": "Vitalik Yatsenko <bitalikr1999@gmail.com>",
   "version": "1.0.0",
   "description": "test",
   "main": "./.webpack/main/index.js",
   "scripts": {
     "start": "electron-forge start",
-    "package": "electron-forge package --arch=x64 --platform=darwin",
+    "package": "electron-forge package",
     "make": "electron-forge make ",
     "release": "electron-forge publish",
     "lint": "eslint . --ext js,ts",
@@ -100,74 +100,6 @@
     "wait-on": "5.3.0"
   },
   "config": {
-    "forge": {
-      "packagerConfig": {
-        "name": "Warehouse",
-        "executableName": "Warehouse",
-        "icon": "assets/icon",
-        "extraResource": [
-          "assets"
-        ],
-        "arch": [
-          "x64",
-          "arm64"
-        ],
-        "platforms": []
-      },
-      "plugins": [
-        [
-          "@electron-forge/plugin-webpack",
-          {
-            "mainConfig": "./webpack/main.webpack.js",
-            "renderer": {
-              "config": "./webpack/renderer.webpack.js",
-              "entryPoints": [
-                {
-                  "html": "./public/index.html",
-                  "js": "./src/index.tsx",
-                  "description": "My Description",
-                  "name": "main_window",
-                  "preload": {
-                    "js": "./electron/bridge.ts"
-                  }
-                }
-              ]
-            }
-          }
-        ]
-      ],
-      "makers": [
-        {
-          "name": "@electron-forge/maker-squirrel",
-          "config": {
-            "name": "Warehouse",
-            "description": "My Description"
-          }
-        },
-        {
-          "name": "@electron-forge/maker-zip",
-          "platforms": [
-            "darwin",
-            "linux",
-            "windows"
-          ]
-        },
-        {
-          "name": "@electron-forge/maker-deb",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-rpm",
-          "config": {}
-        },
-        {
-          "name": "@electron-forge/maker-dmg",
-          "config": {
-            "background": "./assets/bg.webp",
-            "format": "ULFO"
-          }
-        }
-      ]
-    }
+    "forge": "./forge.config.js"
   }
 }

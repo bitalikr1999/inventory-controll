@@ -2,6 +2,7 @@ import { RouteKey } from '@/@types/enums'
 import {
 	AppstoreAddOutlined,
 	ExclamationCircleOutlined,
+	FallOutlined,
 } from '@ant-design/icons'
 import { Button, Modal, Row, Table } from 'antd'
 import { useNavigate } from 'react-router-dom'
@@ -56,10 +57,21 @@ export const WarehouseListPage = () => {
 					onClick={() => navigate(RouteKey.WarehouseCategories)}>
 					Категорії
 				</Button>
+				<Button
+					type="default"
+					icon={<FallOutlined />}
+					size="middle"
+					style={{
+						marginLeft: 15,
+					}}
+					onClick={() => navigate(RouteKey.WarehouseHistory)}>
+					Історія
+				</Button>
 			</Row>
 			<Table
 				dataSource={items}
 				columns={WarehouseTableConfig(onPressDelete, setProduct)}
+				rowKey={'_id'}
 			/>
 
 			<WarehouseAdmissionModalSmart

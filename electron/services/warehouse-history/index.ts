@@ -24,7 +24,7 @@ class WarehouseHistoryService {
 	}
 
 	private async fillArray(records: IWarehouseHistoryRecord[]) {
-		return await Promise.all(records.map(this.fillOne))
+		return await Promise.all(records.map(this.fillOne.bind(this)))
 	}
 
 	private async fillOne(record: IWarehouseHistoryRecord) {
