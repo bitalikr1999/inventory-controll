@@ -13,6 +13,7 @@ export const menusDb = new Datastore({
 	timestampData: true,
 })
 
+// TODO
 class MenusRepository {
 	public db = menusDb
 

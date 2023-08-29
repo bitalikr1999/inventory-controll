@@ -1,25 +1,38 @@
+import { RepositoriesList } from 'electron/core/common/repositories-list'
+
 const Datastore = require('nedb')
 export class Repository<T> {
 	private _db: typeof Datastore
+	private _path: string
 
 	public get db() {
 		return this._db
 	}
 
+	public get path() {
+		return this._path
+	}
+
 	static create<T>(path: string) {
 		const repository = new this<T>()
 
-		repository.initDb(path)
+		repository.setPath(path)
+		repository.initDb()
 
 		return repository
 	}
 
-	public initDb(path: string) {
+	public initDb() {
 		this._db = new Datastore({
-			filename: path,
+			filename: this._path,
 			autoload: true,
 			timestampData: true,
 		})
+		return this
+	}
+
+	public setPath(path: string) {
+		this._path = path
 		return this
 	}
 

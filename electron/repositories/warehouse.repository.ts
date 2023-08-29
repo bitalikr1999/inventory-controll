@@ -65,6 +65,11 @@ class WarehouseRepository extends Repository<IWarehouseItem> {
 	}
 }
 
-export const warehouseRepository = new WarehouseRepository().initDb(
-	path.join(app.getPath('appData'), 'foodAccountingData', 'warehouse.db'),
+const repoFilePath = path.join(
+	app.getPath('appData'),
+	'foodAccountingData',
+	'warehouse.db',
 )
+export const warehouseRepository = new WarehouseRepository()
+	.setPath(repoFilePath)
+	.initDb()

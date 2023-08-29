@@ -10,6 +10,7 @@ import {
 	WarehouseController,
 	WarehouseHistoryController,
 } from './controllers'
+import './core/common/export-database'
 
 let mainWindow: BrowserWindow | null
 
