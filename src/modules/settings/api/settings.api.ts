@@ -6,6 +6,10 @@ class SettingsAPI extends API {
 	public openDbFolder() {
 		this.call('openDbFolder', {})
 	}
+
+	public importDatabase(filepath: string) {
+		this.call('importDatabase', { filepath })
+	}
 }
 
 export const settingsAPI = new SettingsAPI()

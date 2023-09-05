@@ -5,6 +5,7 @@ import { useStoreDate } from '@/shared/hooks'
 import { Button, Col, Divider, Input, Row } from 'antd'
 import _ from 'lodash'
 import { settingsAPI } from '../api'
+import { ImportDatabaseModalWidget } from '../widgets/import-database'
 
 export const SettingsPage = () => {
 	const { data, set } = useStoreDate<ISetting[]>({
@@ -134,9 +135,11 @@ export const SettingsPage = () => {
 			<Button
 				type="primary"
 				size="large"
-				onClick={settingsAPI.openDbFolder}>
+				onClick={() => settingsAPI.openDbFolder()}>
 				Відкрити db теку
 			</Button>
+
+			<ImportDatabaseModalWidget />
 		</div>
 	)
 }

@@ -14,14 +14,26 @@ export class ExportDatabase {
 	private folderName = 'data'
 	private filesPaths: string[] = []
 	private outputFilePath: string
+	private fileNameFormatter?: () => string
 
 	constructor(private repositoriesList: RepositoriesList) {}
 
 	public async export() {
 		this.createJSZip()
 		this.createFolderInZip()
-		this.getOutputFilePath()
+		this.initOutputFilePath()
 		this.getFilesPaths()
+		await this.appendFilesToFolder()
+		await this.outputZip()
+
+		return this
+	}
+
+	public async exportToFolder(path: string) {
+		this.createJSZip()
+		this.createFolderInZip()
+		this.getFilesPaths()
+		this.initOutputFilePath(path)
 		await this.appendFilesToFolder()
 		await this.outputZip()
 
@@ -78,23 +90,39 @@ export class ExportDatabase {
 		})
 	}
 
-	private getOutputFilePath() {
-		this.outputFilePath = path.join(
-			publicCwd,
-			this.generateOutputFileName(),
-		)
+	private initOutputFilePath(folder = publicCwd) {
+		this.outputFilePath = path.join(folder, this.generateOutputFileName())
+	}
+
+	public setFilenameFormatter(fn: () => string) {
+		this.fileNameFormatter = fn
+		return this
 	}
 
 	private generateOutputFileName() {
+		if (this.fileNameFormatter) return this.fileNameFormatter()
 		const date = new Date()
-		return `warehousedb_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}.zip`
+		return `warehousedb_${date.getHours()}_${date.getDate()}_${date.getMonth()}_${date.getFullYear()}.zip`
+	}
+
+	public getOutputFilePath() {
+		return this.outputFilePath
+	}
+
+	public static createTimeBasedName() {
+		const paths = ['warehousedb']
+		const date = new Date()
+		paths.push(`dt:${date.getTime()}`)
+		paths.push('.zip')
+
+		return paths.join('_')
 	}
 }
 
-setTimeout(async () => {
-	const exportDatabase = new ExportDatabase(
-		RepositoriesList.createWithAllRepositories(),
-	)
-	await exportDatabase.export()
-	exportDatabase.openOutputFile()
-}, 3000)
+// setTimeout(async () => {
+// 	const exportDatabase = new ExportDatabase(
+// 		RepositoriesList.createWithAllRepositories(),
+// 	)
+// 	await exportDatabase.export()
+// 	exportDatabase.openOutputFile()
+// }, 3000)

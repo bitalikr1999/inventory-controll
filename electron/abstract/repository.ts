@@ -1,5 +1,3 @@
-import { RepositoriesList } from 'electron/core/common/repositories-list'
-
 const Datastore = require('nedb')
 export class Repository<T> {
 	private _db: typeof Datastore
@@ -28,7 +26,12 @@ export class Repository<T> {
 			autoload: true,
 			timestampData: true,
 		})
+
 		return this
+	}
+
+	public reload() {
+		this._db.loadDatabase()
 	}
 
 	public setPath(path: string) {

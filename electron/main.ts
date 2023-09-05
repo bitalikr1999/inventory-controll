@@ -11,6 +11,7 @@ import {
 	WarehouseHistoryController,
 } from './controllers'
 import './core/common/export-database'
+import { StoreFs } from './core/common/store-fs'
 
 let mainWindow: BrowserWindow | null
 
@@ -43,6 +44,8 @@ function createWindow() {
 }
 
 async function registerListeners() {
+	StoreFs.initFolders()
+
 	ipcMain.handle('getStore', (_, store: string, key: string) => {
 		return getFromStore(store as any, key)
 	})
@@ -50,10 +53,6 @@ async function registerListeners() {
 	ipcMain.handle('setToStore', (_, store: string, key: string, data: any) => {
 		return setToStore(store as any, key, data)
 	})
-
-	// ipcMain.handle('openDevTooles', () => {
-	// 	mainWindow.webContents.openDevTools()
-	// })
 
 	new ChildrensCalendarsController().listen()
 	new ChildrensController().listen()
