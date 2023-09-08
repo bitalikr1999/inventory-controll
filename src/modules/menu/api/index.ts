@@ -16,7 +16,11 @@ class MenusAPI extends API {
 	}
 
 	public getOne(id: string) {
-		return this.call('getOne', { id })
+		return this.call('getOne', id)
+	}
+
+	public generateXlsx(data: any) {
+		return this.call('generateXlsx', data)
 	}
 }
 

@@ -14,6 +14,7 @@ import { MenuTabAtom } from '../../atoms/menu-tab.atom'
 import { useChildrenCount, useMenus } from '../../hooks'
 import { MenuEditorForm, MenuItemPeriod } from '../../interfaces'
 import { LoadingOutlined } from '@ant-design/icons'
+import { IMenu } from '@/@types/interfaces'
 const randomstring = require('randomstring')
 
 const formInitialState: Partial<MenuEditorForm> = {
@@ -25,6 +26,7 @@ export const MenuEditorPage = () => {
 	const navigate = useNavigate()
 	const location: any = useLocation()
 	const existId = location.state?.id
+	const copyId = location.state?.copyId
 
 	const form = useForm<MenuEditorForm>(
 		cloneDeep(formInitialState),
@@ -34,18 +36,42 @@ export const MenuEditorPage = () => {
 	const { set, getOne } = useMenus({})
 
 	const { count, isLoading } = useChildrenCount(
-		form.values.date,
-		form.values.groupCategory,
+		form.values?.date,
+		form.values?.groupCategory,
 	)
 
 	const loadExist = async () => {
 		const menu = await getOne(existId)
-		form.set(menu)
+		if (menu) form.set(menu)
 	}
 
 	useEffect(() => {
 		if (existId) loadExist()
 	}, [existId])
+
+	const createFromCopy = async () => {
+		const menu: IMenu = await getOne(copyId)
+
+		menu.dateGroupKey = null
+		menu.groupCategory = null
+
+		menu.items = menu.items.map(item => {
+			item.products = item.products.map(it => {
+				return {
+					...it,
+					count: null,
+				}
+			})
+
+			return item
+		})
+
+		form.set(menu as any)
+	}
+
+	useEffect(() => {
+		if (copyId) createFromCopy()
+	}, [copyId])
 
 	const addItem = (period: MenuItemPeriod) => {
 		const items = [...form.values.items]
@@ -142,7 +168,7 @@ export const MenuEditorPage = () => {
 				/>
 
 				<DatePicker
-					onChange={val => form.setField('date', val.toDate())}
+					onChange={(val: any) => form.setField('date', val.toDate())}
 					value={prepareDateForDatePicker(form.values.date)}
 					style={{ width: 150, marginRight: 15 }}
 				/>

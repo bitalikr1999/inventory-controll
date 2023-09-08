@@ -1,6 +1,6 @@
 import { RouteKey } from '@/@types/enums'
 import { PageHeader } from '@/shared/components/grid'
-import { prepareDateForDatePicker } from '@/shared/helpers'
+import { dateToYMstring, prepareDateForDatePicker } from '@/shared/helpers'
 import {
 	AppstoreAddOutlined,
 	ExclamationCircleOutlined,
@@ -11,6 +11,8 @@ import { useNavigate } from 'react-router-dom'
 import { MenuItem } from '../../components/menu-item.component'
 import { useMenus } from '../../hooks'
 import locale from 'antd/es/date-picker/locale/uk_UA'
+import { menusAPI } from '../../api'
+import { productsAPI } from '@/modules/products/api'
 
 export const MenuListPage = () => {
 	const navigate = useNavigate()
@@ -29,7 +31,11 @@ export const MenuListPage = () => {
 	}
 
 	const generateXlsx = () => {
-		window.Main.emit('generateMenu', { menus: data })
+		menusAPI.generateXlsx({ menus: data })
+	}
+
+	const generateProductsSummaryXlsx = () => {
+		productsAPI.generateSummary({ date: dateToYMstring(date) })
 	}
 
 	const renderItems = () => {
@@ -50,13 +56,17 @@ export const MenuListPage = () => {
 								})
 							}
 							onPressDelete={() => onPressRemove(it._id)}
+							onPressCopy={() =>
+								navigate(RouteKey.MenuEditor, {
+									state: { copyId: it._id },
+								})
+							}
 						/>
 					</Col>
 				)
 			})
 	}
 
-	console.log(data)
 	return (
 		<>
 			<PageHeader
@@ -68,11 +78,19 @@ export const MenuListPage = () => {
 							icon={<AppstoreAddOutlined />}
 							size="middle"
 							style={{ marginRight: 15 }}
+							onClick={() => generateProductsSummaryXlsx()}>
+							Згенерувати зведену XLSX
+						</Button>
+						<Button
+							type="primary"
+							icon={<AppstoreAddOutlined />}
+							size="middle"
+							style={{ marginRight: 15 }}
 							onClick={() => generateXlsx()}>
 							Згенерувати XLSX
 						</Button>
 						<DatePicker
-							onChange={val => setDate(val as any)}
+							onChange={(val: any) => setDate(val as any)}
 							value={prepareDateForDatePicker(date)}
 							picker="month"
 							locale={locale}

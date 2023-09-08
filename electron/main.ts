@@ -6,42 +6,30 @@ let mainWindow: BrowserWindow | null
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
-const appLogs = require('electron-log')
-appLogs.transports.console.level = false
-
 function createWindow() {
-	var testWindow = new BrowserWindow({
-		width: 200,
-		height: 200,
+	mainWindow = new BrowserWindow({
+		width: 1100,
+		height: 700,
 		backgroundColor: '#fff',
-		show: true,
-		center: true,
+		webPreferences: {
+			nodeIntegration: false,
+			contextIsolation: true,
+			devTools: true,
+			preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+		},
+		show: false,
+		title: 'Silo',
 	})
-	testWindow.loadURL('https://www.google.com/')
 
-	// mainWindow = new BrowserWindow({
-	// 	width: 1100,
-	// 	height: 700,
-	// 	backgroundColor: '#fff',
-	// 	webPreferences: {
-	// 		nodeIntegration: false,
-	// 		contextIsolation: true,
-	// 		devTools: true,
-	// 		preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-	// 	},
-	// 	show: false,
-	// 	title: 'Silo',
-	// })
-
-	// mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-	// mainWindow.maximize()
-	// mainWindow.show()
+	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+	mainWindow.maximize()
+	mainWindow.show()
 
 	// mainWindow.webContents.openDevTools()
 
-	// mainWindow.on('closed', () => {
-	// 	mainWindow = null
-	// })
+	mainWindow.on('closed', () => {
+		mainWindow = null
+	})
 }
 
 app.on('ready', createWindow)

@@ -18,6 +18,11 @@ interface ItemEditorProps {
 	items: MenuEditorItem[]
 }
 
+const setNumber = (number: any, max: number) => {
+	if (number <= max) return number
+	return max
+}
+
 export const ItemEditor: FC<ItemEditorProps> = ({
 	item,
 	onPressAddProduct,
@@ -123,7 +128,7 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 							console.log('record.product?.count', record.product)
 							setProductField(
 								record.id,
-								Math.min(
+								setNumber(
 									$eventVal(e),
 									record.product?.maxCount,
 								),

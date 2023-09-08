@@ -9,24 +9,24 @@ module.exports = {
 		name: 'Silo',
 		executableName: 'Silo',
 		icon: 'assets/icon',
-		osxSign: {
-			identity:
-				'Developer ID Application: JetUp Digital, TOV (7LY53JU2YB)',
-			'hardened-runtime': false,
-			'gatekeeper-assess': false,
-			entitlements: 'src/default.mas.plist',
-			version: '1.0.0',
-		},
-		osxNotarize: {
-			tool: 'notarytool',
-			appleApiKey: path.join(
-				__dirname,
-				'scripts',
-				'AuthKey_P9Z59QAD2M.p8',
-			),
-			appleApiKeyId: 'P9Z59QAD2M',
-			appleApiIssuer: 'b5ddf310-835b-484a-985d-f70ab1ebea26',
-		},
+		// osxSign: {
+		// 	identity:
+		// 		'Developer ID Application: JetUp Digital, TOV (7LY53JU2YB)',
+		// 	'hardened-runtime': false,
+		// 	'gatekeeper-assess': false,
+		// 	entitlements: 'src/default.mas.plist',
+		// 	version: '1.0.0',
+		// },
+		// osxNotarize: {
+		// 	tool: 'notarytool',
+		// 	appleApiKey: path.join(
+		// 		__dirname,
+		// 		'scripts',
+		// 		'AuthKey_P9Z59QAD2M.p8',
+		// 	),
+		// 	appleApiKeyId: 'P9Z59QAD2M',
+		// 	appleApiIssuer: 'b5ddf310-835b-484a-985d-f70ab1ebea26',
+		// },
 	},
 	plugins: [
 		[

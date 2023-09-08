@@ -7,6 +7,7 @@
   "scripts": {
     "start": "electron-forge start",
     "package": "electron-forge package",
+    "package:intel": "electron-forge package --arch=x64 --platform=darwin",
     "make": "electron-forge make ",
     "make:intel": "electron-forge make -- --arch=universal --platform=darwin",
     "release": "electron-forge publish",

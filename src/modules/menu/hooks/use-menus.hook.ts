@@ -15,6 +15,7 @@ export const useMenus = ({ filterMenus = items => items }: UseMenusParams) => {
 
 	const resetData = async () => {
 		const _data = await menusAPI.getMany(new Date(date))
+		console.log(_data)
 		setData(filterMenus(_data))
 	}
 
