@@ -1,70 +1,47 @@
-import { app, BrowserWindow, ipcMain } from 'electron'
-import { getFromStore, setToStore } from './store'
-import {
-	ChildrensCalendarsController,
-	ChildrensController,
-	ChildrensGroupsController,
-	MenusController,
-	ProductsController,
-	SettingsController,
-	WarehouseController,
-	WarehouseHistoryController,
-} from './controllers'
-import './core/common/export-database'
-import { StoreFs } from './core/common/store-fs'
+import { app, BrowserWindow } from 'electron'
+import { registerListeners } from './listeners'
 
 let mainWindow: BrowserWindow | null
 
 declare const MAIN_WINDOW_WEBPACK_ENTRY: string
 declare const MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY: string
 
+const appLogs = require('electron-log')
+appLogs.transports.console.level = false
+
 function createWindow() {
-	mainWindow = new BrowserWindow({
-		width: 1100,
-		height: 700,
+	var testWindow = new BrowserWindow({
+		width: 200,
+		height: 200,
 		backgroundColor: '#fff',
-		webPreferences: {
-			nodeIntegration: false,
-			contextIsolation: true,
-			devTools: true,
-			preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
-		},
-		show: false,
-		title: 'Warehouse',
+		show: true,
+		center: true,
 	})
+	testWindow.loadURL('https://www.google.com/')
 
-	mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
-	mainWindow.show()
+	// mainWindow = new BrowserWindow({
+	// 	width: 1100,
+	// 	height: 700,
+	// 	backgroundColor: '#fff',
+	// 	webPreferences: {
+	// 		nodeIntegration: false,
+	// 		contextIsolation: true,
+	// 		devTools: true,
+	// 		preload: MAIN_WINDOW_PRELOAD_WEBPACK_ENTRY,
+	// 	},
+	// 	show: false,
+	// 	title: 'Silo',
+	// })
 
-	mainWindow.webContents.openDevTools()
+	// mainWindow.loadURL(MAIN_WINDOW_WEBPACK_ENTRY)
+	// mainWindow.maximize()
+	// mainWindow.show()
 
-	mainWindow.on('closed', () => {
-		mainWindow = null
-	})
-}
+	// mainWindow.webContents.openDevTools()
 
-async function registerListeners() {
-	StoreFs.initFolders()
-
-	ipcMain.handle('getStore', (_, store: string, key: string) => {
-		return getFromStore(store as any, key)
-	})
-
-	ipcMain.handle('setToStore', (_, store: string, key: string, data: any) => {
-		return setToStore(store as any, key, data)
-	})
-
-	new ChildrensCalendarsController().listen()
-	new ChildrensController().listen()
-	new ChildrensGroupsController().listen()
-
-	new SettingsController().listen()
-	new ProductsController().listen()
-
-	new WarehouseHistoryController().listen()
-	new WarehouseController().listen()
-
-	new MenusController().listen()
+	// mainWindow.on('closed', () => {
+	// 	mainWindow = null
+	// })
 }
 
 app.on('ready', createWindow)

@@ -1,17 +1,15 @@
 import { IProduct } from '@/@types/interfaces'
-import { useStoreDate } from '@/shared/hooks'
 import { Col, Modal, Row, Table } from 'antd'
 import { AddProductModalSmart } from '../../smart-components'
 import { ProductsTableConfig } from './table.config'
-import { ExclamationCircleOutlined } from '@ant-design/icons'
-import { useState } from 'react'
-import { cloneDeep } from 'lodash'
+import { ExclamationCircleOutlined, LoadingOutlined } from '@ant-design/icons'
+import { useEffect, useState } from 'react'
+import { useProducts } from '../../hooks'
+import { productsAPI } from '../../api'
 
 export const ProductsListPage = () => {
-	const { data: list, set } = useStoreDate<IProduct[]>({
-		store: 'products',
-		field: 'list',
-	})
+	const { items, isLoading } = useProducts(true)
+
 	const [editedProduct, setProductToEdit] = useState<IProduct>(null)
 
 	const onPressDelete = (product: IProduct) => {
@@ -20,16 +18,19 @@ export const ProductsListPage = () => {
 			icon: <ExclamationCircleOutlined />,
 			okText: 'Так',
 			cancelText: 'Ні',
-			onOk: () => {
-				const _list = cloneDeep(list)
-				set(_list.filter(it => it.id !== product.id))
-			},
+			onOk: () => productsAPI.delete(product._id),
 		})
 	}
 
 	const onPressEdit = (product: IProduct) => {
 		setProductToEdit(product)
 	}
+
+	useEffect(() => {
+		setProductToEdit(null)
+	}, [items])
+
+	if (isLoading) return <LoadingOutlined />
 
 	return (
 		<div>
@@ -42,7 +43,7 @@ export const ProductsListPage = () => {
 				</Col>
 			</Row>
 			<Table
-				dataSource={list}
+				dataSource={items}
 				columns={ProductsTableConfig({ onPressDelete, onPressEdit })}
 			/>
 		</div>

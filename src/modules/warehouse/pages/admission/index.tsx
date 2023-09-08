@@ -1,6 +1,5 @@
 import { RouteKey } from '@/@types/enums'
-import { IProduct } from '@/@types/interfaces'
-import { appEvents } from '@/shared/events'
+
 import { Button, Col, Row, Table } from 'antd'
 import _ from 'lodash'
 import React, { useEffect, useState } from 'react'
@@ -18,6 +17,7 @@ export const WarehouseAdmissionPage = () => {
 	}, [items])
 
 	const submit = async () => {
+		console.log(items)
 		await warehouseAPI.admission({
 			items: items
 				.filter(it => Boolean(it.product))

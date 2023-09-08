@@ -15,7 +15,7 @@ export interface AddMenuPayload {
 			id: string
 			product?: {
 				warehouseId: string
-				productId: number
+				productId: string
 				price: number
 				name: string
 				measurmentUnit: MeasurmentUnit

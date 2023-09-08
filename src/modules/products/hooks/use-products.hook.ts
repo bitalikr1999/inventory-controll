@@ -1,25 +1,48 @@
 import { IProduct } from '@/@types/interfaces'
-import { useStoreDate } from '@/shared/hooks'
+import {
+	useAPICalEventsListener,
+	useMultyHookState,
+	useStoreDate,
+} from '@/shared/hooks'
 import _ from 'lodash'
+import { useEffect, useState } from 'react'
+import { productsAPI } from '../api'
 
-export const useProducts = () => {
-	const { data: items, set } = useStoreDate<IProduct[]>({
-		store: 'products',
-		field: 'list',
-		serrialization: (items: IProduct[]) => {
-			return items ? items.sort((a, b) => a.id - b.id) : []
-		},
+export const useProducts = (autoInit = true) => {
+	const [items, setItems] = useMultyHookState<IProduct[]>('products', [])
+	const [isLoading, setLoading] = useState(false)
+
+	const load = async () => {
+		try {
+			setLoading(true)
+			const data = await productsAPI.getAll()
+			setItems(data)
+		} catch (e) {
+		} finally {
+			setLoading(false)
+		}
+	}
+
+	useAPICalEventsListener('products/delete', () => {
+		console.log('onproductsdelete')
+		load()
+	})
+	useAPICalEventsListener('products/add', () => {
+		console.log('onproductsdelete')
+		load()
+	})
+	useAPICalEventsListener('products/update', () => {
+		console.log('onproductsdelete')
+		load()
 	})
 
-	const getLastId = () => {
-		if (_.isEmpty(items)) return 0
-		const id = Number(items[items.length - 1].id)
-		return _.defaultTo(id, 0)
-	}
+	useEffect(() => {
+		if (autoInit) load()
+	}, [autoInit])
 
 	return {
 		items,
-		set,
-		getLastId,
+		load,
+		isLoading,
 	}
 }

@@ -13,11 +13,6 @@ export const ProductsTableConfig = ({
 	onPressEdit,
 }: Props): ColumnsType<IProduct> => [
 	{
-		title: '№',
-		key: 'key',
-		dataIndex: 'id',
-	},
-	{
 		title: 'Назва',
 		dataIndex: 'name',
 		key: 'name',

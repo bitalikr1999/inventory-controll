@@ -16,7 +16,7 @@ export const ProductAutocomplite: FC<Props> = ({ onChange, product }) => {
 	const [hideOptions, setHideOptions] = useState(false)
 	const inputRef = useRef<InputRef>(null)
 
-	const { items } = useProducts()
+	const { items } = useProducts(true)
 
 	useEffect(() => {
 		if (product) {
@@ -39,6 +39,7 @@ export const ProductAutocomplite: FC<Props> = ({ onChange, product }) => {
 		)
 	}
 	const onSelect = (data: string) => {
+		console.log(items)
 		const item = items.find(it => it.name === data)
 		setHideOptions(true)
 		onChange(item)

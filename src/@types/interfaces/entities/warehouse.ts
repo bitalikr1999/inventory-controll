@@ -3,7 +3,7 @@ import { IProduct } from './product'
 
 export interface IWarehouseItem {
 	_id: string
-	productId: number
+	productId: string
 
 	count: number
 	price: number
@@ -17,7 +17,7 @@ export interface IWarehouseHistoryRecord {
 	_id: string
 
 	warehouseId?: string
-	productId?: number
+	productId?: string
 
 	type: HistoryRecordType
 	reasone: HistoryRecordReasone

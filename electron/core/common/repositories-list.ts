@@ -3,7 +3,9 @@ import {
 	childrensCalendarsRepository,
 	childrensGroupsRepository,
 	childrensRepository,
+	menusRepository,
 	productsRepository,
+	settingsRepository,
 	warehouseHistoryRepository,
 	warehouseRepository,
 } from 'electron/repositories'
@@ -27,6 +29,8 @@ export class RepositoriesList {
 			productsRepository,
 			warehouseHistoryRepository,
 			warehouseRepository,
+			menusRepository,
+			settingsRepository,
 		]
 
 		const repositoriesList = new RepositoriesList(repositories)

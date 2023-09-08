@@ -1,22 +1,11 @@
+import { app } from 'electron'
+import { Repository } from 'electron/abstract'
 import { dbCwd } from 'electron/config'
 import { getMenuKey } from 'electron/helpers'
 import { AddMenuPayload, IMenu } from 'electron/typing'
 import _ from 'lodash'
 import path from 'path'
-// import Datastore from 'nedb-promises'
-
-const Datastore = require('nedb')
-
-export const menusDb = new Datastore({
-	filename: path.join(dbCwd, 'menus.db'),
-	autoload: true,
-	timestampData: true,
-})
-
-// TODO
-class MenusRepository {
-	public db = menusDb
-
+class MenusRepository extends Repository<IMenu> {
 	public async findByDate(date: string): Promise<IMenu[]> {
 		return new Promise((resolve, reject) => {
 			this.db.find(
@@ -57,14 +46,16 @@ class MenusRepository {
 		})
 	}
 
-	public insert(data: AddMenuPayload): Promise<IMenu> {
-		return new Promise((resolve, reject) => {
-			this.db.insert(data, (err: any, result: IMenu) => {
-				if (err) reject(err)
-				else resolve(result)
-			})
-		})
-	}
+	// public insert(data: AddMenuPayload): Promise<IMenu> {
+	// 	return new Promise((resolve, reject) => {
+	// 		this.db.insert(data, (err: any, result: IMenu) => {
+	// 			if (err) reject(err)
+	// 			else resolve(result)
+	// 		})
+	// 	})
+	// }
 }
 
 export const menusRepository = new MenusRepository()
+	.setPath(path.join(dbCwd, 'menus.db'))
+	.initDb()

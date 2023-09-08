@@ -1,10 +1,10 @@
 import path from 'path'
 import _ from 'lodash'
 
-import { app } from 'electron'
 import { Repository } from 'electron/abstract'
 
 import { IWarehouseItem } from '@/@types/interfaces'
+import { dbCwd } from 'electron/config'
 
 class WarehouseRepository extends Repository<IWarehouseItem> {
 	public async getAll() {
@@ -64,12 +64,6 @@ class WarehouseRepository extends Repository<IWarehouseItem> {
 		})
 	}
 }
-
-const repoFilePath = path.join(
-	app.getPath('appData'),
-	'foodAccountingData',
-	'warehouse.db',
-)
 export const warehouseRepository = new WarehouseRepository()
-	.setPath(repoFilePath)
+	.setPath(path.join(dbCwd, 'warehouse.db'))
 	.initDb()

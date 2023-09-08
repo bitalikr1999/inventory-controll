@@ -67,7 +67,7 @@ export const useZdo = () => {
 			const totalCount = getTotalCount(byDays)
 			result.push({
 				product: {
-					id: it._id,
+					_id: it._id,
 					price: it.price,
 					...it.product,
 				},

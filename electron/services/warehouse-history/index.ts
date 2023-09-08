@@ -1,10 +1,10 @@
 import { InsertWarehouseItemPayload } from './interfaces'
 import { IProduct, IWarehouseHistoryRecord } from '@/@types/interfaces'
 import {
+	productsRepository,
 	warehouseHistoryRepository,
 	warehouseRepository,
 } from 'electron/repositories'
-import { getFromStore } from 'electron/store'
 
 class WarehouseHistoryService {
 	public async insert(payload: InsertWarehouseItemPayload) {
@@ -35,10 +35,10 @@ class WarehouseHistoryService {
 		}
 	}
 
-	private async getProduct(productId: number) {
+	private async getProduct(productId: string) {
 		if (!productId) return null
-		const products: IProduct[] = await getFromStore('products', 'list')
-		const product = products.find(it => it.id === productId)
+		const products: IProduct[] = await productsRepository.find({})
+		const product = products.find(it => it._id === productId)
 		return product
 	}
 

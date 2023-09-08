@@ -13,12 +13,12 @@ import {
 	XlsxReportCardGroup,
 	XlsxReportCardItem,
 } from 'electron/xlsx/report-card'
-import { getFromStore } from 'electron/store'
 import { YMstringToDate } from 'electron/helpers/date'
 import {
 	childrensCalendarsRepository,
 	childrensGroupsRepository,
 	childrensRepository,
+	settingsRepository,
 } from 'electron/repositories'
 
 export class ReportCardXlsx {
@@ -161,7 +161,7 @@ export class ReportCardXlsx {
 	}
 
 	private async loadSettings() {
-		const settings: any[] = await getFromStore('settings', 'list')
+		const settings: any[] = await settingsRepository.find({})
 		const settingsObj: Record<string, string> = {}
 
 		settings.map(it => {

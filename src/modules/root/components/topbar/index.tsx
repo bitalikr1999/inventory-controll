@@ -1,13 +1,9 @@
 import { RouteKey } from '@/@types/enums'
 import {
 	AppstoreOutlined,
-	BarChartOutlined,
 	CoffeeOutlined,
 	LockOutlined,
-	LogoutOutlined,
-	MailOutlined,
 	MehOutlined,
-	ScheduleOutlined,
 	SettingOutlined,
 } from '@ant-design/icons'
 import { Menu } from 'antd'
@@ -48,27 +44,12 @@ export const TopBar = () => {
 					onClick={() => navigate(RouteKey.Products)}>
 					Продукти
 				</Menu.Item>
-				{/* <Menu.Item
-					key={RouteKey.ZDO.split('/')[1]}
-					icon={<BarChartOutlined />}
-					onClick={() => navigate(RouteKey.ZDO)}>
-					ЗДО
-				</Menu.Item>
-				<Menu.Item
-					key={RouteKey.VisitingList.split('/')[1]}
-					icon={<ScheduleOutlined />}
-					onClick={() => navigate(RouteKey.VisitingList)}>
-					Табелі
-				</Menu.Item> */}
 			</Menu>
 			<div className="right">
 				<button
 					className="ofbutton"
 					onClick={() => navigate(RouteKey.Settings)}>
 					<SettingOutlined />
-				</button>
-				<button className="ofbutton">
-					<LogoutOutlined />
 				</button>
 			</div>
 		</div>

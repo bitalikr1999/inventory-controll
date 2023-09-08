@@ -1,4 +1,5 @@
 import { HistoryRecordReasone, HistoryRecordType } from '@/@types/enums'
+import { IWarehouseItem } from '@/@types/interfaces'
 import { Controller } from 'electron/abstract'
 import {
 	warehouseHistoryRepository,
@@ -28,36 +29,42 @@ export class WarehouseController extends Controller {
 	) {
 		await Promise.all(
 			data.items.map(async item => {
-				item.price = Number(Number(item.price).toFixed(2))
+				try {
+					item.price = Number(Number(item.price).toFixed(2))
 
-				const exist = await warehouseRepository.getOne({
-					price: item.price,
-					productId: item.product.id,
-				})
-				if (exist) {
-					await warehouseRepository.update(exist._id, {
-						count: Number(exist.count) + Number(item.count),
+					const exist = await warehouseRepository.getOne({
+						price: item.price,
+						productId: item.product._id,
 					})
-				} else {
-					await warehouseRepository.insert({
-						count: Number(item.count),
-						productId: item.product.id,
-						price: Number(item.price),
+					let warehouseItem: IWarehouseItem = exist
+
+					if (exist) {
+						await warehouseRepository.update(exist._id, {
+							count: Number(exist.count) + Number(item.count),
+						})
+					} else {
+						warehouseItem = await warehouseRepository.insert({
+							count: Number(item.count),
+							productId: item.product._id,
+							price: Number(item.price),
+						})
+					}
+
+					await warehouseHistoryRepository.insert({
+						warehouseId: warehouseItem._id,
+						productId: warehouseItem.productId,
+
+						type: HistoryRecordType.Income,
+						reasone: HistoryRecordReasone.Admission,
+
+						productCount: item.count,
+						price: item.price,
+
+						comment: data.comment,
 					})
+				} catch (e) {
+					console.log(e)
 				}
-
-				await warehouseHistoryRepository.insert({
-					warehouseId: exist._id,
-					productId: exist.productId,
-
-					type: HistoryRecordType.Income,
-					reasone: HistoryRecordReasone.Admission,
-
-					productCount: item.count,
-					price: item.price,
-
-					comment: data.comment,
-				})
 			}),
 		)
 	}

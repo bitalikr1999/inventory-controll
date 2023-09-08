@@ -1,4 +1,4 @@
-import React, { useEffect, useMemo, useState } from 'react'
+import React, { useCallback, useEffect, useMemo, useState } from 'react'
 import { IProduct, ISetting } from '@/@types/interfaces'
 import { $eventVal } from '@/shared/helpers'
 import { useStoreDate } from '@/shared/hooks'
@@ -6,47 +6,35 @@ import { Button, Col, Divider, Input, Row } from 'antd'
 import _ from 'lodash'
 import { settingsAPI } from '../api'
 import { ImportDatabaseModalWidget } from '../widgets/import-database'
+import { useSettings } from '../hooks'
 
 export const SettingsPage = () => {
-	const { data, set } = useStoreDate<ISetting[]>({
-		store: 'settings',
-		field: 'list',
-		serrialization: (items: ISetting[]) => {
-			return items ? items : []
+	const { items: settings, isLoading } = useSettings()
+	const [items, setItems] = useState<Record<string, string>>({})
+
+	const settingsToObject = useCallback((settings: ISetting[]) => {
+		return _.mapValues(_.keyBy(settings, 'key'), 'value')
+	}, [])
+
+	const objectToSettings = useCallback(
+		(obj: Record<string, string>): ISetting[] => {
+			return Object.entries(obj).map(([key, value]) => ({ key, value }))
 		},
-	})
+		[],
+	)
 
-	const [items, setItems] = useState<ISetting[]>([])
-
-	useEffect(() => {
-		if (Array.isArray(data)) setItems(data)
-	}, [data])
-
-	const values = useMemo(() => {
-		return items.reduce((res, item) => {
-			res[item.key] = item.value
-			return res
-		}, {} as any)
-	}, [items])
-
-	const onChange = (key: string, value: string) => {
-		let keyExist = false
-		const _items = _.cloneDeep(items).map(it => {
-			if (it.key === key) {
-				keyExist = true
-				return {
-					...it,
-					value,
-				}
-			}
-			return it
-		})
-		if (!keyExist) _items.push({ key, value, label: key })
-		setItems(_items)
+	const submit = async () => {
+		await settingsAPI.put({ items: objectToSettings(items) })
 	}
 
-	const submit = () => {
-		set(items)
+	useEffect(() => {
+		if (Array.isArray(settings)) setItems(settingsToObject(settings))
+	}, [settings])
+
+	const onChange = (key: string, value: string) => {
+		const toSave = _.clone(items)
+		toSave[key] = value
+		setItems(toSave)
 	}
 
 	return (
@@ -60,7 +48,7 @@ export const SettingsPage = () => {
 						<Input
 							size="large"
 							placeholder=""
-							value={values.name}
+							value={items.name}
 							onChange={e => onChange('name', $eventVal(e))}
 						/>
 					</div>
@@ -70,7 +58,7 @@ export const SettingsPage = () => {
 						<Input
 							size="large"
 							placeholder=""
-							value={values.director}
+							value={items.director}
 							onChange={e => onChange('director', $eventVal(e))}
 						/>
 					</div>
@@ -80,7 +68,7 @@ export const SettingsPage = () => {
 						<Input
 							size="large"
 							placeholder=""
-							value={values.doctor}
+							value={items.doctor}
 							onChange={e => onChange('doctor', $eventVal(e))}
 						/>
 					</div>
@@ -90,7 +78,7 @@ export const SettingsPage = () => {
 						<Input
 							size="large"
 							placeholder=""
-							value={values.storekeeper}
+							value={items.storekeeper}
 							onChange={e =>
 								onChange('storekeeper', $eventVal(e))
 							}
@@ -102,7 +90,7 @@ export const SettingsPage = () => {
 						<Input
 							size="large"
 							placeholder=""
-							value={values.peopleWhoIssuedBy}
+							value={items.peopleWhoIssuedBy}
 							onChange={e =>
 								onChange('peopleWhoIssuedBy', $eventVal(e))
 							}
@@ -117,7 +105,7 @@ export const SettingsPage = () => {
 						<Input
 							size="large"
 							placeholder=""
-							value={values.edrpoy}
+							value={items.edrpoy}
 							onChange={e => onChange('edrpoy', $eventVal(e))}
 						/>
 					</div>
@@ -132,14 +120,26 @@ export const SettingsPage = () => {
 
 			<h1>Швидкі дії</h1>
 
-			<Button
-				type="primary"
-				size="large"
-				onClick={() => settingsAPI.openDbFolder()}>
-				Відкрити db теку
-			</Button>
+			<div style={{ marginBottom: 20 }}>
+				<Button
+					type="primary"
+					size="large"
+					onClick={() => settingsAPI.openDbFolder()}>
+					Відкрити db теку
+				</Button>
+			</div>
+			<div style={{ marginBottom: 20 }}>
+				<ImportDatabaseModalWidget />
+			</div>
 
-			<ImportDatabaseModalWidget />
+			<div style={{ marginBottom: 20 }}>
+				<Button
+					type="primary"
+					size="large"
+					onClick={() => settingsAPI.exportDatabase()}>
+					Експорт бази данних
+				</Button>
+			</div>
 		</div>
 	)
 }

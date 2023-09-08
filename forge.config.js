@@ -1,36 +1,32 @@
+const path = require('path')
+
 module.exports = {
 	hooks: {
-		postPackage: async (forgeConfig, options) => {
-			if (options.spinner) {
-				options.spinner.info(
-					`Completed packaging for ${options.platform} / ${options.arch} at ${options.outputPaths[0]}`,
-				)
-			}
-		},
+		// postPackage: require('./scripts/notarize.js'),
 	},
 	packagerConfig: {
-		name: 'Warehouse',
-		executableName: 'Warehouse',
+		appBundleId: 'app.silo.com',
+		name: 'Silo',
+		executableName: 'Silo',
 		icon: 'assets/icon',
-		arch: ['x64', 'arm64'],
-		platforms: ['darwin'],
 		osxSign: {
-			optionsForFile: filePath => {
-				// Here, we keep it simple and return a single entitlements.plist file.
-				// You can use this callback to map different sets of entitlements
-				// to specific files in your packaged app.
-				console.log('filepath', filePath)
-				return {
-					entitlements: './default.mas.plist',
-				}
-			},
+			identity:
+				'Developer ID Application: JetUp Digital, TOV (7LY53JU2YB)',
+			'hardened-runtime': false,
+			'gatekeeper-assess': false,
+			entitlements: 'src/default.mas.plist',
+			version: '1.0.0',
 		},
-		// osxNotarize: {
-		// 	tool: 'notarytool',
-		// 	appleId: 'bitalikrty@gmail.com',
-		// 	appleIdPassword: 'irfc-nqaf-pxda-mwtm',
-		// 	teamId: '7LY53JU2YB',
-		// },
+		osxNotarize: {
+			tool: 'notarytool',
+			appleApiKey: path.join(
+				__dirname,
+				'scripts',
+				'AuthKey_P9Z59QAD2M.p8',
+			),
+			appleApiKeyId: 'P9Z59QAD2M',
+			appleApiIssuer: 'b5ddf310-835b-484a-985d-f70ab1ebea26',
+		},
 	},
 	plugins: [
 		[

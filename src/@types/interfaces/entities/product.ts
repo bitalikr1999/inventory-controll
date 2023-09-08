@@ -1,7 +1,8 @@
 import { MeasurmentUnit, ProductCategory } from '@/@types/enums'
 
 export interface IProduct {
-	id: number
+	_id: string
+	// id: number
 	name: string
 	price: number
 	measurmentUnit: MeasurmentUnit

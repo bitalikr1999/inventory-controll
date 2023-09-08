@@ -9,9 +9,9 @@ import {
 import { MenuReport } from '../menu/menu-report'
 import { GroupCategoryKey } from '@/@types/enums'
 import moment from 'moment'
-import { getFromStore } from 'electron/store'
 import { ProductsSummaryXlsxGenerator } from 'electron/xlsx/products-summary'
 import { YMstringToDate } from 'electron/helpers/date'
+import { settingsRepository } from 'electron/repositories'
 
 export class ProductsSummaryXlsx {
 	private data: Partial<GenerateZdoDataXlsx> = {
@@ -44,7 +44,7 @@ export class ProductsSummaryXlsx {
 	}
 
 	private async loadSettings() {
-		const settings: any[] = await getFromStore('settings', 'list')
+		const settings: any[] = await settingsRepository.find({})
 		const settingsObj: Record<string, string> = {}
 
 		settings.map(it => (settingsObj[it.key] = it.value))

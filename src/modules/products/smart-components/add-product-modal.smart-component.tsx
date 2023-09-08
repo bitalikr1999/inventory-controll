@@ -10,6 +10,7 @@ import { useProducts } from '../hooks'
 import { MeasurmentUnit, ProductCategory } from '@/@types/enums'
 import { IProduct } from '@/@types/interfaces'
 import { cloneDeep, cloneDeepWith } from 'lodash'
+import { productsAPI } from '../api'
 
 interface Form {
 	name: string
@@ -24,7 +25,6 @@ interface Props {
 export const AddProductModalSmart: FC<Props> = ({ existProduct }) => {
 	const [visible, setVisible] = useState(false)
 	const form = useForm<Form>({}, validateProduct)
-	const { items, set, getLastId } = useProducts()
 
 	useEffect(() => {
 		if (existProduct) {
@@ -46,29 +46,14 @@ export const AddProductModalSmart: FC<Props> = ({ existProduct }) => {
 	}
 
 	const update = async () => {
-		const _items = cloneDeep(items)
-
-		_items.forEach((it, i) => {
-			if (it.id === existProduct.id) {
-				_items[i] = {
-					...it,
-					...form.values,
-				}
-			}
+		await productsAPI.update({
+			_id: existProduct._id,
+			...form.values,
 		})
-
-		await set(_items)
 	}
 
 	const add = async () => {
-		await set([
-			...items,
-			{
-				...form.values,
-				id: getLastId() + 1,
-				createdAt: new Date(),
-			},
-		])
+		await productsAPI.add(form.values)
 	}
 
 	const submit = async () => {

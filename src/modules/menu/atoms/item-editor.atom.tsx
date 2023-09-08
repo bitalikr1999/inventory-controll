@@ -1,5 +1,4 @@
-import { IProduct } from '@/@types/interfaces'
-import { ProductAutocomplite } from '@/modules/products/smart-components'
+/* eslint-disable indent */
 import { WarehouseAutocomplite } from '@/modules/warehouse/smart-components'
 import { createStyleSheet } from '@/shared/helpers'
 import { $eventVal } from '@/shared/helpers/form.helper'
@@ -96,7 +95,7 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 								record.id,
 								{
 									warehouseId: item._id,
-									productId: item.product.id,
+									productId: item.product._id,
 									price: item.price,
 									name: item.product.name,
 									measurmentUnit: item.product.measurmentUnit,

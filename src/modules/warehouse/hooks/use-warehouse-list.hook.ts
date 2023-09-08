@@ -8,7 +8,7 @@ import { warehouseAPI } from '../api/warehouse.api'
 
 export const useWarehouseList = () => {
 	const [items, setItems] = useState<IWarehouseItem[]>([])
-	const products = useProducts()
+	const products = useProducts(true)
 
 	const loadItems = async () => {
 		const data = await warehouseAPI.get()
@@ -18,7 +18,7 @@ export const useWarehouseList = () => {
 	const fillItem = (item: IWarehouseItem) => {
 		return {
 			...item,
-			product: products.items.find(it => it.id === item.productId),
+			product: products.items.find(it => it._id === item.productId),
 		}
 	}
 

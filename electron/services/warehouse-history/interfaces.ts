@@ -2,7 +2,7 @@ import { HistoryRecordReasone, HistoryRecordType } from '@/@types/enums'
 
 export interface InsertWarehouseItemPayload {
 	warehouseId?: string
-	productId?: number
+	productId?: string
 
 	type: HistoryRecordType
 	reasone: HistoryRecordReasone
