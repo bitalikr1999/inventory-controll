@@ -11,3 +11,12 @@ export interface IAddWarehouseAdmissionPayload {
 	items: IAddWarehouseAdmissionItem[]
 	comment?: string
 }
+
+export interface ISubsctructWarehouseItemPayload {
+	warehouseItemId: string
+	count: number
+}
+
+export interface ISubsctructWarehouseItemsPayload {
+	items: ISubsctructWarehouseItemPayload[]
+}

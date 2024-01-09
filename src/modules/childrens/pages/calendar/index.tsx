@@ -1,13 +1,17 @@
 import { PageHeader } from '@/shared/components/grid'
-import { createStyleSheet, prepareDateForDatePicker } from '@/shared/helpers'
-import { Button, Checkbox, DatePicker, Row, message } from 'antd'
+import {
+	$eventVal,
+	createStyleSheet,
+	prepareDateForDatePicker,
+} from '@/shared/helpers'
+import { Button, Checkbox, DatePicker, Input, Row, Select, message } from 'antd'
 import locale from 'antd/es/date-picker/locale/uk_UA'
 import moment from 'moment'
 import React, { useEffect, useState } from 'react'
 
 import { useLocation } from 'react-router-dom'
 import { useChildrenGroup, useChildrenGroupCalendar } from '../../hooks'
-import { IChildrenCalendarRecord } from '@/@types/interfaces'
+import { IChildren, IChildrenCalendarRecord } from '@/@types/interfaces'
 import _ from 'lodash'
 import { childrensCalendarsAPI } from '../../api/childrens-calendars.api'
 
@@ -39,9 +43,19 @@ export const GroupCalendar = () => {
 		return Boolean(visit?.isPresent)
 	}
 
-	const onChange = (childId: string, day: number, isPresent: boolean) => {
-		const result = _.cloneDeep(items)
+	const getPaymentPercent = (childId: string) => {
+		const child = items.find(it => it.childId === childId)
 
+		if (!child) {
+			const defaultPercent = group.childrens.find(
+				it => it._id === childId,
+			)?.paymentPercent
+
+			onChangePaymentPercent(childId, defaultPercent)
+		} else return Number(child.paymentPercent)
+	}
+	const findCalendarChild = (childId: string) => {
+		const result = _.cloneDeep(items)
 		let childIndex = result.findIndex(it => it.childId === childId)
 		if (childIndex < 0) {
 			result.push({
@@ -50,6 +64,12 @@ export const GroupCalendar = () => {
 			})
 			childIndex = result.findIndex(it => it.childId === childId)
 		}
+		return { result, childIndex }
+	}
+
+	const onChange = (childId: string, day: number, isPresent: boolean) => {
+		const { result, childIndex } = findCalendarChild(childId)
+
 		const child = result[childIndex]
 		let visitingIndex = child.visiting.findIndex(it => it.day === day)
 
@@ -65,6 +85,13 @@ export const GroupCalendar = () => {
 		setItems(result)
 	}
 
+	function onChangePaymentPercent(childId: string, percent: number) {
+		console.log(childId, percent)
+		const { result, childIndex } = findCalendarChild(childId)
+		result[childIndex].paymentPercent = percent
+		setItems(result)
+	}
+
 	const submit = async () => {
 		await childrensCalendarsAPI.put({
 			groupId: group._id,
@@ -77,31 +104,52 @@ export const GroupCalendar = () => {
 	const renderTr = () => {
 		return group?.childrens
 			.sort((a, b) => a.name.localeCompare(b.name))
-			.map(it => {
-				return (
-					<tr>
-						<td style={{ fontSize: 14 }}>{it.name}</td>
-						{Array.from({ length: daysCount }, (_, i) => {
-							const day = i + 1
-							return (
-								<th>
-									<Checkbox
-										defaultChecked={true}
-										checked={getIsVisiting(it._id, day)}
-										onChange={e =>
-											onChange(
-												it._id,
-												day,
-												e.target.checked,
-											)
-										}
-									/>
-								</th>
-							)
-						})}
-					</tr>
-				)
-			})
+			.map(renderChildRow)
+	}
+
+	function renderChildRow(child: IChildren) {
+		const cols = renderChildRowCols(child)
+
+		cols.push(
+			<th>
+				<Select
+					value={getPaymentPercent(child._id)}
+					style={{ width: 100 }}
+					options={[
+						{ value: 0, label: '0%' },
+						{ value: 50, label: '50%' },
+						{ value: 100, label: '100%' },
+					]}
+					onChange={val => onChangePaymentPercent(child._id, val)}
+				/>
+			</th>,
+		)
+
+		return (
+			<tr>
+				<td style={{ fontSize: 14 }}>{child.name}</td>
+				{cols}
+			</tr>
+		)
+	}
+
+	function renderChildRowCols(child: IChildren) {
+		return Array.from({ length: daysCount }, (_, i) => {
+			const day = i + 1
+			return renderChildRowCol(child, day)
+		})
+	}
+
+	function renderChildRowCol(child: IChildren, day: number) {
+		return (
+			<th>
+				<Checkbox
+					defaultChecked={true}
+					checked={getIsVisiting(child._id, day)}
+					onChange={e => onChange(child._id, day, e.target.checked)}
+				/>
+			</th>
+		)
 	}
 
 	return (
@@ -130,6 +178,7 @@ export const GroupCalendar = () => {
 					{Array.from({ length: daysCount }, (_, i) => {
 						return <th>{i + 1}</th>
 					})}
+					<th style={{ width: 110 }}>Оплата ( від 60% )</th>
 				</tr>
 				{renderTr()}
 			</table>

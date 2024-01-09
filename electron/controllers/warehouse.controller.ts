@@ -1,11 +1,15 @@
 import { HistoryRecordReasone, HistoryRecordType } from '@/@types/enums'
 import { IWarehouseItem } from '@/@types/interfaces'
 import { Controller } from 'electron/abstract'
+import { WarehouseAdmission, WarehouseSubstruct } from 'electron/core/warehouse'
 import {
 	warehouseHistoryRepository,
 	warehouseRepository,
 } from 'electron/repositories'
-import { IAddWarehouseAdmissionPayload } from 'electron/typing'
+import {
+	IAddWarehouseAdmissionPayload,
+	ISubsctructWarehouseItemsPayload,
+} from 'electron/typing'
 
 export class WarehouseController extends Controller {
 	protected basePath = 'warehouse'
@@ -13,6 +17,7 @@ export class WarehouseController extends Controller {
 		get: this.getWarehouseItems,
 		delete: this.deleteWarehouseItem,
 		admission: this.admission,
+		substruct: this.substruct,
 	}
 
 	protected async getWarehouseItems() {
@@ -27,45 +32,17 @@ export class WarehouseController extends Controller {
 		_event: unknown,
 		data: IAddWarehouseAdmissionPayload,
 	) {
-		await Promise.all(
-			data.items.map(async item => {
-				try {
-					item.price = Number(Number(item.price).toFixed(2))
+		for await (const payload of data.items) {
+			await new WarehouseAdmission(payload).admission()
+		}
+	}
 
-					const exist = await warehouseRepository.getOne({
-						price: item.price,
-						productId: item.product._id,
-					})
-					let warehouseItem: IWarehouseItem = exist
-
-					if (exist) {
-						await warehouseRepository.update(exist._id, {
-							count: Number(exist.count) + Number(item.count),
-						})
-					} else {
-						warehouseItem = await warehouseRepository.insert({
-							count: Number(item.count),
-							productId: item.product._id,
-							price: Number(item.price),
-						})
-					}
-
-					await warehouseHistoryRepository.insert({
-						warehouseId: warehouseItem._id,
-						productId: warehouseItem.productId,
-
-						type: HistoryRecordType.Income,
-						reasone: HistoryRecordReasone.Admission,
-
-						productCount: item.count,
-						price: item.price,
-
-						comment: data.comment,
-					})
-				} catch (e) {
-					console.log(e)
-				}
-			}),
-		)
+	protected async substruct(
+		_event: unknown,
+		data: ISubsctructWarehouseItemsPayload,
+	) {
+		for await (const payload of data.items) {
+			await new WarehouseSubstruct(payload).run()
+		}
 	}
 }

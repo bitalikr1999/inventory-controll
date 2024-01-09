@@ -51,6 +51,8 @@ export class ReportCardXlsx {
 		await this.loadGroups()
 		await this.loadSettings()
 
+		console.log(this.result)
+
 		new ReportCardXlsxGenerator().generate(this.result)
 	}
 
@@ -75,6 +77,7 @@ export class ReportCardXlsx {
 	}
 
 	private async fetchCalendars() {
+		console.log(this.params)
 		return this.repository.find({ date: this.params.date })
 	}
 
@@ -148,13 +151,13 @@ export class ReportCardXlsx {
 
 		result.nettoSumm = (60 / 100) * result.bruttoSumm
 
-		if (Number(child.paymentPercent) === 50) {
+		if (Number(calendarItem.paymentPercent) === 50) {
 			result.isPay50 = (50 / 100) * result.nettoSumm
 		}
-		if (Number(child.paymentPercent) === 0) {
+		if (Number(calendarItem.paymentPercent) === 0) {
 			result.isPay0 = 0
 		}
-		if (Number(child.paymentPercent) !== 100)
+		if (Number(calendarItem.paymentPercent) !== 100)
 			result.privilegeReason = child.halfPaymentReason
 
 		return result as any

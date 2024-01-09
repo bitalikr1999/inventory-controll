@@ -18,6 +18,10 @@ class ChildrensGroupsAPI extends API {
 	public edit(payload: any) {
 		return this.call('edit', payload)
 	}
+
+	public remove(id: string) {
+		return this.call('remove', id)
+	}
 }
 
 export const childrensGroupsAPI = new ChildrensGroupsAPI()

@@ -1,5 +1,5 @@
 import _, { cloneDeep } from 'lodash'
-import { useEffect, useMemo, useState } from 'react'
+import { useEffect, useMemo, useRef, useState } from 'react'
 import { useLocation, useNavigate } from 'react-router-dom'
 
 import { RouteKey } from '@/@types/enums'
@@ -22,16 +22,27 @@ const formInitialState: Partial<MenuEditorForm> = {
 	date: new Date(),
 }
 
+const validFormKeys = [
+	'title',
+	'date',
+	'childrensCount',
+	'pressAdd',
+	'items',
+	'groupCategory',
+]
+
 export const MenuEditorPage = () => {
 	const navigate = useNavigate()
 	const location: any = useLocation()
 	const existId = location.state?.id
 	const copyId = location.state?.copyId
+	const isInit = useRef(false)
 
 	const form = useForm<MenuEditorForm>(
 		cloneDeep(formInitialState),
 		() => null,
 	)
+
 	const [selectedItemId, selectItemId] = useState<string>()
 	const { set, getOne } = useMenus({})
 
@@ -39,6 +50,37 @@ export const MenuEditorPage = () => {
 		form.values?.date,
 		form.values?.groupCategory,
 	)
+
+	useEffect(() => {
+		if (!existId && isInit.current) {
+			localStorage.setItem('menuTemp', JSON.stringify(form.values))
+		}
+	}, [form.values])
+
+	useEffect(() => {
+		initFromTemp()
+	}, [])
+
+	function initFromTemp() {
+		if (existId) return
+
+		try {
+			const tempData = localStorage.getItem('menuTemp')
+
+			if (tempData) {
+				const data = JSON.parse(tempData)
+
+				Object.keys(data).map(key => {
+					if (!validFormKeys.includes(key)) throw new Error()
+				})
+				form.set(data)
+			}
+		} catch (e) {
+			localStorage.removeItem('menuTemp')
+		}
+
+		isInit.current = true
+	}
 
 	const loadExist = async () => {
 		const menu = await getOne(existId)
@@ -123,16 +165,26 @@ export const MenuEditorPage = () => {
 		form.setField('items', _.cloneDeep(items))
 	}
 
+	const prepareItemsToSave = () => {
+		return form.values.items.map(item => {
+			return {
+				...item,
+				products: item.products.filter(it => it.product && it.count),
+			}
+		})
+	}
+
 	const save = async () => {
 		const { values } = form
 
+		console.log('items', prepareItemsToSave())
 		try {
 			await set({
 				id: _.defaultTo(existId, null),
 				name: values.title,
 				childrensCount: Number(count),
 				date: new Date(values.date).toISOString(),
-				items: values.items,
+				items: prepareItemsToSave(),
 				groupCategory: values.groupCategory,
 			})
 		} catch (e) {

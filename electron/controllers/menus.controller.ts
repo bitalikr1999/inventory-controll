@@ -41,6 +41,7 @@ export class MenusController extends Controller {
 			: null
 
 		const difference = getMenuDifference(existMenu, data)
+		console.log('difference', difference)
 		await saveDifferenceMenu(difference)
 
 		let resultId: string = payload.id
@@ -64,17 +65,23 @@ const saveDifferenceMenu = async (difference: {
 	warehouseToReturn: any[]
 	warehouseToSubstract: any[]
 }) => {
-	for await (const item of difference.warehouseToSubstract) {
-		await warehouseRepository.decreaseWarehouseItemCount(
-			item.warehouseId,
-			item.count,
-		)
+	try {
+		for await (const item of difference.warehouseToSubstract) {
+			if (item.count && item.count > 0)
+				await warehouseRepository.decreaseWarehouseItemCount(
+					item.warehouseId,
+					item.count,
+				)
+		}
+	} catch (e) {
+		console.log('e', e)
 	}
 
 	for await (const item of difference.warehouseToReturn) {
-		await warehouseRepository.increaseWarehouseItemCount(
-			item.warehouseId,
-			item.count,
-		)
+		if (item.count && item.count > 0)
+			await warehouseRepository.increaseWarehouseItemCount(
+				item.warehouseId,
+				item.count,
+			)
 	}
 }

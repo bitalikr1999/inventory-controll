@@ -11,6 +11,7 @@ export class ChildrensGroupsController extends Controller {
 		getOne: this.handleGetOne,
 		add: this.handleAdd,
 		edit: this.handleEdit,
+		remove: this.handleRemove,
 	}
 
 	protected async handleGetAll() {
@@ -50,5 +51,23 @@ export class ChildrensGroupsController extends Controller {
 			},
 		)
 		return group
+	}
+
+	protected async handleRemove(_: unknown, id: string) {
+		const group = await childrensGroupsRepository.findOne({ _id: id })
+
+		if (!group) return
+
+		const childrens = await childrensRepository.find({ groupId: id })
+
+		await childrensGroupsRepository.remove(id)
+
+		try {
+			for await (const item of childrens) {
+				await childrensRepository.remove(item._id)
+			}
+		} catch (e) {
+			console.log(e)
+		}
 	}
 }

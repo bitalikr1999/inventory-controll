@@ -7,6 +7,7 @@ import Table, { ColumnsType } from 'antd/lib/table'
 import _ from 'lodash'
 import React, { FC } from 'react'
 import { IWarehouseAdmissionItem } from '../intefaces'
+import { FormControllerNumber } from '@/shared/components/form'
 
 interface Props {
 	items: IWarehouseAdmissionItem[]
@@ -70,13 +71,13 @@ export const AdmissionEditorAtom: FC<Props> = ({ items, onChange }) => {
 			key: 'count',
 			render: (val, record, i) => {
 				return (
-					<Input
+					<FormControllerNumber
 						placeholder=""
 						value={val}
 						type="number"
 						disabled={!record.product}
 						addonBefore={record.product?.measurmentUnit}
-						onChange={e => onChangeRow(i, 'count', $eventVal(e))}
+						onChangeTxt={txt => onChangeRow(i, 'count', txt)}
 					/>
 				)
 			},
@@ -86,13 +87,13 @@ export const AdmissionEditorAtom: FC<Props> = ({ items, onChange }) => {
 			key: 'summ',
 			render: (_, record, i) => {
 				return (
-					<Input
+					<FormControllerNumber
 						placeholder=""
 						value={record.summ}
 						type="number"
 						disabled={!record.product}
 						addonAfter={'грн.'}
-						onChange={e => onChangeRow(i, 'summ', $eventVal(e))}
+						onChangeTxt={txt => onChangeRow(i, 'summ', txt)}
 					/>
 				)
 			},

@@ -25,6 +25,7 @@ export interface IChildren {
 export interface IChildrenCalendarChild {
 	childId: string
 	groupCategory?: GroupCategoryKey
+	paymentPercent?: number
 	visiting: {
 		day: number
 		isPresent: boolean
@@ -35,6 +36,7 @@ export interface IChildrenCalendarRecord {
 	_id?: string
 	groupId: string
 	date: string
+
 	items: IChildrenCalendarChild[]
 
 	createdAt?: string

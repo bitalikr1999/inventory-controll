@@ -9,6 +9,7 @@ import { ColumnsType } from 'antd/lib/table'
 import _, { noop } from 'lodash'
 import { FC, useEffect } from 'react'
 import { MenuEditorItem, MenuEditorProduct } from '../interfaces'
+import { FormControllerNumber } from '@/shared/components/form'
 const randomstring = require('randomstring')
 
 interface ItemEditorProps {
@@ -119,22 +120,18 @@ export const ItemEditor: FC<ItemEditorProps> = ({
 			key: 'count',
 			render: (val, record: any) => {
 				return (
-					<Input
+					<FormControllerNumber
 						placeholder=""
 						value={val}
 						type="number"
 						addonBefore={record.product?.measurmentUnit}
-						onChange={e => {
-							console.log('record.product?.count', record.product)
+						onChangeTxt={val =>
 							setProductField(
 								record.id,
-								setNumber(
-									$eventVal(e),
-									record.product?.maxCount,
-								),
+								setNumber(val, record.product?.maxCount),
 								'count',
 							)
-						}}
+						}
 					/>
 				)
 			},

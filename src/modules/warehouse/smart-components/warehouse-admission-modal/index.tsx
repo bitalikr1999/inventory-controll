@@ -1,8 +1,8 @@
-import React, { FC } from 'react'
+import React, { FC, useState } from 'react'
 import { IProduct } from '@/@types/interfaces'
 import { $eventVal, createStyleSheet } from '@/shared/helpers'
 import { useForm } from '@/shared/hooks/useForm'
-import { Button, Drawer, Input } from 'antd'
+import { Button, Drawer, Input, Switch } from 'antd'
 import { warehouseAPI } from '../../api'
 
 interface Props {
@@ -21,6 +21,7 @@ export const WarehouseAdmissionModalSmart: FC<Props> = ({
 	onPressClose,
 }) => {
 	const form = useForm<Form>({}, () => null)
+	const [mod, setMod] = useState<'add' | 'substruct'>('add')
 
 	const submit = async () => {
 		try {
@@ -41,21 +42,17 @@ export const WarehouseAdmissionModalSmart: FC<Props> = ({
 		]
 	}
 
-	return (
-		<Drawer
-			title="Поступлення"
-			placement="right"
-			onClose={onPressClose}
-			visible={Boolean(product)}>
+	const renderInputs = () => {
+		const inputs = [
 			<div className="form-block">
 				<p className="form-label">Продукт</p>
 				<Input
 					size="large"
 					placeholder="Продукт"
 					value={product?.name}
+					disabled
 				/>
-			</div>
-
+			</div>,
 			<div className="form-block">
 				<p className="form-label">Кількість</p>
 				<Input
@@ -65,25 +62,52 @@ export const WarehouseAdmissionModalSmart: FC<Props> = ({
 					addonBefore={form.values.product?.measurmentUnit}
 					onChange={e => form.setField('count', $eventVal(e))}
 				/>
-			</div>
+			</div>,
+		]
+		if (mod === 'add') {
+			inputs.push(
+				<div className="form-block">
+					<p className="form-label">Сума</p>
+					<Input
+						placeholder=""
+						value={form.values.summ}
+						type="number"
+						addonAfter={'грн.'}
+						onChange={e => form.setField('summ', $eventVal(e))}
+					/>
+				</div>,
+			)
+		}
+		console.log(inputs)
 
+		return inputs
+	}
+
+	return (
+		<Drawer
+			title="Поступлення"
+			placement="right"
+			onClose={onPressClose}
+			visible={Boolean(product)}>
 			<div className="form-block">
-				<p className="form-label">Сума</p>
-				<Input
-					placeholder=""
-					value={form.values.summ}
-					type="number"
-					addonAfter={'грн.'}
-					onChange={e => form.setField('summ', $eventVal(e))}
+				<p className="form-label">
+					{mod === 'add' ? 'Нарахування' : 'Списання'}
+				</p>
+				<Switch
+					defaultChecked
+					checked={mod === 'add'}
+					onChange={e => setMod(e ? 'add' : 'substruct')}
 				/>
 			</div>
+
+			{renderInputs()}
 
 			<Button
 				type="primary"
 				size="large"
 				style={styles.button}
 				onClick={() => form.onSubmit(submit)}>
-				Зберегти
+				{mod === 'add' ? 'Нарахувати' : 'Списати'}
 			</Button>
 		</Drawer>
 	)

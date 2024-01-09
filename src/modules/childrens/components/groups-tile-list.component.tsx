@@ -1,5 +1,6 @@
 import { IGroup } from '@/@types/interfaces'
 import {
+	DeleteOutlined,
 	EditOutlined,
 	EllipsisOutlined,
 	FieldTimeOutlined,
@@ -18,6 +19,7 @@ interface Props {
 	onPressItem: (item: IGroup) => void
 	onPressCalendar: (item: IGroup) => void
 	onPressEdit: (item: IGroup) => void
+	onPressRemove: (item: IGroup) => void
 }
 
 export const GroupsTileList: FC<Props> = ({
@@ -25,6 +27,7 @@ export const GroupsTileList: FC<Props> = ({
 	onPressItem,
 	onPressCalendar,
 	onPressEdit,
+	onPressRemove,
 }) => {
 	const renderItems = () => {
 		if (_.isEmpty(items)) return null
@@ -48,6 +51,12 @@ export const GroupsTileList: FC<Props> = ({
 								key="calendar"
 								title="Пропуски"
 								onClick={() => onPressCalendar(it)}
+							/>,
+
+							<DeleteOutlined
+								key="delete"
+								title="Видалити"
+								onClick={() => onPressRemove(it)}
 							/>,
 						]}>
 						<Meta
