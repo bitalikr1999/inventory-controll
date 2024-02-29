@@ -169,7 +169,9 @@ export const MenuEditorPage = () => {
 		return form.values.items.map(item => {
 			return {
 				...item,
-				products: item.products.filter(it => it.product && it.count),
+				products: item.products.filter(
+					it => it.product && it.count !== undefined,
+				),
 			}
 		})
 	}

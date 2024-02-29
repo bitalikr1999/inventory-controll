@@ -154,17 +154,22 @@ const getConfig = (menu: IMenu) => {
 }
 
 const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
-	XLSX.utils.sheet_add_aoa(
-		worksheet,
-		[
-			[xlsxValRight('ЗАТВЕРДЖЕНО', false, 8)],
-			[xlsxValRight('Наказ Міністерства фінансів України', false, 8)],
-			[xlsxValRight('13 грудня 2022 року № 431', false, 8)],
-		],
-		{
-			origin: 'M1',
-		},
-	)
+	// worksheet['A3'].s = {
+	// 	border: {
+	// 		top: {
+	// 			style: 'thin',
+	// 			color: { rgb: '000000' },
+	// 		},
+	// 	},
+	// }
+	// worksheet['A4'].s = {
+	// 	border: {
+	// 		top: {
+	// 			style: 'thin',
+	// 			color: { rgb: '000000' },
+	// 		},
+	// 	},
+	// }
 
 	XLSX.utils.sheet_add_aoa(
 		worksheet,
@@ -181,8 +186,11 @@ const addHead = (worksheet: any, menu: IMenu, config: IMenuTableConfig) => {
 		],
 		{
 			origin: 'A4',
+			cellStyles: true,
 		},
 	)
+
+	console.log(worksheet['A4'])
 
 	const date = moment(new Date(menu.date)).format('MM.DD.YYYYр')
 

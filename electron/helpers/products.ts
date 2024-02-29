@@ -4,6 +4,8 @@ import _ from 'lodash'
 
 export const calcDishWeight = (item: IMenuItem) => {
 	let weight = 0
+
+	console.log('item', item)
 	item.products.map(it => {
 		weight = weight + Number(it.count)
 	})
@@ -11,14 +13,19 @@ export const calcDishWeight = (item: IMenuItem) => {
 	return weight.toFixed(2)
 }
 
-export const calcDishPrice = (item: Pick<IMenuItem, 'products'>) => {
+export const calcDishPrice = (
+	item: Pick<IMenuItem, 'products'>,
+	childrensCount?: number,
+) => {
 	let resultPrice = 0
 
 	item.products.map(it => {
 		resultPrice = resultPrice + Number(it.product.price) * Number(it.count)
 	})
 
-	return resultPrice.toFixed(2)
+	if (childrensCount)
+		return (Number(resultPrice) / Number(childrensCount)).toFixed(2)
+	else return resultPrice.toFixed(2)
 }
 
 export const calcFreeDishPrice = (item: IMenuItem) => {

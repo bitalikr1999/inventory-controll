@@ -24,8 +24,8 @@ export const addDishes = (
 				values.push(
 					xlsxVal(it.name, false),
 					null,
-					xlsxVal(calcDishWeight(it), false),
-					xlsxVal(calcDishPrice(it), false),
+					xlsxVal(Number(it.weight), false),
+					xlsxVal(calcDishPrice(it, config.childrensCount), false),
 				)
 			} else {
 				values.push(xlsxVal(''), xlsxVal(''), xlsxVal(''), xlsxVal(''))
@@ -44,17 +44,17 @@ export const addDishesSummary = (
 	config: IMenuTableConfig,
 ) => {
 	const sum1 = periods.mornin.reduce((res, item) => {
-		res = Number(res) + Number(calcDishPrice(item))
+		res = Number(res) + Number(calcDishPrice(item, config.childrensCount))
 		return res
 	}, 0)
 
 	const sum2 = periods.dinner.reduce((res, item) => {
-		res = Number(res) + Number(calcDishPrice(item))
+		res = Number(res) + Number(calcDishPrice(item, config.childrensCount))
 		return res
 	}, 0)
 
 	const sum3 = periods.supper.reduce((res, item) => {
-		res = Number(res) + Number(calcDishPrice(item))
+		res = Number(res) + Number(calcDishPrice(item, config.childrensCount))
 		return res
 	}, 0)
 

@@ -21,6 +21,7 @@ export interface IMenu {
 export interface IMenuItem {
 	id: string
 	name: string
+	weight: string
 	period: MenuItemPeriod
 	products: IMenuItemProduct[]
 }

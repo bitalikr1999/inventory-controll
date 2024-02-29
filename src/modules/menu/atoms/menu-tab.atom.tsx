@@ -29,7 +29,6 @@ export const MenuTabAtom: FC<MenuTabProps> = ({
 		let result = 0
 
 		item.products?.map(it => {
-			console.log('it', it)
 			if (!it.product) return
 			result =
 				Number(result) + getSumm(it.product?.price, Number(it.count))
